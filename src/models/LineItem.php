@@ -802,7 +802,7 @@ class LineItem extends Model
      */
     public function getHasFreeShipping(): bool
     {
-        if ($this->type === LineItemType::Purchasable) {
+        if ($this->type === LineItemType::Purchasable && $this->purchasableId) {
             return $this->getPurchasable()->hasFreeShipping();
         }
 

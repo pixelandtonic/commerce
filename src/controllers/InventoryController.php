@@ -16,6 +16,7 @@ use craft\commerce\enums\InventoryTransactionType;
 use craft\commerce\enums\InventoryUpdateQuantityType;
 use craft\commerce\models\inventory\InventoryManualMovement;
 use craft\commerce\models\inventory\UpdateInventoryLevel;
+use craft\commerce\models\InventoryImport;
 use craft\commerce\models\InventoryItem;
 use craft\commerce\models\InventoryLocation;
 use craft\commerce\Plugin;
@@ -24,11 +25,13 @@ use craft\enums\MenuItemType;
 use craft\errors\DeprecationException;
 use craft\helpers\AdminTable;
 use craft\helpers\ArrayHelper;
+use craft\helpers\Assets;
 use craft\helpers\Cp;
 use craft\helpers\Html;
 use craft\web\assets\htmx\HtmxAsset;
 use craft\web\Controller;
 use craft\web\CpScreenResponseBehavior;
+use craft\web\UploadedFile;
 use yii\base\InvalidConfigException;
 use yii\db\Exception;
 use yii\web\BadRequestHttpException;
@@ -195,12 +198,22 @@ class InventoryController extends Controller
             ];
         }
 
+        $importBtnId = sprintf("import-%s", mt_rand());
+        $items['import'] = [
+            'type' => MenuItemType::Link,
+            'id' => $importBtnId,
+            'url' => 'commerce/inventory/import',
+            'icon' => 'arrow-up',
+            'label' => Craft::t('commerce', 'Import Inventory'),
+        ];
+
         return $this->asCpScreen()
             ->title($title)
             ->site(Cp::requestedSite())
             ->selectableSites(Craft::$app->getSites()->getEditableSites())
             ->action(null)
             ->crumbs($crumbs)
+            ->actionMenuItems(fn () => $items)
             ->contentTemplate('commerce/inventory/levels/_index', compact(
                 'inventoryLocations',
                 'currentLocation',
@@ -541,6 +554,50 @@ JS, [
         return $this->asSuccess(Craft::t('commerce', 'Inventory updated.'), [
             'updatedItems' => collect($resultingInventoryLevels)->toArray(),
         ]);
+    }
+
+    /**
+     * @return Response
+     * @throws BadRequestHttpException
+     * @throws DeprecationException
+     * @throws InvalidConfigException
+     */
+    public function actionImport(): Response
+    {
+        $params = [];
+
+        return $this->asCpScreen()
+            ->action('commerce/inventory/import-inventory')
+            ->addCrumb(Craft::t('commerce', 'Inventory'), 'commerce/inventory')
+            ->selectedSubnavItem('inventory')
+            ->title(Craft::t('commerce', 'Import Inventory'))
+            ->formAttributes(['enctype' => 'multipart/form-data'])
+            ->metaSidebarTemplate('commerce/inventory/levels/_importMeta')
+            ->submitButtonLabel(Craft::t('commerce', 'Import'))
+            ->contentTemplate('commerce/inventory/levels/_importScreen', $params);
+    }
+
+    public function actionImportInventory(): Response
+    {
+        $errors = [];
+        $inventory = Plugin::getInstance()->getInventory();
+        $this->requirePostRequest();
+        $this->requirePermission('commerce-manageInventoryStockLevels');
+
+        $file = UploadedFile::getInstanceByName('importFile');
+
+        if (!$file) {
+            return $this->asError(Craft::t('commerce', 'No file uploaded.'));
+        }
+
+        $import = new InventoryImport([
+            'importFile' => $file->tempName
+        ]);
+
+        $inventory->importInventory($import);
+
+
+        return $this->asSuccess(Craft::t('commerce', 'Inventory imported.'));
     }
 
     /**

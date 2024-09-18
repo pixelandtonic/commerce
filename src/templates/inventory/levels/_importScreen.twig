@@ -1,0 +1,9 @@
+{% import '_includes/forms' as forms %}
+
+{{ forms.fileField({
+    label: 'Attach import file'|t('commerce'),
+    name: 'importFile',
+    inputAttributes: {
+        accept: '.csv'
+    }
+}) }}

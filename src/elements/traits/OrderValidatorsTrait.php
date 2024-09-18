@@ -83,7 +83,7 @@ trait OrderValidatorsTrait
         // Set live scenario for addresses to match CP
         $address?->setScenario(Address::SCENARIO_LIVE);
 
-        if ($address && !$address->validate()) {
+        if ($address && (!$address->validate())) {
             $this->addModelErrors($address, $attribute);
         }
 
