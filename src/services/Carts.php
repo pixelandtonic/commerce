@@ -102,7 +102,7 @@ class Carts extends Component
     /**
      * Get the current cart for this session.
      *
-     * @param bool $forceSave Force the cart to save when requesting it.
+     * @param bool $forceSave Force the cart.
      * @throws ElementNotFoundException
      * @throws Exception
      * @throws Throwable
@@ -465,7 +465,7 @@ class Carts extends Component
 
     /**
      * Gets the current payment currency ISO code
-     * @TODO: Fix this for 5.0
+     * @TODO: Fix this for next breaking change version
      */
     private function _getCartPaymentCurrencyIso(): string
     {
