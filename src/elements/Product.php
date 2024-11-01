@@ -1655,18 +1655,12 @@ class Product extends Element implements HasStoreInterface
      */
     public function getFieldLayout(): ?FieldLayout
     {
-        $fieldLayout = parent::getFieldLayout();
-        if ($fieldLayout) {
-            return $fieldLayout;
+        try {
+            return $this->getType()->getProductFieldLayout();
+        } catch (InvalidConfigException) {
+            // The product type was probably deleted
+            return null;
         }
-
-        $fieldLayout = $this->getType()->getFieldLayout();
-        if ($fieldLayout->id) {
-            $this->fieldLayoutId = $fieldLayout->id;
-            return $fieldLayout;
-        }
-
-        return null;
     }
 
     /**
