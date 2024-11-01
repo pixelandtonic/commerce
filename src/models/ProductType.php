@@ -398,7 +398,7 @@ class ProductType extends Model implements FieldLayoutProviderInterface
 
     public function getFieldLayout(): FieldLayout
     {
-        return $this->productFieldLayout();
+        return $this->getProductFieldLayout();
     }
 
     /**
