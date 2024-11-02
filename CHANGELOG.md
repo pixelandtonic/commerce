@@ -26,12 +26,12 @@
 - Added `craft\commerce\elements\db\Purchasable::onPromotion()`.
 - Added `craft\commerce\events\UpgradeEvent`.
 - Added `craft\commerce\models\Discount::$requireCouponCode`.
-- Added `craft\commerce\models\ProductType::$isStructure`
-- Added `craft\commerce\models\ProductType::$maxLevels`
-- Added `craft\commerce\models\ProductType::$structureId`
-- Added `craft\commerce\models\ProductType::DEFAULT_PLACEMENT_BEGINNING`
-- Added `craft\commerce\models\ProductType::DEFAULT_PLACEMENT_END`
-- Added `craft\commerce\models\ProductType::getConfig()`
+- Added `craft\commerce\models\ProductType::$isStructure`.
+- Added `craft\commerce\models\ProductType::$maxLevels`.
+- Added `craft\commerce\models\ProductType::$structureId`.
+- Added `craft\commerce\models\ProductType::DEFAULT_PLACEMENT_BEGINNING`.
+- Added `craft\commerce\models\ProductType::DEFAULT_PLACEMENT_END`.
+- Added `craft\commerce\models\ProductType::getConfig()`.
 
 ### System
 - Improved the performance of adding items to the cart.
