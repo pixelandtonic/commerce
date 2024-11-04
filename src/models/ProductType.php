@@ -9,6 +9,7 @@ namespace craft\commerce\models;
 
 use Craft;
 use craft\base\Field;
+use craft\base\FieldLayoutProviderInterface;
 use craft\behaviors\FieldLayoutBehavior;
 use craft\commerce\base\Model;
 use craft\commerce\elements\Product;
@@ -33,7 +34,6 @@ use yii\base\InvalidConfigException;
 /**
  * Product type model.
  * @method null setFieldLayout(FieldLayout $fieldLayout)
- * @method FieldLayout getFieldLayout()
  *
  * @property string $cpEditUrl
  * @property string $cpEditVariantUrl
@@ -47,7 +47,7 @@ use yii\base\InvalidConfigException;
  * @author Pixel & Tonic, Inc. <support@pixelandtonic.com>
  * @since 2.0
  */
-class ProductType extends Model
+class ProductType extends Model implements FieldLayoutProviderInterface
 {
     /** @since 5.2.0 */
     public const DEFAULT_PLACEMENT_BEGINNING = 'beginning';
@@ -225,6 +225,14 @@ class ProductType extends Model
     }
 
     /**
+     * @inerhitdoc
+     */
+    public function getHandle(): ?string
+    {
+        return $this->handle;
+    }
+
+    /**
      * @inheritdoc
      */
     protected function defineRules(): array
@@ -388,6 +396,11 @@ class ProductType extends Model
         $this->_taxCategories = $categories;
     }
 
+    public function getFieldLayout(): FieldLayout
+    {
+        return $this->getProductFieldLayout();
+    }
+
     /**
      * @throws InvalidConfigException
      */
@@ -517,9 +530,8 @@ class ProductType extends Model
     /**
      * @inheritdoc
      */
-    public function behaviors(): array
+    protected function defineBehaviors(): array
     {
-        $behaviors = parent::behaviors();
         $behaviors['productFieldLayout'] = [
             'class' => FieldLayoutBehavior::class,
             'elementType' => Product::class,
