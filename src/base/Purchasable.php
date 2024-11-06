@@ -972,7 +972,7 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
                 'ownerCanonicalId' => $owner?->canonicalId,
                 'ownerIsDraft' => $owner?->getIsDraft(),
                 'ownerIsRevision' => $owner?->getIsRevision(),
-                'ownerIsCanonical' =>$owner?->getIsCanonical(),
+                'ownerIsCanonical' => $owner?->getIsCanonical(),
                 'ownerIsDuplicateOf' => $owner->duplicateOf !== null,
                 'ownerDuplicateOfId' => $owner->duplicateOf?->id,
                 'ownerDuplicateOfIsCanonical' => $owner->duplicateOf?->getIsCanonical(),
