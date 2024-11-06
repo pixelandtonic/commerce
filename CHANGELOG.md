@@ -1,9 +1,10 @@
 # Release Notes for Craft Commerce
 
 ## Unreleased
+
 - Fixed a bug where product revisions weren’t storing variant relations.
-- Fixed a PHP error that occurred when calling a product or variant's render method. ([#3742](https://github.com/craftcms/commerce/issues/3742))
-- Fixed a bug where inventory would not save when creating a new variant. ([#3661](https://github.com/craftcms/commerce/issues/3661))
+- Fixed a PHP error that occurred when calling a product or variant’s `render()` method. ([#3742](https://github.com/craftcms/commerce/issues/3742))
+- Fixed a bug where inventory data wasn’t getting saved when creating a new variant. ([#3661](https://github.com/craftcms/commerce/issues/3661))
 
 ## 5.2.1 - 2024-10-23
 
