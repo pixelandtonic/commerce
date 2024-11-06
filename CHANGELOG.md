@@ -1,5 +1,8 @@
 # Release Notes for Craft Commerce
 
+## Unreleased
+- Fixed a bug where product revisions weren’t storing variant relations.
+
 ## 5.2.1 - 2024-10-23
 
 - Fixed a bug where the Commerce subnav could be missing the “Product” nav item. ([#3735](https://github.com/craftcms/commerce/issues/3735))
