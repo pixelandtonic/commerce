@@ -9,6 +9,7 @@ use craft\commerce\elements\db\OrderQuery;
 use craft\commerce\elements\Order;
 use craft\commerce\Plugin;
 use craft\elements\conditions\ElementConditionRuleInterface;
+use craft\helpers\ArrayHelper;
 use yii\db\QueryInterface;
 
 /**
@@ -41,7 +42,7 @@ class PaymentGatewayConditionRule extends BaseSelectConditionRule implements Ele
     protected function options(): array
     {
         return Plugin::getInstance()->getGateways()->getAllGateways()->mapWithKeys(function($gateway) {
-            return [$gateway->id => $gateway->name];
+            return [$gateway->uid => $gateway->name];
         })->all();
     }
 
@@ -50,8 +51,9 @@ class PaymentGatewayConditionRule extends BaseSelectConditionRule implements Ele
      */
     public function modifyQuery(QueryInterface $query): void
     {
+        $gateway = Plugin::getInstance()->getGateways()->getAllGateways()->firstWhere('uid', $this->value);
         /** @var OrderQuery $query */
-        $query->gatewayId($this->value);
+        $query->gatewayId($gateway->id);
     }
 
     /**
@@ -60,6 +62,7 @@ class PaymentGatewayConditionRule extends BaseSelectConditionRule implements Ele
     public function matchElement(ElementInterface $element): bool
     {
         /** @var Order $element */
-        return $this->matchValue($element->gatewayId);
+        $gatewayUid = $element->getGateway()?->uid;
+        return $this->matchValue($gatewayUid);
     }
 }
