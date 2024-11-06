@@ -10,7 +10,6 @@ namespace craft\commerce\base;
 use Craft;
 use craft\base\Element;
 use craft\base\NestedElementInterface;
-use craft\commerce\db\Table;
 use craft\commerce\elements\Order;
 use craft\commerce\errors\StoreNotFoundException;
 use craft\commerce\helpers\Currency;
@@ -28,6 +27,7 @@ use craft\commerce\Plugin;
 use craft\commerce\records\InventoryItem as InventoryItemRecord;
 use craft\commerce\records\Purchasable as PurchasableRecord;
 use craft\commerce\records\PurchasableStore;
+use craft\db\ActiveQuery;
 use craft\errors\DeprecationException;
 use craft\errors\SiteNotFoundException;
 use craft\helpers\ArrayHelper;
@@ -40,7 +40,6 @@ use Illuminate\Support\Collection;
 use Money\Money;
 use Money\Teller;
 use yii\base\InvalidConfigException;
-use yii\db\ActiveQueryInterface;
 use yii\validators\Validator;
 
 /**
@@ -819,7 +818,7 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
                 UniqueValidator::class,
                 'targetClass' => PurchasableRecord::class,
                 'caseInsensitive' => true,
-                'filter' => function(ActiveQueryInterface $query) {
+                'filter' => function(ActiveQuery $query) {
                     $query->leftJoin(\craft\db\Table::ELEMENTS . ' elements', '[[elements.id]] = [[commerce_purchasables.id]]');
                     $query->andWhere(['elements.revisionId' => null, 'elements.draftId' => null]);
                 },
@@ -959,27 +958,6 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
             $isOwnerDraftApplying = false;
             $isOwnerRevisionApplying = false;
 
-            $owner = $this->getOwner();
-            $state = [
-                'id' => $this->id,
-                'canonicalId' => $this->canonicalId,
-                'isDraft' => $this->getIsDraft(),
-                'isRevision' => $this->getIsRevision(),
-                'isCanonical' => $this->getIsCanonical(),
-                'isDuplicateOf' => $this->duplicateOf !== null,
-                'duplicateOfId' => $this->duplicateOf?->id,
-                'ownerId' => $owner?->id,
-                'ownerCanonicalId' => $owner?->canonicalId,
-                'ownerIsDraft' => $owner?->getIsDraft(),
-                'ownerIsRevision' => $owner?->getIsRevision(),
-                'ownerIsCanonical' => $owner?->getIsCanonical(),
-                'ownerIsDuplicateOf' => $owner->duplicateOf !== null,
-                'ownerDuplicateOfId' => $owner->duplicateOf?->id,
-                'ownerDuplicateOfIsCanonical' => $owner->duplicateOf?->getIsCanonical(),
-                'ownerDuplicateOfIsDraft' => $owner->duplicateOf?->getIsDraft(),
-                'ownerDuplicateOfIsRevision' => $owner->duplicateOf?->getIsRevision(),
-            ];
-
             // If this is a nested element, check if the owner is a draft and is being applied
             if ($this instanceof NestedElementInterface) {
                 $owner = $this->getOwner();
@@ -1027,7 +1005,7 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
             // added to inventory before it is saved as a permanent variant.
             if ($canonicalPurchasableId) {
                 if ($isOwnerDraftApplying && $this->duplicateOf !== null) {
-                    /** @var InventoryItem|null $inventoryItem */
+                    /** @var InventoryItemRecord|null $inventoryItem */
                     $inventoryItem = InventoryItemRecord::find()->where(['purchasableId' => $this->duplicateOf->id])->one();
                     if ($inventoryItem) {
                         $inventoryItem->purchasableId = $canonicalPurchasableId;
@@ -1036,7 +1014,7 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
                     }
                 } else {
                     // Set the inventory item data
-                    /** @var InventoryItem|null $inventoryItem */
+                    /** @var InventoryItemRecord|null $inventoryItem */
                     $inventoryItem = InventoryItemRecord::find()->where(['purchasableId' => $canonicalPurchasableId])->one();
                     if (!$inventoryItem) {
                         $inventoryItem = new InventoryItemRecord();
