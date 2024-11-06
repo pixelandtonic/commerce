@@ -1,6 +1,6 @@
 # Release Notes for Craft Commerce
 
-## Unreleased
+## 5.2.2 - 2024-11-06
 
 - Fixed a bug where product revisions weren’t storing variant relations.
 - Fixed a PHP error that occurred when calling a product or variant’s `render()` method. ([#3742](https://github.com/craftcms/commerce/issues/3742))
