@@ -1,5 +1,10 @@
 # Release Notes for Craft Commerce
 
+## Unreleased
+- Fixed a bug where product revisions weren’t storing variant relations.
+- Fixed a PHP error that occurred when calling a product or variant's render method. ([#3742](https://github.com/craftcms/commerce/issues/3742))
+- Fixed a bug where inventory would not save when creating a new variant. ([#3661](https://github.com/craftcms/commerce/issues/3661))
+
 ## 5.2.1 - 2024-10-23
 
 - Fixed a bug where the Commerce subnav could be missing the “Product” nav item. ([#3735](https://github.com/craftcms/commerce/issues/3735))
@@ -26,12 +31,12 @@
 - Added `craft\commerce\elements\db\Purchasable::onPromotion()`.
 - Added `craft\commerce\events\UpgradeEvent`.
 - Added `craft\commerce\models\Discount::$requireCouponCode`.
-- Added `craft\commerce\models\ProductType::$isStructure`
-- Added `craft\commerce\models\ProductType::$maxLevels`
-- Added `craft\commerce\models\ProductType::$structureId`
-- Added `craft\commerce\models\ProductType::DEFAULT_PLACEMENT_BEGINNING`
-- Added `craft\commerce\models\ProductType::DEFAULT_PLACEMENT_END`
-- Added `craft\commerce\models\ProductType::getConfig()`
+- Added `craft\commerce\models\ProductType::$isStructure`.
+- Added `craft\commerce\models\ProductType::$maxLevels`.
+- Added `craft\commerce\models\ProductType::$structureId`.
+- Added `craft\commerce\models\ProductType::DEFAULT_PLACEMENT_BEGINNING`.
+- Added `craft\commerce\models\ProductType::DEFAULT_PLACEMENT_END`.
+- Added `craft\commerce\models\ProductType::getConfig()`.
 
 ### System
 - Improved the performance of adding items to the cart.

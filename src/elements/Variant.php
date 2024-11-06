@@ -361,6 +361,14 @@ class Variant extends Purchasable implements NestedElementInterface
      */
     public function getIsAvailable(): bool
     {
+        if ($this->getIsRevision()) {
+            return false;
+        }
+
+        if ($this->getIsDraft()) {
+            return false;
+        }
+
         if ($this->getPrimaryOwner()->getIsDraft()) {
             return false;
         }
@@ -420,16 +428,17 @@ class Variant extends Purchasable implements NestedElementInterface
      * @throws InvalidConfigException
      * @throws InvalidConfigException
      */
+    /**
+     * @inheritdoc
+     */
     public function getFieldLayout(): ?FieldLayout
     {
-        $fieldLayout = parent::getFieldLayout();
-
-        if (!$fieldLayout && $this->getOwnerId()) {
-            $fieldLayout = $this->getOwner()->getType()->getVariantFieldLayout();
-            $this->fieldLayoutId = $fieldLayout->id;
+        try {
+            return $this->getOwner()->getType()->getVariantFieldLayout();
+        } catch (InvalidConfigException) {
+            // The product type was probably deleted
+            return null;
         }
-
-        return $fieldLayout;
     }
 
     /**
