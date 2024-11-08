@@ -1,5 +1,9 @@
 # Release Notes for Craft Commerce
 
+## Unreleased
+
+- Fixed a PHP error that could occur when retrieving a variant. ([#3754](https://github.com/craftcms/commerce/issues/3754))
+
 ## 5.2.2 - 2024-11-06
 
 - Fixed a bug where product revisions weren’t storing variant relations.
