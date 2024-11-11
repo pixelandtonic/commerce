@@ -1,5 +1,9 @@
 # Release Notes for Craft Commerce
 
+## Unreleased
+
+- Fixed a bug where purchasables were showing incorrectly on the Edit Order screen. ([#3756](https://github.com/craftcms/commerce/issues/3756))
+
 ## 5.2.2.1 - 2024-11-08
 
 - Fixed a PHP error that could occur when retrieving a variant. ([#3754](https://github.com/craftcms/commerce/issues/3754))
