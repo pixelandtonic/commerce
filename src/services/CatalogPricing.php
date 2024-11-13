@@ -44,7 +44,7 @@ class CatalogPricing extends Component
     /**
      * @since 5.3.0
      */
-    const EVENT_BEFORE_CREATE_CATALOG_PRICING_JOB = 'beforeCreateCatalogPricingJob';
+    public const EVENT_BEFORE_CREATE_CATALOG_PRICING_JOB = 'beforeCreateCatalogPricingJob';
 
     /**
      * @var array|null

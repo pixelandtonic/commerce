@@ -7,9 +7,6 @@
 
 namespace craft\commerce\events;
 
-use craft\commerce\base\Plan;
-use craft\commerce\models\subscriptions\SubscriptionForm;
-use craft\elements\User;
 use craft\events\CancelableEvent;
 
 /**
