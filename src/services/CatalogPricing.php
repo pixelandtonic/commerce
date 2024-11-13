@@ -12,7 +12,6 @@ use craft\commerce\base\Purchasable;
 use craft\commerce\db\Table;
 use craft\commerce\elements\conditions\purchasables\CatalogPricingCondition;
 use craft\commerce\elements\conditions\purchasables\CatalogPricingCustomerConditionRule;
-use craft\commerce\events\CatalogPricingJobEvent;
 use craft\commerce\models\CatalogPricing as CatalogPricingModel;
 use craft\commerce\models\CatalogPricingRule;
 use craft\commerce\Plugin;
@@ -41,11 +40,6 @@ use yii\queue\Queue;
  */
 class CatalogPricing extends Component
 {
-    /**
-     * @since 5.3.0
-     */
-    public const EVENT_BEFORE_CREATE_CATALOG_PRICING_JOB = 'beforeCreateCatalogPricingJob';
-
     /**
      * @var array|null
      */
@@ -506,21 +500,7 @@ class CatalogPricing extends Component
         $catalogPricingRuleIds = $config['catalogPricingRuleIds'] ?? null;
         $purchasableIds = $config['purchasableIds'] ?? null;
         $storeId = $config['storeId'] ?? null;
-
-        /** @var CatalogPricingJobEvent $event */
-        $event = Craft::createObject(
-            CatalogPricingJobEvent::class, compact('catalogPricingRuleIds', 'purchasableIds', 'storeId'),
-        );
-
-        if ($this->hasEventHandlers(self::EVENT_BEFORE_CREATE_CATALOG_PRICING_JOB)) {
-            $this->trigger(self::EVENT_BEFORE_CREATE_CATALOG_PRICING_JOB, $event);
-        }
-
-        if (!$event->isValid) {
-            return;
-        }
-
-        $this->markPricesAsUpdatePending($event->catalogPricingRuleIds, $event->purchasableIds, $event->storeId);
+        $this->markPricesAsUpdatePending($catalogPricingRuleIds, $purchasableIds, $storeId);
 
         $config = array_merge([
             'class' => CatalogPricingJob::class,
