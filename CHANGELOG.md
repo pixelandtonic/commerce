@@ -1,6 +1,6 @@
 # Release Notes for Craft Commerce
 
-## Unreleased
+## 5.2.3 - 2024-11-13
 
 - Fixed a performance degradation bug with variant queries. ([#3758](https://github.com/craftcms/commerce/issues/3758))
 - Fixed a bug where it was possible to select purchasables that didn’t belong to an order’s site, from Edit Order pages. ([#3756](https://github.com/craftcms/commerce/issues/3756))
