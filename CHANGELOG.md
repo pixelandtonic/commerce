@@ -2,8 +2,6 @@
 
 ## Unreleased
 
-- Added `\craft\commerce\events\CatalogPricingJobEvent`.
-- Added `craft\commerce\services\CatalogPricing::EVENT_BEFORE_CREATE_CATALOG_PRICING_JOB`.
 - Fixed a variant query performance degradation bug. ([#3758](https://github.com/craftcms/commerce/issues/3758))
 - Fixed a bug where purchasables were showing incorrectly on the Edit Order screen. ([#3756](https://github.com/craftcms/commerce/issues/3756))
 
