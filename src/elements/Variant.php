@@ -427,6 +427,17 @@ class Variant extends Purchasable implements NestedElementInterface
      */
     public function getFieldLayout(): ?FieldLayout
     {
+        $fieldLayout = parent::getFieldLayout();
+
+        if ($fieldLayout) {
+            // Variant field layouts are stored on the product type so retrieving the field layout by ID does not set the provider
+            $productType = collect(Plugin::getInstance()->getProductTypes()->getAllProductTypes())->firstWhere('variantFieldLayoutId', $fieldLayout->id);
+            if ($productType) {
+                $fieldLayout->provider = $productType;
+                return $fieldLayout;
+            }
+        }
+
         try {
             if ($this->getOwner() === null) {
                 return parent::getFieldLayout();
