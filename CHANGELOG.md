@@ -2,8 +2,8 @@
 
 ## Unreleased
 
-- Fixed a variant query performance degradation bug. ([#3758](https://github.com/craftcms/commerce/issues/3758))
-- Fixed a bug where purchasables were showing incorrectly on the Edit Order screen. ([#3756](https://github.com/craftcms/commerce/issues/3756))
+- Fixed a performance degradation bug with variant queries. ([#3758](https://github.com/craftcms/commerce/issues/3758))
+- Fixed a bug where it was possible to select purchasables that didn’t belong to an order’s site, from Edit Order screens. ([#3756](https://github.com/craftcms/commerce/issues/3756))
 
 ## 5.2.2.1 - 2024-11-08
 
