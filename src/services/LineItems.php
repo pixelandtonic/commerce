@@ -275,12 +275,11 @@ class LineItems extends Component
         $lineItemRecord->isShippable = null;
         $lineItemRecord->isTaxable = null;
 
-        if ($lineItem->type === LineItemType::Custom) {
-            $lineItemRecord->hasFreeShipping = $lineItem->getHasFreeShipping();
-            $lineItemRecord->isPromotable = $lineItem->getIsPromotable();
-            $lineItemRecord->isShippable = $lineItem->getIsShippable();
-            $lineItemRecord->isTaxable = $lineItem->getIsTaxable();
-        }
+        // Save this information for all line item types, even though live lookups will happen for line items with purchasables
+        $lineItemRecord->hasFreeShipping = $lineItem->getHasFreeShipping();
+        $lineItemRecord->isPromotable = $lineItem->getIsPromotable();
+        $lineItemRecord->isShippable = $lineItem->getIsShippable();
+        $lineItemRecord->isTaxable = $lineItem->getIsTaxable();
 
         $lineItemRecord->purchasableId = $lineItem->purchasableId;
         $lineItemRecord->orderId = $lineItem->orderId;
@@ -521,7 +520,7 @@ class LineItems extends Component
     public function orderCompleteHandler(LineItem $lineItem, Order $order): void
     {
         // Called the after order complete method for the purchasable if there is one
-        if ($lineItem->getPurchasable()) {
+        if ($lineItem->type === LineItemType::Purchasable && $lineItem->getPurchasable()) {
             $lineItem->getPurchasable()->afterOrderComplete($order, $lineItem);
         }
 

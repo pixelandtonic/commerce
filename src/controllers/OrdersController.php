@@ -16,6 +16,7 @@ use craft\commerce\base\PurchasableInterface;
 use craft\commerce\behaviors\StoreBehavior;
 use craft\commerce\collections\InventoryMovementCollection;
 use craft\commerce\db\Table;
+use craft\commerce\elements\db\PurchasableQuery;
 use craft\commerce\elements\Order;
 use craft\commerce\enums\InventoryTransactionType;
 use craft\commerce\enums\LineItemType;
@@ -44,6 +45,7 @@ use craft\commerce\web\assets\commerceui\CommerceOrderAsset;
 use craft\db\Query;
 use craft\db\Table as CraftTable;
 use craft\elements\Address;
+use craft\elements\db\ElementQuery;
 use craft\elements\User;
 use craft\errors\ElementNotFoundException;
 use craft\errors\InvalidElementException;
@@ -686,6 +688,8 @@ JS, []);
             ->innerJoin(Table::PURCHASABLES_STORES . ' pstores', '[[purchasables.id]] = [[pstores.purchasableId]]')
             ->where(['elements.enabled' => true])
             ->andWhere(['pstores.storeId' => $store->id])
+            ->andWhere(['elements.revisionId' => null])
+            ->andWhere(['elements.draftId' => null])
             ->from(['purchasables' => Table::PURCHASABLES]);
 
         // Are they searching for a SKU or purchasable description?
@@ -928,7 +932,7 @@ JS, []);
         }
 
         // Set previous language back
-        Locale::switchAppLanguage($originalLanguage, $originalFormattingLocale);
+        Locale::switchAppLanguage($originalLanguage, $originalFormattingLocale->id);
 
         if (!$success) {
             $error = $error ?: Craft::t('commerce', 'Could not send email');
@@ -1380,11 +1384,14 @@ JS, []);
         Craft::$app->getView()->registerJs('window.orderEdit.defaultShippingCategoryId = ' . Json::encode($defaultShippingCategoryId) . ';', View::POS_BEGIN);
 
         $currentUser = Craft::$app->getUser()->getIdentity();
-        $permissions = [
-            'commerce-manageOrders' => $currentUser->can('commerce-manageOrders'),
-            'commerce-editOrders' => $currentUser->can('commerce-editOrders'),
-            'commerce-deleteOrders' => $currentUser->can('commerce-deleteOrders'),
-        ];
+
+        $permissions = ArrayHelper::map([
+            'editUsers',
+            'commerce-manageOrders',
+            'commerce-editOrders',
+            'commerce-deleteOrders',
+        ], fn($permission) => $permission, fn($permission) => Craft::$app->getUser()->getIdentity()->can($permission));
+
         Craft::$app->getView()->registerJs('window.orderEdit.currentUserPermissions = ' . Json::encode($permissions) . ';', View::POS_BEGIN);
         Craft::$app->getView()->registerJs('window.orderEdit.currentUserId = ' . Json::encode($currentUser->id) . ';', View::POS_BEGIN);
 
@@ -1436,6 +1443,9 @@ JS, []);
         $forceEdit = ($order->hasErrors() || !$order->isCompleted);
 
         Craft::$app->getView()->registerJs('window.orderEdit.forceEdit = ' . Json::encode($forceEdit) . ';', View::POS_BEGIN);
+
+        $store = $order->getStore();
+        Craft::$app->getView()->registerJs('window.orderEdit.store = ' . Json::encode($store->toArray([], ['settings.locationAddress'])) . ';', View::POS_BEGIN);
     }
 
     /**
@@ -1486,28 +1496,28 @@ JS, []);
 
             $order->autoSetAddresses();
         } else {
-            $getAddress = static function($address, $orderId, $title) {
-                if ($address && ($address['id'] && ($address['ownerId'] != $orderId || isset($address['_copy'])))) {
+            $getAddress = static function($address, Order $order, $title) {
+                if ($address && ($address['id'] && ($address['ownerId'] != $order->id || isset($address['_copy'])))) {
                     if (isset($address['_copy'])) {
                         unset($address['_copy']);
                     }
                     $address = Craft::$app->getElements()->getElementById($address['id'], Address::class);
                     $address = Craft::$app->getElements()->duplicateElement($address, [
-                        'ownerId' => $orderId,
-                        'primaryOwnerId' => $orderId,
+                        'owner' => $order,
+                        'primaryOwner' => $order,
                         'title' => $title,
                     ]);
-                } elseif ($address && ($address['id'] && $address['ownerId'] == $orderId)) {
+                } elseif ($address && ($address['id'] && $address['ownerId'] == $order->id)) {
                     /** @var Address|null $address */
                     $address = Address::find()->ownerId($address['ownerId'])->id($address['id'])->one();
                 }
 
                 return $address;
             };
-            $billingAddress = $getAddress($submittedBillingAddress, $orderRequestData['order']['id'], Craft::t('commerce', 'Billing Address'));
+            $billingAddress = $getAddress($submittedBillingAddress, $order, Craft::t('commerce', 'Billing Address'));
             $order->setBillingAddress($billingAddress);
 
-            $shippingAddress = $getAddress($submittedShippingAddress, $orderRequestData['order']['id'], Craft::t('commerce', 'Shipping Address'));
+            $shippingAddress = $getAddress($submittedShippingAddress, $order, Craft::t('commerce', 'Shipping Address'));
             $order->setShippingAddress($shippingAddress);
 
             if (isset($orderRequestData['order']['sourceBillingAddressId'])) {
@@ -1817,12 +1827,37 @@ JS, []);
     private function _addLivePurchasableInfo(array $results, int $siteId, int|false|null $customerId = null): array
     {
         $purchasables = [];
+        $store = Plugin::getInstance()->getStores()->getStoreBySiteId($siteId);
+        $baseCurrency = $store->getCurrency();
+
+        $elementIdsByType = [];
+        foreach ($results as $r) {
+            if (!array_key_exists($r['type'], $elementIdsByType)) {
+                $elementIdsByType[$r['type']] = [];
+            }
+            $elementIdsByType[$r['type']][] = $r['id'];
+        }
+
+        $purchasablesById = [];
+        foreach ($elementIdsByType as $type => $ids) {
+            if (!class_exists($type)) {
+                continue;
+            }
+
+            /** @var ElementQuery $query */
+            $query = $type::find();
+
+            if ($query instanceof PurchasableQuery) {
+                $query->forCustomer($customerId);
+            }
+
+            $purchasablesById = [...$purchasablesById, ...$query->id($ids)->all()];
+        }
 
         foreach ($results as $row) {
             /** @var PurchasableInterface|null $purchasable */
-            $purchasable = Plugin::getInstance()->getPurchasables()->getPurchasableById($row['id'], $siteId, $customerId);
+            $purchasable = ArrayHelper::firstWhere($purchasablesById, 'id', $row['id']);
             if ($purchasable) {
-                $baseCurrency = $purchasable->getStore()->getCurrency();
                 // @TODO revisit when updating currencies for stores
                 $row['price'] = $purchasable->getSalePrice();
                 $row['promotionalPrice'] = $purchasable->getPromotionalPrice();

@@ -71,11 +71,12 @@ class PurchasableWeightField extends BaseNativeField
         return Cp::textHtml([
             'id' => 'weight',
             'name' => 'weight',
-            'value' => $element->weight !== null ? Craft::$app->getLocale()->getFormatter()->asDecimal($element->weight) : '',
+            'value' => $element->weight !== null ? Craft::$app->getFormattingLocale()->getFormatter()->asDecimal($element->weight) : '',
             'class' => 'text',
             'size' => 10,
             'unit' => Plugin::getInstance()->getSettings()->weightUnits,
             'placeholder' => Craft::t('commerce', 'Weight'),
+            'disabled' => $static,
         ]);
     }
 

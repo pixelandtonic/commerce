@@ -1617,8 +1617,8 @@ class Order extends Element implements HasStoreInterface
         if (!$this->_shippingAddress && !$this->shippingAddressId && $primaryShippingAddress = $user->getPrimaryShippingAddress()) {
             $this->sourceShippingAddressId = $primaryShippingAddress->id;
             $shippingAddress = Craft::$app->getElements()->duplicateElement($primaryShippingAddress, [
-                'ownerId' => $this->id,
-                'primaryOwnerId' => $this->id,
+                'owner' => $this,
+                'primaryOwner' => $this,
             ]);
             $this->setShippingAddress($shippingAddress);
             $autoSetOccurred = true;
@@ -1627,8 +1627,8 @@ class Order extends Element implements HasStoreInterface
         if (!$this->_billingAddress && !$this->billingAddressId && $primaryBillingAddress = $user->getPrimaryBillingAddress()) {
             $this->sourceBillingAddressId = $primaryBillingAddress->id;
             $billingAddress = Craft::$app->getElements()->duplicateElement($primaryBillingAddress, [
-                'ownerId' => $this->id,
-                'primaryOwnerId' => $this->id,
+                'owner' => $this,
+                'primaryOwner' => $this,
             ]);
             $this->setBillingAddress($billingAddress);
             $autoSetOccurred = true;
@@ -2592,11 +2592,9 @@ class Order extends Element implements HasStoreInterface
      */
     public function getPaidStatus(): string
     {
-        $teller = $this->_getTeller();
-
         if ($this->getIsPaid() &&
-            $teller->greaterThan($this->getTotalPrice(), 0) &&
-            $teller->greaterThan($this->getTotalPaid(), $this->getTotalPrice())
+            $this->_getTeller()->greaterThan($this->getTotalPrice(), 0) &&
+            $this->_getTeller()->greaterThan($this->getTotalPaid(), $this->getTotalPrice())
         ) {
             return self::PAID_STATUS_OVERPAID;
         }
@@ -2605,7 +2603,7 @@ class Order extends Element implements HasStoreInterface
             return self::PAID_STATUS_PAID;
         }
 
-        if ($this->getTotalPaid() > 0) {
+        if ($this->_getTeller()->greaterThan($this->getTotalPaid(), 0)) {
             return self::PAID_STATUS_PARTIAL;
         }
 
@@ -2726,7 +2724,7 @@ class Order extends Element implements HasStoreInterface
      */
     public function hasOutstandingBalance(): bool
     {
-        return $this->getOutstandingBalance() > 0;
+        return $this->_getTeller()->greaterThan($this->getOutstandingBalance(), 0);
     }
 
     /**
@@ -3059,6 +3057,12 @@ class Order extends Element implements HasStoreInterface
      */
     public function setAdjustments(array $adjustments): void
     {
+        $this->_orderAdjustments = [];
+
+        foreach ($adjustments as $adjustment) {
+            $adjustment->setOrder($this);
+        }
+
         $this->_orderAdjustments = $adjustments;
     }
 

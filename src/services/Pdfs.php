@@ -106,7 +106,7 @@ class Pdfs extends Component
     public const EVENT_AFTER_SAVE_PDF = 'afterSavePdf';
 
     /**
-     * @event PdfEvent The event that is triggered before an order’s PDF is rendered.
+     * @event PdfRenderEvent The event that is triggered before an order’s PDF is rendered.
      *
      * Event handlers can customize PDF rendering by modifying several properties on the event object:
      *
@@ -136,7 +136,7 @@ class Pdfs extends Component
     public const EVENT_BEFORE_RENDER_PDF = 'beforeRenderPdf';
 
     /**
-     * @event PdfEvent The event that is triggered after an order’s PDF has been rendered.
+     * @event PdfRenderEvent The event that is triggered after an order’s PDF has been rendered.
      *
      * Event handlers can override Commerce’s PDF generation by setting the `pdf` property on the event to a custom-rendered PDF string. The event properties will be the same as those from `beforeRenderPdf`, but `pdf` will contain a rendered PDF string and is the only one for which setting a value will make any difference for the resulting PDF output.
      *
@@ -509,7 +509,7 @@ class Pdfs extends Component
         if (!$event->template || !$view->doesTemplateExist($event->template)) {
             // Restore the original template mode
             $view->setTemplateMode($oldTemplateMode);
-            Locale::switchAppLanguage($originalLanguage, $originalFormattingLanguage);
+            Locale::switchAppLanguage($originalLanguage, $originalFormattingLanguage->id);
 
             throw new Exception('PDF template file does not exist.');
         }
@@ -518,14 +518,14 @@ class Pdfs extends Component
             // TODO Add event
             $html = $view->renderTemplate($event->template, $variables);
         } catch (\Exception $e) {
-            Locale::switchAppLanguage($originalLanguage, $originalFormattingLanguage);
+            Locale::switchAppLanguage($originalLanguage, $originalFormattingLanguage->id);
             // Set the pdf html to the render error.
             Craft::error('Order PDF render error. Order number: ' . $order->getShortNumber() . '. ' . $e->getMessage());
             Craft::$app->getErrorHandler()->logException($e);
             $html = Craft::t('commerce', 'An error occurred while generating this PDF.');
         }
 
-        Locale::switchAppLanguage($originalLanguage, $originalFormattingLanguage);
+        Locale::switchAppLanguage($originalLanguage, $originalFormattingLanguage->id);
         // Restore the original template mode
         $view->setTemplateMode($oldTemplateMode);
 

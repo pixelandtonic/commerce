@@ -25,7 +25,8 @@ use craft\commerce\events\CustomizeVariantSnapshotDataEvent;
 use craft\commerce\events\CustomizeVariantSnapshotFieldsEvent;
 use craft\commerce\helpers\Purchasable as PurchasableHelper;
 use craft\commerce\models\ProductType;
-use craft\commerce\models\Sale;
+use craft\commerce\models\ShippingCategory;
+use craft\commerce\models\TaxCategory;
 use craft\commerce\Plugin;
 use craft\commerce\records\Variant as VariantRecord;
 use craft\db\Query;
@@ -50,8 +51,6 @@ use yii\base\InvalidConfigException;
  * Variant model.
  *
  * @property string $eagerLoadedElements some eager-loaded elements on a given handle
- * @property bool $onSale
- * @property Sale[] $sales sales models which are currently affecting the salePrice of this purchasable
  * @property string $priceAsCurrency
  * @property DateTime|null $dateUpdated
  * @property DateTime|null $dateCreated
@@ -362,6 +361,14 @@ class Variant extends Purchasable implements NestedElementInterface
      */
     public function getIsAvailable(): bool
     {
+        if ($this->getIsRevision()) {
+            return false;
+        }
+
+        if ($this->getIsDraft()) {
+            return false;
+        }
+
         if ($this->getPrimaryOwner()->getIsDraft()) {
             return false;
         }
@@ -421,16 +428,17 @@ class Variant extends Purchasable implements NestedElementInterface
      * @throws InvalidConfigException
      * @throws InvalidConfigException
      */
+    /**
+     * @inheritdoc
+     */
     public function getFieldLayout(): ?FieldLayout
     {
-        $fieldLayout = parent::getFieldLayout();
-
-        if (!$fieldLayout && $this->getOwnerId()) {
-            $fieldLayout = $this->getOwner()->getType()->getVariantFieldLayout();
-            $this->fieldLayoutId = $fieldLayout->id;
+        try {
+            return $this->getOwner()->getType()->getVariantFieldLayout();
+        } catch (InvalidConfigException) {
+            // The product type was probably deleted
+            return null;
         }
-
-        return $fieldLayout;
     }
 
     /**
@@ -891,6 +899,20 @@ class Variant extends Purchasable implements NestedElementInterface
 
     /**
      * @inheritdoc
+     */
+    public function getSupportedSites(): array
+    {
+        $owner = $this->getOwner();
+
+        if (!$owner) {
+            return [Craft::$app->getSites()->getPrimarySite()->id];
+        }
+
+        return $this->getOwner()->getSupportedSites();
+    }
+
+    /**
+     * @inheritdoc
      * @throws Exception
      */
     public function afterSave(bool $isNew): void
@@ -1185,12 +1207,25 @@ class Variant extends Purchasable implements NestedElementInterface
      */
     protected function availableShippingCategories(): array
     {
+        $allAvailableShippingCategories = parent::availableShippingCategories();
+
         $productTypeId = $this->getPrimaryOwner()?->getType()->id;
-        if ($productTypeId) {
-            return Plugin::getInstance()->getShippingCategories()->getShippingCategoriesByProductTypeId($productTypeId);
+
+        if (!$productTypeId) {
+            return [Plugin::getInstance()->getShippingCategories()->getDefaultShippingCategory($this->storeId)];
         }
 
-        return parent::availableShippingCategories();
+        // Limit to only those for this product type
+        $categoryIds = collect(Plugin::getInstance()->getShippingCategories()->getShippingCategoriesByProductTypeId($productTypeId))->pluck('id')->toArray();
+        $available = collect($allAvailableShippingCategories)->filter(function(ShippingCategory $category) use ($categoryIds) {
+            return in_array($category->id, $categoryIds);
+        });
+
+        if ($available->isEmpty()) {
+            return [Plugin::getInstance()->getShippingCategories()->getDefaultShippingCategory($this->storeId)];
+        }
+
+        return $available->toArray();
     }
 
     /**
@@ -1198,12 +1233,25 @@ class Variant extends Purchasable implements NestedElementInterface
      */
     protected function availableTaxCategories(): array
     {
+        $allAvailableTaxCategories = parent::availableTaxCategories();
+
         $productTypeId = $this->getPrimaryOwner()?->getType()->id;
-        if ($productTypeId) {
-            return Plugin::getInstance()->getTaxCategories()->getTaxCategoriesByProductTypeId($productTypeId);
+
+        if (!$productTypeId) {
+            return [Plugin::getInstance()->getTaxCategories()->getDefaultTaxCategory()];
         }
 
-        return parent::availableTaxCategories();
+        // Limit to only those for this product type
+        $categoryIds = collect(Plugin::getInstance()->getTaxCategories()->getTaxCategoriesByProductTypeId($productTypeId))->pluck('id')->toArray();
+        $available = collect($allAvailableTaxCategories)->filter(function(TaxCategory $category) use ($categoryIds) {
+            return in_array($category->id, $categoryIds);
+        });
+
+        if ($available->isEmpty()) {
+            return [Plugin::getInstance()->getTaxCategories()->getDefaultTaxCategory()];
+        }
+
+        return $available->toArray();
     }
 
     /**

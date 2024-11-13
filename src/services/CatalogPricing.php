@@ -75,14 +75,41 @@ class CatalogPricing extends Component
         $isAllPurchasables = $purchasableIds === null;
         if ($isAllPurchasables) {
             $purchasableIds = (new Query())
-                ->select(['id'])
-                ->from([Table::PURCHASABLES])
+                ->select(['purchasables.id'])
+                ->from(Table::PURCHASABLES . ' purchasables')
+                ->innerJoin(\craft\db\Table::ELEMENTS . ' e', '[[e.id]] = [[purchasables.id]]')
+                // Make sure we aren't putting and draft or revision purchasables in the catalog pricing table
+                ->where(['e.revisionId' => null])
+                ->andWhere(['e.draftId' => null])
                 ->column();
+        } else {
+            // If purchasable IDs have been passed in remove all IDs that are revisions or drafts
+            $allowedPurchasableIds = [];
+            // Chunk through the IDs to avoid hitting the int limit in the where clause
+            foreach (array_chunk($purchasableIds, 2000) as $purchasableIdsChunk) {
+                $allowedPurchasableIds = array_merge($allowedPurchasableIds, (new Query())
+                    ->select(['purchasables.id'])
+                    ->from(Table::PURCHASABLES . ' purchasables')
+                    ->innerJoin(\craft\db\Table::ELEMENTS . ' e', '[[e.id]] = [[purchasables.id]]')
+                    ->where(['e.revisionId' => null])
+                    ->andWhere(['e.draftId' => null])
+                    ->andWhere(['purchasables.id' => $purchasableIdsChunk])
+                    ->column());
+            }
+
+            $purchasableIds = $allowedPurchasableIds;
         }
 
         if (empty($purchasableIds)) {
             return;
         }
+
+        // Rules with user ID records
+        $cprWithUserIds = (new Query())
+            ->select(['catalogPricingRuleId'])
+            ->from(Table::CATALOG_PRICING_RULES_USERS)
+            ->groupBy('catalogPricingRuleId')
+            ->column();
 
         // @TODO maybe mark prices as pending update here?
 
@@ -112,6 +139,11 @@ class CatalogPricing extends Component
 
                 // Skip rule if the rule is not enabled
                 if (!$catalogPricingRule->enabled) {
+                    continue;
+                }
+
+                // Skip if the rule has user conditions but didn't generate any applicable users
+                if (!empty($catalogPricingRule->getCustomerCondition()->getConditionRules()) && !in_array($catalogPricingRule->id, $cprWithUserIds, true)) {
                     continue;
                 }
 
@@ -281,10 +313,12 @@ class CatalogPricing extends Component
         $key = 'catalog-price-' . implode('-', [$storeId, $userKey, $promoKey]);
 
         if ($this->_allCatalogPrices === null || !isset($this->_allCatalogPrices[$key])) {
-            $query = $this->createCatalogPricingQuery($userId, $storeId, $isPromotionalPrice)
-                ->indexBy('purchasableId');
+            $query = $this->createCatalogPricesQuery($userId, $storeId)
+                ->addSelect(['purchasableId'])
+                ->indexBy('purchasableId')
+                ->collect();
 
-            $this->_allCatalogPrices[$key] = $query->column();
+            $this->_allCatalogPrices[$key] = $query->pluck($isPromotionalPrice ? 'promotionalPrice' : 'price', 'purchasableId');
         }
 
         return $this->_allCatalogPrices[$key][$purchasableId] ?? null;
@@ -301,7 +335,8 @@ class CatalogPricing extends Component
     {
         $storeId = $storeId ?? Plugin::getInstance()->getStores()->getCurrentStore()->id;
 
-        $allPriceRows = $this->createCatalogPricingQuery(storeId: $storeId, allPrices: true)
+        $allPriceRows = $this->createCatalogPricesQuery(storeId: $storeId, allPrices: true)
+            // Override select to prevent `min`/grouping
             ->select([
                 'id', 'price', 'purchasableId', 'storeId', 'isPromotionalPrice', 'catalogPricingRuleId', 'dateFrom', 'dateTo', 'uid',
             ])
@@ -406,7 +441,7 @@ class CatalogPricing extends Component
      */
     private function _createCatalogPricesQuery(int $storeId, ?CatalogPricingCondition $conditionBuilder = null, bool $includeBasePrices = true, ?string $searchText = null, ?int $limit = null, ?int $offset = null): Query
     {
-        $query = Plugin::getInstance()->getCatalogPricing()->createCatalogPricingQuery(storeId: $storeId, allPrices: true, condition: $conditionBuilder);
+        $query = Plugin::getInstance()->getCatalogPricing()->createCatalogPricesQuery(storeId: $storeId, allPrices: true, condition: $conditionBuilder);
 
         if ($includeBasePrices === false) {
             $query->andWhere(['not', ['catalogPricingRuleId' => null]]);
@@ -518,10 +553,15 @@ class CatalogPricing extends Component
      * @param int|null $userId
      * @param int|string|null $storeId
      * @param bool|null $isPromotionalPrice
+     * @param bool $allPrices
+     * @param CatalogPricingCondition|null $condition
      * @return Query
+     * @throws InvalidConfigException
+     * @deprecated in 5.1.0. Use `createCatalogPricesQuery()` instead.
      */
     public function createCatalogPricingQuery(?int $userId = null, int|string|null $storeId = null, ?bool $isPromotionalPrice = null, bool $allPrices = false, ?CatalogPricingCondition $condition = null): Query
     {
+        Craft::$app->getDeprecator()->log(__METHOD__, 'CatalogPricing `' . __METHOD__ . '()` method has been deprecated. Use `createCatalogPricesQuery()` instead.');
         $query = (new Query())
             ->select([new Expression('MIN(price) as price')])
             ->from([Table::CATALOG_PRICING . ' cp']);
@@ -557,6 +597,58 @@ class CatalogPricing extends Component
 
         if ($isPromotionalPrice !== null) {
             $query->andWhere(['isPromotionalPrice' => $isPromotionalPrice]);
+        }
+
+        return $query;
+    }
+
+    /**
+     * Returns rows of purchasable prices.
+     *
+     * @param int|null $userId
+     * @param int|string|null $storeId
+     * @param bool $allPrices
+     * @param CatalogPricingCondition|null $condition
+     * @return Query
+     * @throws InvalidConfigException
+     * @since 5.1.0
+     */
+    public function createCatalogPricesQuery(?int $userId = null, int|string|null $storeId = null, bool $allPrices = false, ?CatalogPricingCondition $condition = null): Query
+    {
+        $query = (new Query())
+            ->select([
+                new Expression('MIN(CASE WHEN [[isPromotionalPrice]] = FALSE THEN [[price]] END) AS [[price]]'),
+                new Expression('MIN(CASE WHEN [[isPromotionalPrice]] = TRUE THEN [[price]] END) AS [[promotionalPrice]]'),
+                new Expression('MIN([[price]]) AS [[salePrice]]'),
+            ])
+            ->from([Table::CATALOG_PRICING . ' cp']);
+
+        // Use condition builder to tweak the query for reusability
+        $condition = $condition ?? Craft::$app->getConditions()->createCondition([
+            'class' => CatalogPricingCondition::class,
+            'allPrices' => $allPrices,
+        ]);
+
+        if ($userId) {
+            $condition->addConditionRule(Craft::$app->getConditions()->createConditionRule([
+                'class' => CatalogPricingCustomerConditionRule::class,
+                'customerId' => $userId,
+            ]));
+        }
+
+        $condition->modifyQuery($query);
+
+        $query
+            ->andWhere(['or', ['dateFrom' => null], ['<=', 'dateFrom', Db::prepareDateForDb(new DateTime())]])
+            ->andWhere(['or', ['dateTo' => null], ['>=', 'dateTo', Db::prepareDateForDb(new DateTime())]]);
+
+        // If we're not getting all prices, we need to group by purchasableId and storeId
+        if (!$allPrices) {
+            $query->groupBy(['purchasableId', 'storeId']);
+        }
+
+        if ($storeId) {
+            $query->andWhere(['storeId' => $storeId]);
         }
 
         return $query;

@@ -1,10 +1,92 @@
 # Release Notes for Craft Commerce
 
-## 5.1.0-beta.1 - 2024-08-14
+## Unreleased
+- Fixed a bug where product revisions weren’t storing variant relations.
+- Fixed a PHP error that occurred when calling a product or variant's render method. ([#3742](https://github.com/craftcms/commerce/issues/3742))
+- Fixed a bug where inventory would not save when creating a new variant. ([#3661](https://github.com/craftcms/commerce/issues/3661))
+
+## 5.2.1 - 2024-10-23
+
+- Fixed a bug where the Commerce subnav could be missing the “Product” nav item. ([#3735](https://github.com/craftcms/commerce/issues/3735))
+- Fixed PHP errors that could occur when completing an order. ([#3733](https://github.com/craftcms/commerce/issues/3733), [#3736](https://github.com/craftcms/commerce/issues/3736))
+
+## 5.2.0 - 2024-10-16
+
+### Store Management
+- Products can now be structured, per product type.
+- It’s now possible for discounts to explicitly require a coupon code. ([#3132](https://github.com/craftcms/commerce/issues/3132))
+- New order addresses now default to the store’s country on Order Edit screens. ([#3306](https://github.com/craftcms/commerce/issues/3306))
+- Product conditions can now have a “Variant Search” rule. ([#3689](https://github.com/craftcms/commerce/issues/3689))
+
+### Development
+- Added the `onPromotion` purchasable query param.
+- Added the `onPromotion` GraphQL variant query argument.
+
+### Extensibility
+- Added `craft\commerce\console\controllers\UpgradeController::$v3droppableColumns`
+- Added `craft\commerce\console\controllers\UpgradeController::EVENT_BEFORE_DROP_V3_DATABASE_ENTITIES`.
+- Added `craft\commerce\elements\Product::EVENT_DEFINE_PARENT_SELECTION_CRITERIA`.
+- Added `craft\commerce\elements\conditions\products\ProductVariantSearchConditionRule`.
+- Added `craft\commerce\elements\db\Purchasable::$onPromotion`.
+- Added `craft\commerce\elements\db\Purchasable::onPromotion()`.
+- Added `craft\commerce\events\UpgradeEvent`.
+- Added `craft\commerce\models\Discount::$requireCouponCode`.
+- Added `craft\commerce\models\ProductType::$isStructure`.
+- Added `craft\commerce\models\ProductType::$maxLevels`.
+- Added `craft\commerce\models\ProductType::$structureId`.
+- Added `craft\commerce\models\ProductType::DEFAULT_PLACEMENT_BEGINNING`.
+- Added `craft\commerce\models\ProductType::DEFAULT_PLACEMENT_END`.
+- Added `craft\commerce\models\ProductType::getConfig()`.
+
+### System
+- Improved the performance of adding items to the cart.
+- Improved the performance of shipping rule matching when an order condition formula is used. ([3653](https://github.com/craftcms/commerce/pull/3653))
+- Craft Commerce now requires Money PHP 4.2 or later.
+- Fixed a bug where outstanding order balances could be calculated incorrectly. ([#3403](https://github.com/craftcms/commerce/issues/3403))
+
+## 5.1.4 - 2024-10-16
+
+- Fixed a PHP error that could occur when creating a subscription. ([#3710](https://github.com/craftcms/commerce/issues/3710))
+- Fixed a bug where inventory items could appear with blank descriptions on the Inventory management screen. ([#3706](https://github.com/craftcms/commerce/issues/3706))
+- Fixed a bug where additional buttons defined with `craft\commerce\elements\Order::EVENT_DEFINE_ADDITIONAL_BUTTONS` weren’t displayed on Edit Order screens. ([#3692](https://github.com/craftcms/commerce/issues/3692))
+- Fixed a bug where email errors weren’t displayed on Edit Order screens. ([#3693](https://github.com/craftcms/commerce/issues/3693))
+- Fixed a bug where `craft\commerce\helpers\Currency::formatAsCurrency()` wasn’t stripping zeros. ([#3716](https://github.com/craftcms/commerce/issues/3716))
+
+## 5.1.3 - 2024-10-02
+
+- Fixed a bug where variants weren’t respecting their product’s propagation method.
+- Fixed a PHP error that could occur when creating a new product.
+- Fixed a bug where Edit Product screens were showing shipping categories that weren’t available to the current store. ([#3690](https://github.com/craftcms/commerce/issues/3690))
+- Fixed a bug where Edit Product screens were showing tax categories that weren’t available to the product type.. ([#3690](https://github.com/craftcms/commerce/issues/3690))
+- Fixed a bug where Edit Order screens were displaying the store name twice.
+- Fixed a bug where `craft\commerce\models\CatalogPricingRule::$description` was not being populated. ([#3699](https://github.com/craftcms/commerce/issues/3699))
+- Fixed a bug where catalog pricing rules were generating prices incorrectly. ([#3700](https://github.com/craftcms/commerce/issues/3700))
+- Fixed a PHP error that could occur when deleting a user with orders. ([#3686](https://github.com/craftcms/commerce/issues/3686))
+
+## 5.1.2 - 2024-09-19
+
+- Fixed a bug where shipping methods weren’t validating if a shipping method in a different store had the same name. ([#3676](https://github.com/craftcms/commerce/issues/3676))
+- Fixed a bug where any modifications to `craft\commerce\events\CreateSubscriptionEvent::$parameters` weren’t being passed to the gateway’s `subscribe()` method.
+- Fixed a bug where stores’ aggregate stock levels weren’t getting updated when inventory changed. ([#3668](https://github.com/craftcms/commerce/issues/3668))
+- Fixed a bug where addresses weren’t being automatically added on Edit Order screens. ([#3673](https://github.com/craftcms/commerce/issues/3673))
+- Fixed a PHP error that could occur when viewing an Edit Order screen after deleting a purchasable. ([#3677](https://github.com/craftcms/commerce/issues/3677))
+- Fixed a bug where some strings weren’t getting translated on Edit Order screens.
+- Fixed a JavaScript error that could occur when editing an order.
+
+## 5.1.1 - 2024-09-10
+
+- Fixed XSS vulnerabilities.
+
+## 5.1.0.1 - 2024-09-05
+
+- Fixed a bug where catalog pricing rules weren’t respecting product conditions. ([#3544](https://github.com/craftcms/commerce/issues/3544))
+
+## 5.1.0 - 2024-09-04
 
 ### Store Management
 - It’s now possible to manage transfers between inventory locations.
 - Catalog pricing rules now support flexible matching based on product and variant conditions. ([#3544](https://github.com/craftcms/commerce/issues/3544))
+- Variant conditions can now have an “SKU” rule.
 
 ### Administration
 - It’s now possible to create custom line items. ([#2301](https://github.com/craftcms/commerce/discussions/2301), [#2233](https://github.com/craftcms/commerce/discussions/2233), [#2345](https://github.com/craftcms/commerce/discussions/2345))
@@ -19,11 +101,17 @@
 
 ### Extensibility
 - Added `craft\commerce\controllers\TransfersController`.
+- Added `craft\commerce\elements\Order::EVENT_AFTER_LINE_ITEMS_REFRESHED`.
+- Added `craft\commerce\elements\Order::EVENT_BEFORE_LINE_ITEMS_REFRESHED`.
+- Added `craft\commerce\elements\Product::$defaultBasePrice`.
+- Added `craft\commerce\elements\Product::$storeId`.
+- Added `craft\commerce\elements\Product::getCurrencyAttributes()`.
+- Added `craft\commerce\elements\Product::getStore()`.
+- Added `craft\commerce\elements\Transfer`.
 - Added `craft\commerce\elements\conditions\products\CatalogPricingRuleProductCondition`.
 - Added `craft\commerce\elements\conditions\transfers\TransferCondition`.
 - Added `craft\commerce\elements\conditions\variants\CatalogPricingRuleVariantCondition`.
 - Added `craft\commerce\elements\db\TransferQuery`.
-- Added `craft\commerce\elements\Transfer`.
 - Added `craft\commerce\enums\LineItemType`.
 - Added `craft\commerce\enums\TransferStatusType`.
 - Added `craft\commerce\fieldlayoutelements\TransferManagementField`.
@@ -42,8 +130,6 @@
 - Added `craft\commerce\models\LineItem::setIsPromotable()`.
 - Added `craft\commerce\models\LineItem::setIsShippable()`.
 - Added `craft\commerce\models\LineItem::setIsTaxable()`.
-- Added `craft\commerce\models\Order::EVENT_AFTER_LINE_ITEMS_REFRESHED`.
-- Added `craft\commerce\models\Order::EVENT_BEFORE_LINE_ITEMS_REFRESHED`.
 - Added `craft\commerce\models\ProductType::$productTitleTranslationKeyFormat`.
 - Added `craft\commerce\models\ProductType::$productTitleTranslationMethod`.
 - Added `craft\commerce\models\ProductType::$propagationMethod`.
@@ -57,17 +143,47 @@
 - Added `craft\commerce\records\ProductType::$propagationMethod`.
 - Added `craft\commerce\records\ProductType::$variantTitleTranslationKeyFormat`.
 - Added `craft\commerce\records\ProductType::$variantTitleTranslationMethod`.
+- Added `craft\commerce\services\CatalogPricing::createCatalogPricesQuery()`
 - Added `craft\commerce\services\InventoryLocations::getAllInventoryLocationsAsList`
 - Added `craft\commerce\services\LineItems::create()`.
 - Added `craft\commerce\services\LineItems::resolveCustomLineItem()`.
 - Added `craft\commerce\services\Transfers`.
 - Deprecated `craft\commerce\models\LineItem::populateFromPurchasable()`. `populate()` should be used instead.
 - Deprecated `craft\commerce\models\LineItem::refreshFromPurchasable()`. `refresh()` should be used instead.
+- Deprecated `craft\commerce\services\CatalogPricing::createCatalogPricingQuery()`. `createCatalogPricesQuery()` should be used instead.
 - Deprecated `craft\commerce\services\LineItems::createLineItem()`. `create()` should be used instead.
 - Removed `craft\commerce\fieldlayoutelements\UserCommerceField`.
 
 ### System
 - Craft Commerce now requires Craft CMS 5.2 or later.
+
+## 5.0.19 - 2024-09-04
+
+- Fixed a bug where calculated catalog prices weren’t getting rounded to the decimal precision of the store’s currency.
+- Fixed a PHP error that occurred when calling `craft\commerce\elements\Variant::getSales()`.
+- Fixed a SQL error that could occur when upgrading to Commerce 5.
+
+## 5.0.18 - 2024-08-28
+
+- Fixed a PHP error that could occur when default addresses were set on a cart. ([#3641](https://github.com/craftcms/commerce/issues/3641))
+- Fixed a bug were the “Auto Set New Cart Addresses” store setting was not persisting when saved.
+
+## 5.0.17 - 2024-08-21
+
+- Fixed a bug where variant indexes weren’t displaying promotion prices as currency values.
+- Fixed a PHP error that could occur when sending an order email. ([#3596](https://github.com/craftcms/commerce/issues/3596))
+- Fixed a bug where dimension fields were not displaying values in the correct formatting locale. ([#3636](https://github.com/craftcms/commerce/issues/3636))
+- Fixed a bug where users couldn’t access catalog pricing rules when the current user had permission. ([#3639](https://github.com/craftcms/commerce/issues/3639))
+- Fixed a bug where available shipping methods were not returned in order of price. ([#3631](https://github.com/craftcms/commerce/issues/3631))
+
+## 5.0.16.2 - 2024-08-16
+
+- Fixed a bug where variants’ `sku` values could be cleared out when saving a product revision.
+
+## 5.0.16.1 - 2024-08-16
+
+- Fixed a bug where variants’ `sku` values could be cleared out when saving a product.
+- Fixed a bug where `craft\commerce\elements\Product::getVariants()` wasn’t respecting variants’ site statuses.
 
 ## 5.0.16 - 2024-08-14
 

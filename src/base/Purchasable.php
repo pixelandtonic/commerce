@@ -9,10 +9,11 @@ namespace craft\commerce\base;
 
 use Craft;
 use craft\base\Element;
-use craft\commerce\db\Table;
+use craft\base\NestedElementInterface;
 use craft\commerce\elements\Order;
 use craft\commerce\errors\StoreNotFoundException;
 use craft\commerce\helpers\Currency;
+use craft\commerce\helpers\Localization;
 use craft\commerce\helpers\Purchasable as PurchasableHelper;
 use craft\commerce\models\InventoryItem;
 use craft\commerce\models\InventoryLevel;
@@ -26,6 +27,7 @@ use craft\commerce\Plugin;
 use craft\commerce\records\InventoryItem as InventoryItemRecord;
 use craft\commerce\records\Purchasable as PurchasableRecord;
 use craft\commerce\records\PurchasableStore;
+use craft\db\ActiveQuery;
 use craft\errors\DeprecationException;
 use craft\errors\SiteNotFoundException;
 use craft\helpers\ArrayHelper;
@@ -56,6 +58,7 @@ use yii\validators\Validator;
  * @property-read string $basePriceAsCurrency the base price
  * @property-read string $basePromotionalPriceAsCurrency the base promotional price
  * @property-read string $salePriceAsCurrency the base price the item will be added to the line item with
+ * @property-read Sale[] $sales sales models which are currently affecting the price of this purchasable
  * @property int $shippingCategoryId the purchasable's shipping category ID
  * @property string $sku a unique code as per the commerce_purchasables table
  * @property array $snapshot
@@ -289,6 +292,34 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
             'promotionalPrice',
             'salePrice',
         ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setAttributesFromRequest(array $values): void
+    {
+        $length = ArrayHelper::remove($values, 'length');
+        if ($length !== null) {
+            $this->length = $length ? (float)Localization::normalizeNumber($length) : null;
+        }
+
+        $width = ArrayHelper::remove($values, 'width');
+        if ($width !== null) {
+            $this->width = $width ? (float)Localization::normalizeNumber($width) : null;
+        }
+
+        $height = ArrayHelper::remove($values, 'height');
+        if ($height !== null) {
+            $this->height = $height ? (float)Localization::normalizeNumber($height) : null;
+        }
+
+        $weight = ArrayHelper::remove($values, 'weight');
+        if ($weight !== null) {
+            $this->weight = $weight ? (float)Localization::normalizeNumber($weight) : null;
+        }
+
+        $this->setAttributes($values);
     }
 
     /**
@@ -787,6 +818,10 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
                 UniqueValidator::class,
                 'targetClass' => PurchasableRecord::class,
                 'caseInsensitive' => true,
+                'filter' => function(ActiveQuery $query) {
+                    $query->leftJoin(\craft\db\Table::ELEMENTS . ' elements', '[[elements.id]] = [[commerce_purchasables.id]]');
+                    $query->andWhere(['elements.revisionId' => null, 'elements.draftId' => null]);
+                },
                 'on' => self::SCENARIO_LIVE,
             ],
             [['basePrice'], 'number'],
@@ -916,12 +951,33 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
      */
     public function afterSave(bool $isNew): void
     {
-        $purchasableId = $this->getCanonicalId();
+        $canonicalPurchasableId = $this->getCanonicalId();
+        $purchasableId = $this->id;
+
         if (!$this->propagating) {
-            if ($this->duplicateOf !== null) {
-                $this->sku = \craft\commerce\helpers\Purchasable::tempSku() . '-' . $this->getSku();
-                // Nullify inventory item so a new one is created
-                $this->inventoryItemId = null;
+            $isOwnerDraftApplying = false;
+            $isOwnerRevisionApplying = false;
+
+            // If this is a nested element, check if the owner is a draft and is being applied
+            if ($this instanceof NestedElementInterface) {
+                $owner = $this->getOwner();
+                $isOwnerDraftApplying = $owner
+                    && $owner->getIsCanonical()
+                    && $owner->duplicateOf !== null
+                    && $owner->duplicateOf->getIsDraft();
+
+                $isOwnerRevisionApplying = $owner
+                    && $owner->duplicateOf !== null
+                    && $owner->duplicateOf->getIsRevision();
+            }
+
+            if (!$this->getIsRevision()) {
+                // Reset the purchasable's SKU when it is explicitly being duplicating
+                if ($this->duplicateOf !== null && !$isOwnerDraftApplying && !$isOwnerRevisionApplying) {
+                    $this->sku = PurchasableHelper::tempSku();
+                    // Nullify inventory item so a new one is created
+                    $this->inventoryItemId = null;
+                }
             }
 
             $purchasable = PurchasableRecord::findOne($purchasableId);
@@ -947,18 +1003,29 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
 
             // Always create the inventory item even if it's a temporary draft (in the slide) since we want to allow stock to be
             // added to inventory before it is saved as a permanent variant.
-            if ($purchasableId) {
-                // Set the inventory item data
-                $inventoryItem = InventoryItemRecord::find()->where(['purchasableId' => $purchasableId])->one();
-                if (!$inventoryItem) {
-                    $inventoryItem = new InventoryItemRecord();
-                    $inventoryItem->purchasableId = $purchasableId;
-                    $inventoryItem->countryCodeOfOrigin = '';
-                    $inventoryItem->administrativeAreaCodeOfOrigin = '';
-                    $inventoryItem->harmonizedSystemCode = '';
+            if ($canonicalPurchasableId) {
+                if ($isOwnerDraftApplying && $this->duplicateOf !== null) {
+                    /** @var InventoryItemRecord|null $inventoryItem */
+                    $inventoryItem = InventoryItemRecord::find()->where(['purchasableId' => $this->duplicateOf->id])->one();
+                    if ($inventoryItem) {
+                        $inventoryItem->purchasableId = $canonicalPurchasableId;
+                        $inventoryItem->save();
+                        $this->inventoryItemId = $inventoryItem->id;
+                    }
+                } else {
+                    // Set the inventory item data
+                    /** @var InventoryItemRecord|null $inventoryItem */
+                    $inventoryItem = InventoryItemRecord::find()->where(['purchasableId' => $canonicalPurchasableId])->one();
+                    if (!$inventoryItem) {
+                        $inventoryItem = new InventoryItemRecord();
+                        $inventoryItem->purchasableId = $canonicalPurchasableId;
+                        $inventoryItem->countryCodeOfOrigin = '';
+                        $inventoryItem->administrativeAreaCodeOfOrigin = '';
+                        $inventoryItem->harmonizedSystemCode = '';
+                        $inventoryItem->save();
+                        $this->inventoryItemId = $inventoryItem->id;
+                    }
                 }
-
-                $inventoryItem->save();
             }
         }
 
@@ -1052,6 +1119,17 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
     }
 
     /**
+     * @return array|Sale[]
+     * @throws InvalidConfigException
+     */
+    public function getSales(): array
+    {
+        $this->_loadSales();
+
+        return $this->_sales;
+    }
+
+    /**
      * @return Sale[] The sales that relate directly to this purchasable
      * @throws InvalidConfigException
      */
@@ -1129,6 +1207,7 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
             'label' => Craft::t('commerce', 'Shipping Category'),
             'options' => $options,
             'value' => $this->shippingCategoryId,
+            'disabled' => $static,
         ]);
     }
 
@@ -1158,6 +1237,7 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
             'label' => Craft::t('commerce', 'Tax Category'),
             'options' => $options,
             'value' => $this->taxCategoryId,
+            'disabled' => $static,
         ]);
     }
 
@@ -1179,10 +1259,10 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
             'sku' => (string)Html::encode($this->getSkuAsText()),
             'price' => $this->basePriceAsCurrency,
             'promotionalPrice' => $this->basePromotionalPriceAsCurrency,
-            'weight' => $this->weight !== null ? Craft::$app->getLocale()->getFormatter()->asDecimal($this->$attribute) . ' ' . Plugin::getInstance()->getSettings()->weightUnits : '',
-            'length' => $this->length !== null ? Craft::$app->getLocale()->getFormatter()->asDecimal($this->$attribute) . ' ' . Plugin::getInstance()->getSettings()->dimensionUnits : '',
-            'width' => $this->width !== null ? Craft::$app->getLocale()->getFormatter()->asDecimal($this->$attribute) . ' ' . Plugin::getInstance()->getSettings()->dimensionUnits : '',
-            'height' => $this->height !== null ? Craft::$app->getLocale()->getFormatter()->asDecimal($this->$attribute) . ' ' . Plugin::getInstance()->getSettings()->dimensionUnits : '',
+            'weight' => $this->weight !== null ? Craft::$app->getFormattingLocale()->getFormatter()->asDecimal($this->$attribute) . ' ' . Plugin::getInstance()->getSettings()->weightUnits : '',
+            'length' => $this->length !== null ? Craft::$app->getFormattingLocale()->getFormatter()->asDecimal($this->$attribute) . ' ' . Plugin::getInstance()->getSettings()->dimensionUnits : '',
+            'width' => $this->width !== null ? Craft::$app->getFormattingLocale()->getFormatter()->asDecimal($this->$attribute) . ' ' . Plugin::getInstance()->getSettings()->dimensionUnits : '',
+            'height' => $this->height !== null ? Craft::$app->getFormattingLocale()->getFormatter()->asDecimal($this->$attribute) . ' ' . Plugin::getInstance()->getSettings()->dimensionUnits : '',
             'minQty' => (string)$this->minQty,
             'maxQty' => (string)$this->maxQty,
             'stock' => $stock,

@@ -9,6 +9,7 @@ namespace craft\commerce\models;
 
 use Craft;
 use craft\base\Field;
+use craft\base\FieldLayoutProviderInterface;
 use craft\behaviors\FieldLayoutBehavior;
 use craft\commerce\base\Model;
 use craft\commerce\elements\Product;
@@ -16,9 +17,12 @@ use craft\commerce\elements\Variant;
 use craft\commerce\fieldlayoutelements\VariantsField;
 use craft\commerce\Plugin;
 use craft\commerce\records\ProductType as ProductTypeRecord;
+use craft\db\Table;
+use craft\db\Table as CraftTable;
 use craft\enums\PropagationMethod;
 use craft\errors\DeprecationException;
 use craft\helpers\ArrayHelper;
+use craft\helpers\Db;
 use craft\helpers\StringHelper;
 use craft\helpers\UrlHelper;
 use craft\models\FieldLayout;
@@ -30,7 +34,6 @@ use yii\base\InvalidConfigException;
 /**
  * Product type model.
  * @method null setFieldLayout(FieldLayout $fieldLayout)
- * @method FieldLayout getFieldLayout()
  *
  * @property string $cpEditUrl
  * @property string $cpEditVariantUrl
@@ -44,8 +47,13 @@ use yii\base\InvalidConfigException;
  * @author Pixel & Tonic, Inc. <support@pixelandtonic.com>
  * @since 2.0
  */
-class ProductType extends Model
+class ProductType extends Model implements FieldLayoutProviderInterface
 {
+    /** @since 5.2.0 */
+    public const DEFAULT_PLACEMENT_BEGINNING = 'beginning';
+    /** @since 5.2.0 */
+    public const DEFAULT_PLACEMENT_END = 'end';
+    
     /**
      * @var int|null ID
      */
@@ -139,6 +147,31 @@ class ProductType extends Model
     public ?string $template = null;
 
     /**
+     * @var bool Is this a structure product type
+     * @since 5.2.0
+     */
+    public bool $isStructure = false;
+
+    /**
+     * @var ?int max levels of structure
+     * @since 5.2.0
+     */
+    public ?int $maxLevels = null;
+
+    /**
+     * @var string Default placement
+     * @phpstan-var self::DEFAULT_PLACEMENT_BEGINNING|self::DEFAULT_PLACEMENT_END
+     * @since 5.2.0
+     */
+    public string $defaultPlacement = self::DEFAULT_PLACEMENT_END;
+
+    /**
+     * @var int|null Structure ID
+     * @since 5.2.0
+     */
+    public ?int $structureId = null;
+
+    /**
      * @var int|null Field layout ID
      */
     public ?int $fieldLayoutId = null;
@@ -192,12 +225,20 @@ class ProductType extends Model
     }
 
     /**
+     * @inerhitdoc
+     */
+    public function getHandle(): ?string
+    {
+        return $this->handle;
+    }
+
+    /**
      * @inheritdoc
      */
     protected function defineRules(): array
     {
         return [
-            [['id', 'fieldLayoutId', 'variantFieldLayoutId'], 'number', 'integerOnly' => true],
+            [['id', 'fieldLayoutId', 'variantFieldLayoutId', 'structureId'], 'number', 'integerOnly' => true],
             [['name', 'handle'], 'required'],
             [
                 ['variantTitleFormat'],
@@ -355,6 +396,11 @@ class ProductType extends Model
         $this->_taxCategories = $categories;
     }
 
+    public function getFieldLayout(): FieldLayout
+    {
+        return $this->getProductFieldLayout();
+    }
+
     /**
      * @throws InvalidConfigException
      */
@@ -484,9 +530,8 @@ class ProductType extends Model
     /**
      * @inheritdoc
      */
-    public function behaviors(): array
+    protected function defineBehaviors(): array
     {
-        $behaviors = parent::behaviors();
         $behaviors['productFieldLayout'] = [
             'class' => FieldLayoutBehavior::class,
             'elementType' => Product::class,
@@ -513,5 +558,85 @@ class ProductType extends Model
         $fields[] = 'siteSettings';
 
         return $fields;
+    }
+
+    /**
+     * Returns the product types’s config.
+     *
+     * @return array
+     * @since 5.2.0
+     */
+    public function getConfig(): array
+    {
+        $config = [
+                'name' => $this->name,
+                'handle' => $this->handle,
+                'enableVersioning' => $this->enableVersioning,
+                'hasDimensions' => $this->hasDimensions,
+                'maxVariants' => $this->maxVariants,
+
+                // Variant title field
+                'hasVariantTitleField' => $this->hasVariantTitleField,
+                'variantTitleFormat' => $this->variantTitleFormat,
+                'variantTitleTranslationMethod' => $this->variantTitleTranslationMethod,
+                'variantTitleTranslationKeyFormat' => $this->variantTitleTranslationKeyFormat,
+
+                // Product title field
+                'hasProductTitleField' => $this->hasProductTitleField,
+                'productTitleFormat' => $this->productTitleFormat,
+                'productTitleTranslationMethod' => $this->productTitleTranslationMethod,
+                'productTitleTranslationKeyFormat' => $this->productTitleTranslationKeyFormat,
+
+                'propagationMethod' => $this->propagationMethod->value,
+
+                'skuFormat' => $this->skuFormat,
+                'descriptionFormat' => $this->descriptionFormat,
+                'siteSettings' => [],
+
+                'isStructure' => $this->isStructure,
+                'maxLevels' => $this->maxLevels,
+                'defaultPlacement' => $this->defaultPlacement,
+        ];
+
+        if ($this->isStructure) {
+            $config['structure'] = [
+                'uid' => $this->structureId ? Db::uidById(Table::STRUCTURES, $this->structureId) : StringHelper::UUID(),
+            ];
+        }
+
+        $generateLayoutConfig = function(FieldLayout $fieldLayout): array {
+            $fieldLayoutConfig = $fieldLayout->getConfig();
+
+            if ($fieldLayoutConfig) {
+                if (empty($fieldLayout->id)) {
+                    $layoutUid = StringHelper::UUID();
+                    $fieldLayout->uid = $layoutUid;
+                } else {
+                    $layoutUid = Db::uidById(CraftTable::FIELDLAYOUTS, $fieldLayout->id);
+                }
+
+                return [$layoutUid => $fieldLayoutConfig];
+            }
+
+            return [];
+        };
+
+        $config['productFieldLayouts'] = $generateLayoutConfig($this->getFieldLayout());
+        $config['variantFieldLayouts'] = $generateLayoutConfig($this->getVariantFieldLayout());
+
+        // Get the site settings
+        $allSiteSettings = $this->getSiteSettings();
+
+        foreach ($allSiteSettings as $siteId => $settings) {
+            $siteUid = Db::uidById(CraftTable::SITES, $siteId);
+            $config['siteSettings'][$siteUid] = [
+                'hasUrls' => $settings['hasUrls'],
+                'enabledByDefault' => $settings['enabledByDefault'],
+                'uriFormat' => $settings['uriFormat'],
+                'template' => $settings['template'],
+            ];
+        }
+
+        return $config;
     }
 }

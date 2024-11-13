@@ -42,6 +42,7 @@ use yii\db\Expression;
  * @supports-slug-param
  * @supports-uri-param
  * @supports-status-param
+ * @supports-structure-params
  */
 class ProductQuery extends ElementQuery
 {
@@ -103,7 +104,10 @@ class ProductQuery extends ElementQuery
     /**
      * @inheritdoc
      */
-    protected array $defaultOrderBy = ['commerce_products.postDate' => SORT_DESC];
+    protected array $defaultOrderBy = [
+        'commerce_products.postDate' => SORT_DESC,
+        'elements.id' => SORT_DESC,
+    ];
 
     /**
      * @inheritdoc
@@ -117,6 +121,19 @@ class ProductQuery extends ElementQuery
 
         parent::__construct($elementType, $config);
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function init(): void
+    {
+        if (!isset($this->withStructure)) {
+            $this->withStructure = true;
+        }
+
+        parent::init();
+    }
+
 
     /**
      * @inheritdoc
@@ -413,6 +430,11 @@ class ProductQuery extends ElementQuery
      */
     public function type(mixed $value): static
     {
+        // If the value is a product type handle, swap it with the product type
+        if (is_string($value) && ($productType = Plugin::getInstance()->getProductTypes()->getProductTypeByHandle($value))) {
+            $value = $productType;
+        }
+
         if ($value instanceof ProductType) {
             $this->typeId = [$value->id];
         } elseif ($value !== null) {
@@ -574,7 +596,8 @@ class ProductQuery extends ElementQuery
      *
      * | Value | Fetches {elements}…
      * | - | -
-     * | a [[VariantQuery|VariantQuery]] object | with variants that match the query.
+     * | a [[VariantQuery]] object | with variants that match the query.
+     * | a configuration [[array]] for a [[VariantQuery]] | with variants that match the criteria.
      *
      * @param VariantQuery|array $value The property value
      * @return static self reference
@@ -711,14 +734,12 @@ class ProductQuery extends ElementQuery
         // Store dependent related joins to the sub query need to be done after the `elements_sites` is joined in the base `ElementQuery` class.
         $customerId = Craft::$app->getUser()->getIdentity()?->id;
 
-        $catalogPricingQuery = Plugin::getInstance()
+        $catalogPricesQuery = Plugin::getInstance()
             ->getCatalogPricing()
-            ->createCatalogPricingQuery(userId: $customerId)
+            ->createCatalogPricesQuery(userId: $customerId)
             ->addSelect(['cp.purchasableId', 'cp.storeId'])
             ->leftJoin(['purvariants' => Table::VARIANTS], '[[purvariants.id]] = [[cp.purchasableId]]')
-            ->andWhere(['purvariants.isDefault' => true])
-        ;
-        $catalogPricesQuery = (clone $catalogPricingQuery)->andWhere(['isPromotionalPrice' => false]);
+            ->andWhere(['purvariants.isDefault' => true]);
 
         $this->subQuery->leftJoin(['sitestores' => Table::SITESTORES], '[[elements_sites.siteId]] = [[sitestores.siteId]]');
         $this->subQuery->leftJoin(['catalogprices' => $catalogPricesQuery], '[[catalogprices.purchasableId]] = [[commerce_products.defaultVariantId]] AND [[catalogprices.storeId]] = [[sitestores.storeId]]');
@@ -747,13 +768,18 @@ class ProductQuery extends ElementQuery
             'commerce_products.postDate',
             'commerce_products.expiryDate',
             'subquery.price as defaultPrice',
+            'commerce_products.defaultPrice as defaultBasePrice',
             'commerce_products.defaultVariantId',
             'commerce_products.defaultSku',
             'commerce_products.defaultWeight',
             'commerce_products.defaultLength',
             'commerce_products.defaultWidth',
             'commerce_products.defaultHeight',
+            'sitestores.storeId',
         ]);
+
+        // Join in sites stores to get product's store for current request
+        $this->query->leftJoin(['sitestores' => Table::SITESTORES], '[[elements_sites.siteId]] = [[sitestores.siteId]]');
 
         $this->subQuery->addSelect(['catalogprices.price']);
 
@@ -765,9 +791,7 @@ class ProductQuery extends ElementQuery
             $this->subQuery->andWhere(Db::parseDateParam('commerce_products.expiryDate', $this->expiryDate));
         }
 
-        if (isset($this->typeId)) {
-            $this->subQuery->andWhere(['commerce_products.typeId' => $this->typeId]);
-        }
+        $this->_applyProductTypeIdParam();
 
         if (isset($this->defaultPrice)) {
             $this->subQuery->andWhere(Db::parseParam('catalogprices.price', $this->defaultPrice));
@@ -881,6 +905,30 @@ class ProductQuery extends ElementQuery
         $this->subQuery->andWhere([
             'commerce_products.typeId' => Plugin::getInstance()->getProductTypes()->getEditableProductTypeIds(),
         ]);
+    }
+
+    /**
+     * Applies the 'productTypeId' param to the query being prepared.
+     */
+    private function _applyProductTypeIdParam(): void
+    {
+        if ($this->typeId) {
+            $this->subQuery->andWhere(['commerce_products.typeId' => $this->typeId]);
+
+            // Should we set the structureId param?
+            if (
+                $this->withStructure !== false &&
+                !isset($this->structureId) &&
+                count($this->typeId) === 1
+            ) {
+                $productType = Plugin::getInstance()->getProductTypes()->getProductTypeById(reset($this->typeId));
+                if ($productType && $productType->isStructure) {
+                    $this->structureId = $productType->structureId;
+                } else {
+                    $this->withStructure = false;
+                }
+            }
+        }
     }
 
     /**

@@ -98,6 +98,17 @@ class Store extends Model
     private bool|string $_allowEmptyCartOnCheckout = false;
 
     /**
+     * @inheritdoc
+     */
+    public function attributes(): array
+    {
+        $names = parent::attributes();
+        $names[] = 'name';
+        $names[] = 'settings';
+        return $names;
+    }
+
+    /**
      * @var bool
      * @see setAllowCheckoutWithoutPayment()
      * @see getAllowCheckoutWithoutPayment()
@@ -317,16 +328,6 @@ class Store extends Model
     }
 
     /**
-     * @inheritdoc
-     */
-    public function attributes(): array
-    {
-        $attributes = parent::attributes();
-        $attributes[] = 'name';
-        return $attributes;
-    }
-
-    /**
      * Returns the project config data for this store.
      */
     public function getConfig(): array
@@ -336,7 +337,7 @@ class Store extends Model
             'allowEmptyCartOnCheckout' => $this->getAllowEmptyCartOnCheckout(false),
             'allowPartialPaymentOnCheckout' => $this->getAllowPartialPaymentOnCheckout(false),
             'autoSetCartShippingMethodOption' => $this->getAutoSetCartShippingMethodOption(false),
-            'autoSetNewCartAddresses' => $this->getAutoSetCartShippingMethodOption(false),
+            'autoSetNewCartAddresses' => $this->getAutoSetNewCartAddresses(false),
             'autoSetPaymentSource' => $this->getAutoSetPaymentSource(false),
             'freeOrderPaymentStrategy' => $this->getFreeOrderPaymentStrategy(false),
             'handle' => $this->handle,

@@ -59,6 +59,11 @@ class ShippingMethods extends Component
     private ?array $_allShippingMethods = null;
 
     /**
+     * @var array
+     */
+    private array $_serializedOrdersByNumber = [];
+
+    /**
      * Returns the Commerce managed shipping methods stored in the database.
      *
      * @param int|null $storeId
@@ -145,7 +150,7 @@ class ShippingMethods extends Component
 
         // Sort by price. Using the cached price and don't call `$method->getPriceForOrder($order);` again.
         uasort($matchingMethods, static function($a, $b) {
-            return ($a['price'] < $b['price']) ? -1 : 1;
+            return $a['price'] <=> $b['price'];
         });
 
         $shippingMethods = [];
@@ -154,7 +159,30 @@ class ShippingMethods extends Component
             $shippingMethods[$method->getHandle()] = $method; // Keep the key being the handle of the method for front-end use.
         }
 
+        // Clear the memoized data so next time we watch to match rules, we get fresh data.
+        $this->_serializedOrdersByNumber = [];
+
         return $shippingMethods;
+    }
+
+    /**
+     * Creates an order as an array for matching rules.
+     * We do this centrally here so that we can clear the memoized data centrally.
+     *
+     * @param Order $order
+     * @return array
+     * @since 4.7.0
+     */
+    public function getSerializedOrderForMatchingRules(Order $order): array
+    {
+        if (isset($this->_serializedOrdersByNumber[$order->number])) {
+            return $this->_serializedOrdersByNumber[$order->number];
+        }
+
+        $fieldsAsArray = $order->getSerializedFieldValues();
+        $orderAsArray = $order->toArray([], ['lineItems.snapshot', 'shippingAddress', 'billingAddress']);
+        $this->_serializedOrdersByNumber[$order->number] = array_merge($orderAsArray, $fieldsAsArray);
+        return $this->_serializedOrdersByNumber[$order->number];
     }
 
     /**
