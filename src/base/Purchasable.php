@@ -10,6 +10,7 @@ namespace craft\commerce\base;
 use Craft;
 use craft\base\Element;
 use craft\base\NestedElementInterface;
+use craft\commerce\db\Table;
 use craft\commerce\elements\Order;
 use craft\commerce\errors\StoreNotFoundException;
 use craft\commerce\helpers\Currency;
@@ -28,6 +29,7 @@ use craft\commerce\records\InventoryItem as InventoryItemRecord;
 use craft\commerce\records\Purchasable as PurchasableRecord;
 use craft\commerce\records\PurchasableStore;
 use craft\db\ActiveQuery;
+use craft\db\Table as CraftTable;
 use craft\errors\DeprecationException;
 use craft\errors\SiteNotFoundException;
 use craft\helpers\ArrayHelper;
@@ -819,7 +821,9 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
                 'targetClass' => PurchasableRecord::class,
                 'caseInsensitive' => true,
                 'filter' => function(ActiveQuery $query) {
-                    $query->leftJoin(\craft\db\Table::ELEMENTS . ' elements', '[[elements.id]] = [[commerce_purchasables.id]]');
+                    $targetRecordClassTableName = $query->modelClass::tableName();
+                    $elementsTable = CraftTable::ELEMENTS;
+                    $query->leftJoin(['elements' => $elementsTable], "[[elements.id]] = {$targetRecordClassTableName}.id");
                     $query->andWhere(['elements.revisionId' => null, 'elements.draftId' => null]);
                 },
                 'on' => self::SCENARIO_LIVE,
