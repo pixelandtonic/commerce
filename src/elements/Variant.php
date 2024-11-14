@@ -60,8 +60,6 @@ use yii\base\InvalidConfigException;
  * @property-read string $gqlTypeName
  * @property-read string $skuAsText
  * @property string $salePriceAsCurrency
- * @method Product|null getOwner()
- * @method Product|null getPrimaryOwner()
  * @author Pixel & Tonic, Inc. <support@pixelandtonic.com>
  * @since 2.0
  */
@@ -522,6 +520,55 @@ class Variant extends Purchasable implements NestedElementInterface
         $this->fieldLayoutId = $owner->getType()->variantFieldLayoutId;
 
         $this->traitSetOwner($owner);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getPrimaryOwner(): ?ElementInterface
+    {
+        if (!isset($this->_primaryOwner)) {
+            $primaryOwnerId = $this->getPrimaryOwnerId();
+            if (!$primaryOwnerId) {
+                return null;
+            }
+
+            $this->_primaryOwner = Craft::$app->getElements()->getElementById($primaryOwnerId, Product::class, $this->siteId, [
+                'trashed' => null,
+            ]) ?? false;
+            if (!$this->_primaryOwner) {
+                throw new InvalidConfigException("Invalid owner ID: $primaryOwnerId");
+            }
+        }
+
+        return $this->_primaryOwner ?: null;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getOwner(): ?ElementInterface
+    {
+        if (!isset($this->_owner)) {
+            $ownerId = $this->getOwnerId();
+            if (!$ownerId) {
+                return null;
+            }
+
+            // If ownerId and primaryOwnerId are the same, return the primary owner
+            if ($ownerId === $this->getPrimaryOwnerId()) {
+                return $this->getPrimaryOwner();
+            }
+
+            $this->_owner = Craft::$app->getElements()->getElementById($ownerId, Product::class, $this->siteId, [
+                'trashed' => null,
+            ]) ?? false;
+            if (!$this->_owner) {
+                throw new InvalidConfigException("Invalid owner ID: $ownerId");
+            }
+        }
+
+        return $this->_owner ?: null;
     }
 
     /**
