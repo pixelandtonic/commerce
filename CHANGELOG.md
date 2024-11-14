@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Improved the performance of `Product::getVariants()`. ([#3578](https://github.com/craftcms/commerce/issues/3758))
 - Fixed a SQL error that could occur when creating a variant. ([#3763](https://github.com/craftcms/commerce/issues/))
 
 ## 5.2.3 - 2024-11-13
