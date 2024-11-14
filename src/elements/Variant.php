@@ -524,8 +524,9 @@ class Variant extends Purchasable implements NestedElementInterface
 
     /**
      * @inheritdoc
+     * @TODO remove implementation when `NestedElementTrait::getOwner()` is updated
      */
-    public function getPrimaryOwner(): ?ElementInterface
+    public function getPrimaryOwner(): ?Product
     {
         if (!isset($this->_primaryOwner)) {
             $primaryOwnerId = $this->getPrimaryOwnerId();
@@ -541,13 +542,15 @@ class Variant extends Purchasable implements NestedElementInterface
             }
         }
 
+        /** @phpstan-ignore-next-line */
         return $this->_primaryOwner ?: null;
     }
 
     /**
      * @inheritdoc
+     * @TODO remove implementation when `NestedElementTrait::getOwner()` is updated
      */
-    public function getOwner(): ?ElementInterface
+    public function getOwner(): ?Product
     {
         if (!isset($this->_owner)) {
             $ownerId = $this->getOwnerId();
@@ -568,6 +571,7 @@ class Variant extends Purchasable implements NestedElementInterface
             }
         }
 
+        /** @phpstan-ignore-next-line */
         return $this->_owner ?: null;
     }
 
