@@ -1,5 +1,9 @@
 # Release Notes for Craft Commerce
 
+## Unreleased
+
+- Added the `--with-fields` option to all Commerce `resave/*` commands.
+
 ## 5.2.4 - 2024-11-14
 
 - Improved the performance of `craft\commerce\elements\Product::getVariants()`. ([#3578](https://github.com/craftcms/commerce/issues/3758))
