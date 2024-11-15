@@ -105,6 +105,22 @@ class Product extends Element implements HasStoreInterface
     /**
      * @inheritdoc
      */
+    public function __get($name)
+    {
+        // in v6 consider having Product::getVariants() return ElementQueryInterface, so this can be removed
+        if ($name === 'variants') {
+            $actionSegments = Craft::$app->getRequest()->actionSegments;
+            if (isset($actionSegments[0]) && $actionSegments[0] === 'nested-elements') {
+                return $this->getVariants(true);
+            }
+        }
+
+        return parent::__get($name);
+    }
+
+    /**
+     * @inheritdoc
+     */
     public static function displayName(): string
     {
         return Craft::t('commerce', 'Product');
