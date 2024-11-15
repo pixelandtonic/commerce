@@ -24,6 +24,26 @@ class Taxes extends Component implements TaxEngineInterface
     /**
      * @event TaxEngineEvent The event that is triggered when determining the tax engine.
      * @since 3.1
+     *
+     * ```php
+     * use craft\commerce\base\TaxEngineInterface;
+     * use craft\commerce\engines\Tax;
+     * use craft\commerce\events\TaxEngineEvent;
+     * use craft\commerce\services\Taxes;
+     * use yii\base\Event;
+     *
+     * Event::on(
+     *      Taxes::class,
+     *      Taxes::EVENT_REGISTER_TAX_ENGINE,
+     *      function(TaxEngineEvent $event) {
+     *          // @var TaxEngineInterface $currentEngine
+     *          $currentEngine = $event->engine;
+     *
+     *          // Set a new tax engine on `$event->engine`
+     *          // ...
+     *      }
+     * );
+     * ```
      */
     public const EVENT_REGISTER_TAX_ENGINE = 'registerTaxEngine';
 
