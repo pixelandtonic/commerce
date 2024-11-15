@@ -1152,7 +1152,7 @@ class Plugin extends BasePlugin
                     }
 
                     // @TODO Remove this check when Commerce requires Craft 5.5
-                    if (property_exists($controller, 'withFields') && !empty($controller->withFields)) {
+                    if (version_compare(Craft::$app->getInfo()->version, '5.5.0', '>=') && !empty($controller->withFields)) {
                         $handles = Collection::make(self::getInstance()->getProductTypes()->getAllProductTypes())
                             ->filter(fn(ProductType $productType) => $controller->hasTheFields($productType->getFieldLayout()))
                             ->map(fn(ProductType $productType) => $productType->handle)
@@ -1183,7 +1183,7 @@ class Plugin extends BasePlugin
                     /** @var ResaveController $controller */
                     $controller = Craft::$app->controller;
                     // @TODO Remove this check when Commerce requires Craft 5.5
-                    if (property_exists($controller, 'withFields') && !empty($controller->withFields)) {
+                    if (version_compare(Craft::$app->getInfo()->version, '5.5.0', '>=') && !empty($controller->withFields)) {
                         $fieldLayout = Craft::$app->getFields()->getLayoutByType(Order::class);
                         if (!$controller->hasTheFields($fieldLayout)) {
                             $controller->output($controller->markdownToAnsi('The order field layout doesn’t satisfy `--with-fields`.'));
@@ -1204,7 +1204,7 @@ class Plugin extends BasePlugin
                     /** @var ResaveController $controller */
                     $controller = Craft::$app->controller;
                     // @TODO Remove this check when Commerce requires Craft 5.5
-                    if (property_exists($controller, 'withFields') && !empty($controller->withFields)) {
+                    if (version_compare(Craft::$app->getInfo()->version, '5.5.0', '>=') && !empty($controller->withFields)) {
                         $fieldLayout = Craft::$app->getFields()->getLayoutByType(Order::class);
                         if (!$controller->hasTheFields($fieldLayout)) {
                             $controller->output($controller->markdownToAnsi('The order field layout doesn’t satisfy `--with-fields`.'));
