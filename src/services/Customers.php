@@ -17,7 +17,6 @@ use craft\commerce\events\UpdatePrimaryPaymentSourceEvent;
 use craft\commerce\Plugin;
 use craft\commerce\records\Customer as CustomerRecord;
 use craft\db\Query;
-use craft\elements\Address;
 use craft\elements\User;
 use craft\errors\ElementNotFoundException;
 use craft\errors\InvalidElementException;
@@ -38,7 +37,26 @@ class Customers extends Component
     // -------------------------------------------------------------------------
 
     /**
-     * @event RegisterElementSourcesEvent The event that is triggered when a primary payment method is saved.
+     * @event UpdatePrimaryPaymentSourceEvent The event that is triggered when a primary payment method is saved.
+     *
+     * ```php
+     * use craft\elements\User;
+     * use craft\commerce\services\Customers;
+     * use craft\commerce\events\UpdatePrimaryPaymentSourceEvent;
+     * use yii\base\Event;
+     *
+     * Event::on(
+     *      Customers::class,
+     *      Customers::EVENT_UPDATE_PRIMARY_PAYMENT_SOURCE,
+     *      function(UpdatePrimaryPaymentSourceEvent $event) {
+     *          $previousPrimaryPaymentSourceId = $event->previousPrimaryPaymentSourceId;
+     *          $newPrimaryPaymentSourceId = $event->newPrimaryPaymentSourceId;
+     *          // @var User|CustomerBehavior $customer
+     *          $customer = $event->customer;
+     *          // ...
+     *      }
+     * );
+     * ```
      */
     public const EVENT_UPDATE_PRIMARY_PAYMENT_SOURCE = 'updatePrimaryPaymentSource';
 
