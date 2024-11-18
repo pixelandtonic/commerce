@@ -361,6 +361,14 @@ class Variant extends Purchasable implements NestedElementInterface
      */
     public function getIsAvailable(): bool
     {
+        if ($this->getIsRevision()) {
+            return false;
+        }
+
+        if ($this->getIsDraft()) {
+            return false;
+        }
+
         if ($this->getPrimaryOwner()->getIsDraft()) {
             return false;
         }
@@ -416,20 +424,30 @@ class Variant extends Purchasable implements NestedElementInterface
 
     /**
      * @inheritdoc
-     * @throws InvalidConfigException
-     * @throws InvalidConfigException
-     * @throws InvalidConfigException
      */
     public function getFieldLayout(): ?FieldLayout
     {
         $fieldLayout = parent::getFieldLayout();
 
-        if (!$fieldLayout && $this->getOwnerId()) {
-            $fieldLayout = $this->getOwner()->getType()->getVariantFieldLayout();
-            $this->fieldLayoutId = $fieldLayout->id;
+        if ($fieldLayout) {
+            // Variant field layouts are stored on the product type so retrieving the field layout by ID does not set the provider
+            $productType = collect(Plugin::getInstance()->getProductTypes()->getAllProductTypes())->firstWhere('variantFieldLayoutId', $fieldLayout->id);
+            if ($productType) {
+                $fieldLayout->provider = $productType;
+                return $fieldLayout;
+            }
         }
 
-        return $fieldLayout;
+        try {
+            if ($this->getOwner() === null) {
+                return parent::getFieldLayout();
+            }
+
+            return $this->getOwner()->getType()->getVariantFieldLayout();
+        } catch (InvalidConfigException) {
+            // The product type was probably deleted
+            return null;
+        }
     }
 
     /**

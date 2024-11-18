@@ -28,6 +28,8 @@ use craft\commerce\Plugin;
 use craft\commerce\records\InventoryItem as InventoryItemRecord;
 use craft\commerce\records\Purchasable as PurchasableRecord;
 use craft\commerce\records\PurchasableStore;
+use craft\db\ActiveQuery;
+use craft\db\Table as CraftTable;
 use craft\errors\DeprecationException;
 use craft\errors\SiteNotFoundException;
 use craft\helpers\ArrayHelper;
@@ -818,6 +820,12 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
                 UniqueValidator::class,
                 'targetClass' => PurchasableRecord::class,
                 'caseInsensitive' => true,
+                'filter' => function(ActiveQuery $query) {
+                    $targetRecordClassTableName = $query->modelClass::tableName();
+                    $elementsTable = CraftTable::ELEMENTS;
+                    $query->leftJoin(['elements' => $elementsTable], "[[elements.id]] = {$targetRecordClassTableName}.id");
+                    $query->andWhere(['elements.revisionId' => null, 'elements.draftId' => null]);
+                },
                 'on' => self::SCENARIO_LIVE,
             ],
             [['basePrice'], 'number'],
@@ -947,20 +955,33 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
      */
     public function afterSave(bool $isNew): void
     {
-        $purchasableId = $this->getCanonicalId();
+        $canonicalPurchasableId = $this->getCanonicalId();
+        $purchasableId = $this->id;
+
         if (!$this->propagating) {
             $isOwnerDraftApplying = false;
+            $isOwnerRevisionApplying = false;
 
             // If this is a nested element, check if the owner is a draft and is being applied
             if ($this instanceof NestedElementInterface) {
                 $owner = $this->getOwner();
-                $isOwnerDraftApplying = $owner && $owner->getIsCanonical() && $owner->duplicateOf !== null && $owner->duplicateOf->getIsDraft();
+                $isOwnerDraftApplying = $owner
+                    && $owner->getIsCanonical()
+                    && $owner->duplicateOf !== null
+                    && $owner->duplicateOf->getIsDraft();
+
+                $isOwnerRevisionApplying = $owner
+                    && $owner->duplicateOf !== null
+                    && $owner->duplicateOf->getIsRevision();
             }
 
-            if ($this->duplicateOf !== null && !$this->getIsRevision() && !$isOwnerDraftApplying) {
-                $this->sku = PurchasableHelper::tempSku() . '-' . $this->getSku();
-                // Nullify inventory item so a new one is created
-                $this->inventoryItemId = null;
+            if (!$this->getIsRevision()) {
+                // Reset the purchasable's SKU when it is explicitly being duplicating
+                if ($this->duplicateOf !== null && !$isOwnerDraftApplying && !$isOwnerRevisionApplying) {
+                    $this->sku = PurchasableHelper::tempSku();
+                    // Nullify inventory item so a new one is created
+                    $this->inventoryItemId = null;
+                }
             }
 
             $purchasable = PurchasableRecord::findOne($purchasableId);
@@ -986,20 +1007,29 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
 
             // Always create the inventory item even if it's a temporary draft (in the slide) since we want to allow stock to be
             // added to inventory before it is saved as a permanent variant.
-            if ($purchasableId) {
-                // Set the inventory item data
-                /** @var InventoryItem|null $inventoryItem */
-                $inventoryItem = InventoryItemRecord::find()->where(['purchasableId' => $purchasableId])->one();
-                if (!$inventoryItem) {
-                    $inventoryItem = new InventoryItemRecord();
-                    $inventoryItem->purchasableId = $purchasableId;
-                    $inventoryItem->countryCodeOfOrigin = '';
-                    $inventoryItem->administrativeAreaCodeOfOrigin = '';
-                    $inventoryItem->harmonizedSystemCode = '';
-                    $inventoryItem->save();
+            if ($canonicalPurchasableId) {
+                if ($isOwnerDraftApplying && $this->duplicateOf !== null) {
+                    /** @var InventoryItemRecord|null $inventoryItem */
+                    $inventoryItem = InventoryItemRecord::find()->where(['purchasableId' => $this->duplicateOf->id])->one();
+                    if ($inventoryItem) {
+                        $inventoryItem->purchasableId = $canonicalPurchasableId;
+                        $inventoryItem->save();
+                        $this->inventoryItemId = $inventoryItem->id;
+                    }
+                } else {
+                    // Set the inventory item data
+                    /** @var InventoryItemRecord|null $inventoryItem */
+                    $inventoryItem = InventoryItemRecord::find()->where(['purchasableId' => $canonicalPurchasableId])->one();
+                    if (!$inventoryItem) {
+                        $inventoryItem = new InventoryItemRecord();
+                        $inventoryItem->purchasableId = $canonicalPurchasableId;
+                        $inventoryItem->countryCodeOfOrigin = '';
+                        $inventoryItem->administrativeAreaCodeOfOrigin = '';
+                        $inventoryItem->harmonizedSystemCode = '';
+                        $inventoryItem->save();
+                        $this->inventoryItemId = $inventoryItem->id;
+                    }
                 }
-
-                $this->inventoryItemId = $inventoryItem->id;
             }
         }
 
@@ -1181,6 +1211,7 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
             'label' => Craft::t('commerce', 'Shipping Category'),
             'options' => $options,
             'value' => $this->shippingCategoryId,
+            'disabled' => $static,
         ]);
     }
 
@@ -1210,6 +1241,7 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
             'label' => Craft::t('commerce', 'Tax Category'),
             'options' => $options,
             'value' => $this->taxCategoryId,
+            'disabled' => $static,
         ]);
     }
 

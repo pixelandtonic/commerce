@@ -134,9 +134,6 @@ class Carts extends Component
             $this->_cart->orderSiteId = Craft::$app->getSites()->getCurrentSite()->id;
             $forceSave = true;
         }
-        if ($this->_cart->autoSetShippingMethod() || $this->_cart->autoSetPaymentSource()) {
-            $forceSave = true;
-        }
 
         $autoSetAddresses = false;
         // We only want to call autoSetAddresses() if we have a authed cart customer

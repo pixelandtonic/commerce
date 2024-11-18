@@ -154,7 +154,7 @@ class ProductTypes extends Component
      *
      * @return array An array of all the editable product types’ IDs.
      */
-    public function getEditableProductTypeIds(): array
+    public function getEditableProductTypeIds(bool $anySite = false): array
     {
         $editableIds = [];
         $user = Craft::$app->getUser()->getIdentity();
@@ -167,7 +167,7 @@ class ProductTypes extends Component
                 continue;
             }
 
-            if ($cpSite && !isset($productType->getSiteSettings()[$cpSite->id])) {
+            if (!$anySite && $cpSite && !isset($productType->getSiteSettings()[$cpSite->id])) {
                 continue;
             }
 
@@ -475,7 +475,7 @@ class ProductTypes extends Component
                 $structureUid = $data['structure']['uid'];
                 $structure = Craft::$app->getStructures()->getStructureByUid($structureUid, true) ?? new Structure(['uid' => $structureUid]);
                 $isNewStructure = empty($structure->id);
-                $structure->maxLevels = $productTypeRecord->maxLevels;
+                $structure->maxLevels = $data['structure']['maxLevels'] ?? null;
                 Craft::$app->getStructures()->saveStructure($structure);
                 $productTypeRecord->structureId = $structure->id;
             } else {

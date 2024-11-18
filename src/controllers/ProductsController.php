@@ -140,6 +140,21 @@ class ProductsController extends BaseController
             ]), 'product');
         }
 
+        // Set its position in the structure if a before/after param was passed
+        if ($productType->isStructure) {
+            if ($nextId = $this->request->getParam('before')) {
+                $nextEntry = Plugin::getInstance()->getProducts()->getProductById($nextId, $site->id, [
+                    'structureId' => $productType->structureId,
+                ]);
+                Craft::$app->getStructures()->moveBefore($productType->structureId, $product, $nextEntry);
+            } elseif ($prevId = $this->request->getParam('after')) {
+                $prevEntry = Plugin::getInstance()->getProducts()->getProductById($prevId, $site->id, [
+                    'structureId' => $productType->structureId,
+                ]);
+                Craft::$app->getStructures()->moveAfter($productType->structureId, $product, $prevEntry);
+            }
+        }
+
         $editUrl = $product->getCpEditUrl();
 
         $response = $this->asModelSuccess($product, Craft::t('app', '{type} created.', [

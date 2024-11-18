@@ -1426,7 +1426,10 @@ class Product extends Element implements HasStoreInterface
     protected function searchKeywords(string $attribute): string
     {
         if ($attribute === 'sku') {
-            return $this->getVariants()->only('sku')->implode(' ');
+            return $this->getVariants()
+                ->pluck('sku')
+                ->filter(fn(?string $sku) => $sku && !PurchasableHelper::isTempSku($sku))
+                ->implode(' ');
         }
 
         return parent::searchKeywords($attribute);
@@ -1652,18 +1655,12 @@ class Product extends Element implements HasStoreInterface
      */
     public function getFieldLayout(): ?FieldLayout
     {
-        $fieldLayout = parent::getFieldLayout();
-        if ($fieldLayout) {
-            return $fieldLayout;
+        try {
+            return $this->getType()->getProductFieldLayout();
+        } catch (InvalidConfigException) {
+            // The product type was probably deleted
+            return null;
         }
-
-        $fieldLayout = $this->getType()->getFieldLayout();
-        if ($fieldLayout->id) {
-            $this->fieldLayoutId = $fieldLayout->id;
-            return $fieldLayout;
-        }
-
-        return null;
     }
 
     /**
@@ -1752,10 +1749,16 @@ class Product extends Element implements HasStoreInterface
      */
     private static function createVariantQuery(Product $product): VariantQuery
     {
-        return Variant::find()
+        $query = Variant::find()
             ->productId($product->id)
             ->siteId($product->siteId)
             ->orderBy(['sortOrder' => SORT_ASC]);
+
+        if ($product->getIsRevision()) {
+            $query->revisions(null)->trashed(null);
+        }
+
+        return $query;
     }
 
     /**

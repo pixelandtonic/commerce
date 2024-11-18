@@ -2,9 +2,69 @@
 
 ## Unreleased
 
+- Fixed a SQL error that could occur when creating a variant. ([#3763](https://github.com/craftcms/commerce/issues/))
+
+## 5.2.3 - 2024-11-13
+
+- Fixed a performance degradation bug with variant queries. ([#3758](https://github.com/craftcms/commerce/issues/3758))
+- Fixed a bug where it was possible to select purchasables that didn’t belong to an order’s site, from Edit Order pages. ([#3756](https://github.com/craftcms/commerce/issues/3756))
+
+## 5.2.2.1 - 2024-11-08
+
+- Fixed a PHP error that could occur when retrieving a variant. ([#3754](https://github.com/craftcms/commerce/issues/3754))
+
+## 5.2.2 - 2024-11-06
+
+- Fixed a bug where product revisions weren’t storing variant relations.
+- Fixed a PHP error that occurred when calling a product or variant’s `render()` method. ([#3742](https://github.com/craftcms/commerce/issues/3742))
+- Fixed a bug where inventory data wasn’t getting saved when creating a new variant. ([#3661](https://github.com/craftcms/commerce/issues/3661))
+
+## 5.2.1 - 2024-10-23
+
+- Fixed a bug where the Commerce subnav could be missing the “Product” nav item. ([#3735](https://github.com/craftcms/commerce/issues/3735))
+- Fixed PHP errors that could occur when completing an order. ([#3733](https://github.com/craftcms/commerce/issues/3733), [#3736](https://github.com/craftcms/commerce/issues/3736))
+
+## 5.2.0 - 2024-10-16
+
+### Store Management
+- Products can now be structured, per product type.
+- It’s now possible for discounts to explicitly require a coupon code. ([#3132](https://github.com/craftcms/commerce/issues/3132))
+- New order addresses now default to the store’s country on Order Edit screens. ([#3306](https://github.com/craftcms/commerce/issues/3306))
+- Product conditions can now have a “Variant Search” rule. ([#3689](https://github.com/craftcms/commerce/issues/3689))
+
+### Development
+- Added the `onPromotion` purchasable query param.
+- Added the `onPromotion` GraphQL variant query argument.
+
+### Extensibility
+- Added `craft\commerce\console\controllers\UpgradeController::$v3droppableColumns`
+- Added `craft\commerce\console\controllers\UpgradeController::EVENT_BEFORE_DROP_V3_DATABASE_ENTITIES`.
+- Added `craft\commerce\elements\Product::EVENT_DEFINE_PARENT_SELECTION_CRITERIA`.
+- Added `craft\commerce\elements\conditions\products\ProductVariantSearchConditionRule`.
+- Added `craft\commerce\elements\db\Purchasable::$onPromotion`.
+- Added `craft\commerce\elements\db\Purchasable::onPromotion()`.
+- Added `craft\commerce\events\UpgradeEvent`.
+- Added `craft\commerce\models\Discount::$requireCouponCode`.
+- Added `craft\commerce\models\ProductType::$isStructure`.
+- Added `craft\commerce\models\ProductType::$maxLevels`.
+- Added `craft\commerce\models\ProductType::$structureId`.
+- Added `craft\commerce\models\ProductType::DEFAULT_PLACEMENT_BEGINNING`.
+- Added `craft\commerce\models\ProductType::DEFAULT_PLACEMENT_END`.
+- Added `craft\commerce\models\ProductType::getConfig()`.
+
+### System
+- Improved the performance of adding items to the cart.
+- Improved the performance of shipping rule matching when an order condition formula is used. ([3653](https://github.com/craftcms/commerce/pull/3653))
+- Craft Commerce now requires Money PHP 4.2 or later.
+- Fixed a bug where outstanding order balances could be calculated incorrectly. ([#3403](https://github.com/craftcms/commerce/issues/3403))
+
+## 5.1.4 - 2024-10-16
+
+- Fixed a PHP error that could occur when creating a subscription. ([#3710](https://github.com/craftcms/commerce/issues/3710))
 - Fixed a bug where inventory items could appear with blank descriptions on the Inventory management screen. ([#3706](https://github.com/craftcms/commerce/issues/3706))
-- Fixed a bug where additional buttons defined with `Order::EVENT_DEFINE_ADDITIONAL_BUTTONS` weren’t displayed on the Edit Order screen. ([#3692](https://github.com/craftcms/commerce/issues/3692))
-- Fixed a bug where email errors weren’t displayed on the Edit Order screen. ([#3693](https://github.com/craftcms/commerce/issues/3693))
+- Fixed a bug where additional buttons defined with `craft\commerce\elements\Order::EVENT_DEFINE_ADDITIONAL_BUTTONS` weren’t displayed on Edit Order screens. ([#3692](https://github.com/craftcms/commerce/issues/3692))
+- Fixed a bug where email errors weren’t displayed on Edit Order screens. ([#3693](https://github.com/craftcms/commerce/issues/3693))
+- Fixed a bug where `craft\commerce\helpers\Currency::formatAsCurrency()` wasn’t stripping zeros. ([#3716](https://github.com/craftcms/commerce/issues/3716))
 
 ## 5.1.3 - 2024-10-02
 

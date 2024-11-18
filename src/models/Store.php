@@ -97,14 +97,6 @@ class Store extends Model
      */
     private bool|string $_allowEmptyCartOnCheckout = false;
 
-    public function extraFields(): array
-    {
-        $fields = parent::extraFields();
-        $fields[] = 'settings.locationAddress';
-
-        return $fields;
-    }
-
     /**
      * @inheritdoc
      */
@@ -112,8 +104,6 @@ class Store extends Model
     {
         $names = parent::attributes();
         $names[] = 'name';
-        $names[] = 'countries';
-        $names[] = 'marketAddressCondition';
         $names[] = 'settings';
         return $names;
     }
