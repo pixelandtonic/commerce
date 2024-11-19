@@ -1652,7 +1652,8 @@ class OrderQuery extends ElementQuery
         }
 
         if (isset($this->couponCode)) {
-            $this->subQuery->andWhere(Db::parseParam('commerce_orders.couponCode', $this->couponCode));
+            // Coupon code criteria is case-insensitive like in the adjuster
+            $this->subQuery->andWhere(Db::parseParam('commerce_orders.couponCode', $this->couponCode, caseInsensitive: true));
         }
 
         if (isset($this->email) && $this->email) {
