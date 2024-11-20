@@ -3,6 +3,7 @@
 ## Unreleased
 
 - Added the `--with-fields` option to all Commerce `resave/*` commands.
+- Fixed a SQL error that could occur when updating. ([#3778](https://github.com/craftcms/commerce/issues/3778))
 
 ## 5.2.4 - 2024-11-14
 

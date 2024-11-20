@@ -1599,7 +1599,6 @@ class OrderQuery extends ElementQuery
         }
 
         if (isset($this->reference) && $this->reference) {
-            // $this->subQuery->andWhere(['commerce_orders.reference' => $this->reference]);
             $this->subQuery->andWhere(Db::parseParam('commerce_orders.reference', $this->reference));
         }
 
