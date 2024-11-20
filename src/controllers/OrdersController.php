@@ -685,9 +685,19 @@ JS, []);
                 'and',
                 '[[elements.id]] = [[purchasables.id]]',
             ])
+            // Make sure this purchasable is enabled for the site
+            ->innerJoin(['es' => CraftTable::ELEMENTS_SITES], [
+                'and',
+                '[[es.elementId]] = [[purchasables.id]]',
+                '[[es.siteId]] = :siteId',
+            ], [
+                ':siteId' => $siteId,
+            ])
             ->innerJoin(Table::PURCHASABLES_STORES . ' pstores', '[[purchasables.id]] = [[pstores.purchasableId]]')
             ->where(['elements.enabled' => true])
             ->andWhere(['pstores.storeId' => $store->id])
+            ->andWhere(['elements.revisionId' => null])
+            ->andWhere(['elements.draftId' => null])
             ->from(['purchasables' => Table::PURCHASABLES]);
 
         // Are they searching for a SKU or purchasable description?
@@ -1382,11 +1392,14 @@ JS, []);
         Craft::$app->getView()->registerJs('window.orderEdit.defaultShippingCategoryId = ' . Json::encode($defaultShippingCategoryId) . ';', View::POS_BEGIN);
 
         $currentUser = Craft::$app->getUser()->getIdentity();
-        $permissions = [
-            'commerce-manageOrders' => $currentUser->can('commerce-manageOrders'),
-            'commerce-editOrders' => $currentUser->can('commerce-editOrders'),
-            'commerce-deleteOrders' => $currentUser->can('commerce-deleteOrders'),
-        ];
+
+        $permissions = ArrayHelper::map([
+            'editUsers',
+            'commerce-manageOrders',
+            'commerce-editOrders',
+            'commerce-deleteOrders',
+        ], fn($permission) => $permission, fn($permission) => Craft::$app->getUser()->getIdentity()->can($permission));
+
         Craft::$app->getView()->registerJs('window.orderEdit.currentUserPermissions = ' . Json::encode($permissions) . ';', View::POS_BEGIN);
         Craft::$app->getView()->registerJs('window.orderEdit.currentUserId = ' . Json::encode($currentUser->id) . ';', View::POS_BEGIN);
 

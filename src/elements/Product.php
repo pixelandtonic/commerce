@@ -1045,6 +1045,21 @@ class Product extends Element implements HasStoreInterface
             }
 
             $this->_variants = self::createVariantQuery($this)->status(null)->collect();
+            $this->_variants->map(function(Variant $v) {
+                if (!$this->id) {
+                    return $v;
+                }
+
+                if ($v->primaryOwnerId === $this->id) {
+                    $v->setPrimaryOwner($this);
+                }
+
+                if ($v->ownerId === $this->id) {
+                    $v->setOwner($this);
+                }
+
+                return $v;
+            });
         }
 
         return $this->_variants->filter(fn(Variant $variant) => $includeDisabled || ($variant->getStatus() === self::STATUS_ENABLED));
@@ -1749,10 +1764,16 @@ class Product extends Element implements HasStoreInterface
      */
     private static function createVariantQuery(Product $product): VariantQuery
     {
-        return Variant::find()
+        $query = Variant::find()
             ->productId($product->id)
             ->siteId($product->siteId)
             ->orderBy(['sortOrder' => SORT_ASC]);
+
+        if ($product->getIsRevision()) {
+            $query->revisions(null)->trashed(null);
+        }
+
+        return $query;
     }
 
     /**

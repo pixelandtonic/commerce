@@ -89,11 +89,12 @@
             </div>
             <div id="to-option-custom"
                  class="flex-grow{% if email.recipientType != 'custom' %} hidden{% endif %}">
-                {{ forms.text({
+                {{ forms.autosuggestField({
                     id: 'to',
                     name: 'to',
-                    value: email.to,
-                    placeholder: 'jane@acme.com, joe@acme.com'
+                    value: email.getTo(false),
+                    errors: email.getErrors('to'),
+                    suggestEnvVars: true,
                 }) }}
             </div>
         </div>
@@ -107,22 +108,24 @@
         required: true,
     }, recipientInput) }}
 
-    {{ forms.textField({
+    {{ forms.autosuggestField({
         label: 'BCC’d Recipient'|t('commerce'),
         instructions: 'Additional recipients that should receive this email. Twig code can be used here.'|t('commerce'),
         id: 'bcc',
         name: 'bcc',
-        value: email.bcc,
+        value: email.getBcc(false),
         errors: email.getErrors('bcc'),
+        suggestEnvVars: true,
     }) }}
 
-    {{ forms.textField({
+    {{ forms.autosuggestField({
         label: 'CC’d Recipient'|t('commerce'),
         instructions: 'Additional recipients that should receive this email. Twig code can be used here.'|t('commerce'),
         id: 'cc',
         name: 'cc',
-        value: email.cc,
+        value: email.getCc(false),
         errors: email.getErrors('cc'),
+        suggestEnvVars: true,
     }) }}
 
     {{ forms.autoSuggestField({
