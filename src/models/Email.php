@@ -27,6 +27,9 @@ use yii\base\InvalidConfigException;
  * @property-read string $pdfTemplatePath
  * @property-read null|Pdf $pdf
  * @property-read array $config
+ * @property ?string $bcc
+ * @property ?string $cc
+ * @property ?string $to
  * @property string|null $senderAddress
  */
 class Email extends Model implements HasStoreInterface
