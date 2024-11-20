@@ -159,7 +159,7 @@ trait Routes
             // Inventory
             $event->rules['commerce/inventory'] = 'commerce/inventory/edit-location-levels'; // redirect to the first location
             $event->rules['commerce/inventory/levels'] = 'commerce/inventory/edit-location-levels'; // redirect to the first location
-            $event->rules['commerce/inventory/import'] = 'commerce/inventory/import';
+            $event->rules['commerce/inventory/import'] = 'commerce/inventory-importexport/index';
 
             $event->rules['commerce/inventory/item/<inventoryItemId:\d+>'] = 'commerce/inventory/item-edit';
             $event->rules['commerce/inventory/levels/<inventoryLocationHandle:{handle}>'] = 'commerce/inventory/edit-location-levels';

@@ -558,51 +558,7 @@ JS, [
             'updatedItems' => collect($resultingInventoryLevels)->toArray(),
         ]);
     }
-
-    /**
-     * @return Response
-     * @throws BadRequestHttpException
-     * @throws DeprecationException
-     * @throws InvalidConfigException
-     */
-    public function actionImport(): Response
-    {
-        $params = [];
-
-        return $this->asCpScreen()
-            ->action('commerce/inventory/import-inventory')
-            ->addCrumb(Craft::t('commerce', 'Inventory'), 'commerce/inventory')
-            ->selectedSubnavItem('inventory')
-            ->title(Craft::t('commerce', 'Import Inventory'))
-            ->formAttributes(['enctype' => 'multipart/form-data'])
-            ->metaSidebarTemplate('commerce/inventory/levels/_importMeta')
-            ->submitButtonLabel(Craft::t('commerce', 'Import'))
-            ->contentTemplate('commerce/inventory/levels/_importScreen', $params);
-    }
-
-    public function actionImportInventory(): Response
-    {
-        $errors = [];
-        $inventory = Plugin::getInstance()->getInventory();
-        $this->requirePostRequest();
-        $this->requirePermission('commerce-manageInventoryStockLevels');
-
-        $file = UploadedFile::getInstanceByName('importFile');
-
-        if (!$file) {
-            return $this->asError(Craft::t('commerce', 'No file uploaded.'));
-        }
-
-        $import = new InventoryImport([
-            'importFile' => $file->tempName
-        ]);
-
-        $inventory->importInventory($import);
-
-
-        return $this->asSuccess(Craft::t('commerce', 'Inventory imported.'));
-    }
-
+    
     /**
      * @return Response
      * @throws BadRequestHttpException
