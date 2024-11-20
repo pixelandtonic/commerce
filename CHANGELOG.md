@@ -1,5 +1,9 @@
 # Release Notes for Craft Commerce
 
+## Unreleased
+
+- Fixed a SQL error that could occur when updating. ([#3778](https://github.com/craftcms/commerce/issues/3778))
+
 ## 5.2.4 - 2024-11-14
 
 - Improved the performance of `craft\commerce\elements\Product::getVariants()`. ([#3578](https://github.com/craftcms/commerce/issues/3758))
