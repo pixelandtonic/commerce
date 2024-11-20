@@ -1,6 +1,6 @@
 # Release Notes for Craft Commerce
 
-## Unreleased
+## 5.2.5 - 2024-11-20
 
 - The `resave/products`, `resave/orders`, and `resave/carts` commands now support the `--with-fields` option.
 - Fixed a SQL error that could occur when updating. ([#3778](https://github.com/craftcms/commerce/issues/3778))
