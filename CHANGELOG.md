@@ -1,9 +1,24 @@
 # Release Notes for Craft Commerce
 
-## Unreleased
+## 5.2.4 - 2024-11-14
+
+- Improved the performance of `craft\commerce\elements\Product::getVariants()`. ([#3578](https://github.com/craftcms/commerce/issues/3758))
+- Fixed a SQL error that could occur when creating a variant. ([#3763](https://github.com/craftcms/commerce/issues/))
+
+## 5.2.3 - 2024-11-13
+
+- Fixed a performance degradation bug with variant queries. ([#3758](https://github.com/craftcms/commerce/issues/3758))
+- Fixed a bug where it was possible to select purchasables that didn’t belong to an order’s site, from Edit Order pages. ([#3756](https://github.com/craftcms/commerce/issues/3756))
+
+## 5.2.2.1 - 2024-11-08
+
+- Fixed a PHP error that could occur when retrieving a variant. ([#3754](https://github.com/craftcms/commerce/issues/3754))
+
+## 5.2.2 - 2024-11-06
+
 - Fixed a bug where product revisions weren’t storing variant relations.
-- Fixed a PHP error that occurred when calling a product or variant's render method. ([#3742](https://github.com/craftcms/commerce/issues/3742))
-- Fixed a bug where inventory would not save when creating a new variant. ([#3661](https://github.com/craftcms/commerce/issues/3661))
+- Fixed a PHP error that occurred when calling a product or variant’s `render()` method. ([#3742](https://github.com/craftcms/commerce/issues/3742))
+- Fixed a bug where inventory data wasn’t getting saved when creating a new variant. ([#3661](https://github.com/craftcms/commerce/issues/3661))
 
 ## 5.2.1 - 2024-10-23
 

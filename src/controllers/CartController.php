@@ -20,6 +20,7 @@ use craft\elements\User;
 use craft\errors\ElementNotFoundException;
 use craft\errors\MissingComponentException;
 use craft\helpers\Json;
+use craft\helpers\StringHelper;
 use craft\helpers\UrlHelper;
 use Illuminate\Support\Collection;
 use Throwable;
@@ -534,13 +535,21 @@ class CartController extends BaseFrontEndController
                 $this->_mutex->release($this->_mutexLockName);
             }
 
+            $data = [
+                $this->_cartVariable => $this->cartArray($this->_cart),
+            ];
+
+            $originalCart = Order::find()->id($this->_cart->id)->isCompleted(null)->one();
+
+            if ($originalCart && $this->_cart->number == $originalCart->number) {
+                $data['original' . StringHelper::toTitleCase($this->_cartVariable)] = $this->cartArray($originalCart);
+            }
+
             return $this->asModelFailure(
                 $this->_cart,
                 $message,
                 'cart',
-                [
-                    $this->_cartVariable => $this->cartArray($this->_cart),
-                ],
+                $data,
                 [
                     $this->_cartVariable => $this->_cart,
                 ]

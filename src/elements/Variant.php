@@ -60,8 +60,6 @@ use yii\base\InvalidConfigException;
  * @property-read string $gqlTypeName
  * @property-read string $skuAsText
  * @property string $salePriceAsCurrency
- * @method Product|null getOwner()
- * @method Product|null getPrimaryOwner()
  * @author Pixel & Tonic, Inc. <support@pixelandtonic.com>
  * @since 2.0
  */
@@ -424,16 +422,25 @@ class Variant extends Purchasable implements NestedElementInterface
 
     /**
      * @inheritdoc
-     * @throws InvalidConfigException
-     * @throws InvalidConfigException
-     * @throws InvalidConfigException
-     */
-    /**
-     * @inheritdoc
      */
     public function getFieldLayout(): ?FieldLayout
     {
+        $fieldLayout = parent::getFieldLayout();
+
+        if ($fieldLayout) {
+            // Variant field layouts are stored on the product type so retrieving the field layout by ID does not set the provider
+            $productType = collect(Plugin::getInstance()->getProductTypes()->getAllProductTypes())->firstWhere('variantFieldLayoutId', $fieldLayout->id);
+            if ($productType) {
+                $fieldLayout->provider = $productType;
+                return $fieldLayout;
+            }
+        }
+
         try {
+            if ($this->getOwner() === null) {
+                return parent::getFieldLayout();
+            }
+
             return $this->getOwner()->getType()->getVariantFieldLayout();
         } catch (InvalidConfigException) {
             // The product type was probably deleted
@@ -513,6 +520,59 @@ class Variant extends Purchasable implements NestedElementInterface
         $this->fieldLayoutId = $owner->getType()->variantFieldLayoutId;
 
         $this->traitSetOwner($owner);
+    }
+
+    /**
+     * @inheritdoc
+     * @TODO remove implementation when `NestedElementTrait::getOwner()` is updated
+     */
+    public function getPrimaryOwner(): ?Product
+    {
+        if (!isset($this->_primaryOwner)) {
+            $primaryOwnerId = $this->getPrimaryOwnerId();
+            if (!$primaryOwnerId) {
+                return null;
+            }
+
+            $this->_primaryOwner = Craft::$app->getElements()->getElementById($primaryOwnerId, Product::class, $this->siteId, [
+                'trashed' => null,
+            ]) ?? false;
+            if (!$this->_primaryOwner) {
+                throw new InvalidConfigException("Invalid owner ID: $primaryOwnerId");
+            }
+        }
+
+        /** @phpstan-ignore-next-line */
+        return $this->_primaryOwner ?: null;
+    }
+
+    /**
+     * @inheritdoc
+     * @TODO remove implementation when `NestedElementTrait::getOwner()` is updated
+     */
+    public function getOwner(): ?Product
+    {
+        if (!isset($this->_owner)) {
+            $ownerId = $this->getOwnerId();
+            if (!$ownerId) {
+                return null;
+            }
+
+            // If ownerId and primaryOwnerId are the same, return the primary owner
+            if ($ownerId === $this->getPrimaryOwnerId()) {
+                return $this->getPrimaryOwner();
+            }
+
+            $this->_owner = Craft::$app->getElements()->getElementById($ownerId, Product::class, $this->siteId, [
+                'trashed' => null,
+            ]) ?? false;
+            if (!$this->_owner) {
+                throw new InvalidConfigException("Invalid owner ID: $ownerId");
+            }
+        }
+
+        /** @phpstan-ignore-next-line */
+        return $this->_owner ?: null;
     }
 
     /**
