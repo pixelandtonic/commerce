@@ -1,5 +1,9 @@
 # Release Notes for Craft Commerce
 
+## Unreleased
+
+- Fixed a bug where prices could display incorrectly when inline editing a variant. ([#3768](https://github.com/craftcms/commerce/issues/3768))
+
 ## 5.2.5 - 2024-11-20
 
 - The `resave/products`, `resave/orders`, and `resave/carts` commands now support the `--with-fields` option.
