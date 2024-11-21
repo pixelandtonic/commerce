@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2f3ba664672e378629a5fd88f697019c",
+    "content-hash": "733b4b868ad8dbf52e6ea739a7a83494",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -331,16 +331,16 @@
         },
         {
             "name": "craftcms/cms",
-            "version": "5.5.0.1",
+            "version": "5.5.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/craftcms/cms.git",
-                "reference": "5e24a0bf74ea29ea2f5c04d4c9dcc325dcbb41ba"
+                "reference": "2233b27fd7e80cccc3aab927ad073f5916167dba"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/craftcms/cms/zipball/5e24a0bf74ea29ea2f5c04d4c9dcc325dcbb41ba",
-                "reference": "5e24a0bf74ea29ea2f5c04d4c9dcc325dcbb41ba",
+                "url": "https://api.github.com/repos/craftcms/cms/zipball/2233b27fd7e80cccc3aab927ad073f5916167dba",
+                "reference": "2233b27fd7e80cccc3aab927ad073f5916167dba",
                 "shasum": ""
             },
             "require": {
@@ -454,7 +454,7 @@
                 "rss": "https://github.com/craftcms/cms/releases.atom",
                 "source": "https://github.com/craftcms/cms"
             },
-            "time": "2024-11-13T14:36:24+00:00"
+            "time": "2024-11-19T02:11:31+00:00"
         },
         {
             "name": "craftcms/plugin-installer",
@@ -9423,16 +9423,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "1.12.10",
+            "version": "1.12.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "fc463b5d0fe906dcf19689be692c65c50406a071"
+                "reference": "0d1fc20a962a91be578bcfe7cf939e6e1a2ff733"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/fc463b5d0fe906dcf19689be692c65c50406a071",
-                "reference": "fc463b5d0fe906dcf19689be692c65c50406a071",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/0d1fc20a962a91be578bcfe7cf939e6e1a2ff733",
+                "reference": "0d1fc20a962a91be578bcfe7cf939e6e1a2ff733",
                 "shasum": ""
             },
             "require": {
@@ -9477,7 +9477,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-11-11T15:37:09+00:00"
+            "time": "2024-11-17T14:08:01+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
