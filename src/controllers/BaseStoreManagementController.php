@@ -40,6 +40,16 @@ class BaseStoreManagementController extends BaseCpController
     public function renderTemplate(string $template, array $variables = [], ?string $templateMode = null): YiiResponse
     {
         $variables['storeSettingsNav'] = $this->getStoreSettingsNav();
+
+        if (!isset($variables['storeHandle'])) {
+            $routeParams = Craft::$app->getUrlManager()->getRouteParams();
+
+            // Make sure store handle is always passed to the template
+            if (isset($routeParams['storeHandle'])) {
+                $variables['storeHandle'] = $routeParams['storeHandle'];
+            }
+        }
+
         return parent::renderTemplate($template, $variables, $templateMode);
     }
 
