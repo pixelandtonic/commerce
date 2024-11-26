@@ -9,6 +9,7 @@ namespace craft\commerce\controllers;
 
 use Craft;
 use craft\commerce\Plugin;
+use craft\web\UrlManager;
 use yii\base\InvalidConfigException;
 use yii\web\Response as YiiResponse;
 
@@ -42,7 +43,9 @@ class BaseStoreManagementController extends BaseCpController
         $variables['storeSettingsNav'] = $this->getStoreSettingsNav();
 
         if (!isset($variables['storeHandle'])) {
-            $routeParams = Craft::$app->getUrlManager()->getRouteParams();
+            /** @var UrlManager $urlManager */
+            $urlManager = Craft::$app->getUrlManager();
+            $routeParams = $urlManager->getRouteParams();
 
             // Make sure store handle is always passed to the template
             if (isset($routeParams['storeHandle'])) {
