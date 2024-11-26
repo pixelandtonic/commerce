@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-- Fixed a bug where variant prices could display incorrectly when inline editing. ([#3768](https://github.com/craftcms/commerce/issues/3768))
+- Fixed a bug where variant prices could be displayed incorrectly when inline editing. ([#3768](https://github.com/craftcms/commerce/issues/3768))
 - Fixed a performance degradation bug with variant queries. ([#3758](https://github.com/craftcms/commerce/issues/3758))
 - Fixed a PHP error that could occur when managing store settings. ([#3780](https://github.com/craftcms/commerce/issues/3780))
 
