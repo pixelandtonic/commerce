@@ -1,6 +1,6 @@
 # Release Notes for Craft Commerce
 
-## Unreleased
+## 5.2.6 - 2024-11-26
 
 - Fixed a bug where variant prices could be displayed incorrectly when inline editing. ([#3768](https://github.com/craftcms/commerce/issues/3768))
 - Fixed a performance degradation bug with variant queries. ([#3758](https://github.com/craftcms/commerce/issues/3758))
