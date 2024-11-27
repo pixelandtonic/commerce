@@ -1,5 +1,9 @@
 # Release Notes for Craft Commerce
 
+## Unreleased
+
+- Fixed a bug where users could access the Commerce user screen when the current user didn’t have permission. 
+
 ## 5.2.6 - 2024-11-26
 
 - Fixed a bug where variant prices could be displayed incorrectly when inline editing. ([#3768](https://github.com/craftcms/commerce/issues/3768))
