@@ -1607,9 +1607,8 @@ class OrderQuery extends ElementQuery
             $this->subQuery->leftJoin(CraftTable::USERS . ' users', '[[users.id]] = [[commerce_orders.customerId]]');
             $this->subQuery->andWhere(Db::parseParam('users.email', $this->email, '=', true));
         }
-
-        // Allow true ot false but not null
-        if (isset($this->isCompleted) && $this->isCompleted !== null) {
+        
+        if (isset($this->isCompleted)) {
             $this->subQuery->andWhere(Db::parseBooleanParam('commerce_orders.isCompleted', $this->isCompleted, false));
         }
 
