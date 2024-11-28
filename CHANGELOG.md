@@ -1,5 +1,20 @@
 # Release Notes for Craft Commerce
 
+## Unreleased
+
+- Fixed a bug where users could access the Commerce user screen when the current user didn’t have permission. 
+
+## 5.2.6 - 2024-11-26
+
+- Fixed a bug where variant prices could be displayed incorrectly when inline editing. ([#3768](https://github.com/craftcms/commerce/issues/3768))
+- Fixed a performance degradation bug with variant queries. ([#3758](https://github.com/craftcms/commerce/issues/3758))
+- Fixed a PHP error that could occur when managing store settings. ([#3780](https://github.com/craftcms/commerce/issues/3780))
+
+## 5.2.5 - 2024-11-20
+
+- The `resave/products`, `resave/orders`, and `resave/carts` commands now support the `--with-fields` option.
+- Fixed a SQL error that could occur when updating. ([#3778](https://github.com/craftcms/commerce/issues/3778))
+
 ## 5.2.4 - 2024-11-14
 
 - Improved the performance of `craft\commerce\elements\Product::getVariants()`. ([#3578](https://github.com/craftcms/commerce/issues/3758))
