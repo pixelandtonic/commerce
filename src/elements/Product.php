@@ -568,6 +568,17 @@ class Product extends Element implements HasStoreInterface
     /**
      * @inheritdoc
      */
+    public static function attributePreviewHtml(array $attribute): mixed
+    {
+        return match($attribute['value']) {
+            'defaultSku' => $attribute['placeholder'],
+            default => parent::attributePreviewHtml($attribute)
+        };
+    }
+
+    /**
+     * @inheritdoc
+     */
     protected static function defineCardAttributes(): array
     {
         return array_merge(parent::defineCardAttributes(), [
