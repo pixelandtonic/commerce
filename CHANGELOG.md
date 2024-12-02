@@ -1,5 +1,9 @@
 # Release Notes for Craft Commerce
 
+## Unreleased
+
+- Fixed an error that occurred on the Orders index page. ([#3793](https://github.com/craftcms/commerce/issues/3793))
+
 ## 4.7.0 - 2024-10-16
 
 ### Store Management
