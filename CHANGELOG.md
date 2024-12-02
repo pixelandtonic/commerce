@@ -1,8 +1,8 @@
 # Release Notes for Craft Commerce
 
-## Unreleased
+## 4.7.1 - 2024-12-02
 
-- Fixed an error that occurred on the Orders index page. ([#3793](https://github.com/craftcms/commerce/issues/3793))
+- Fixed an error that occurred on the Orders index page when running Craft CMS 4.13.4 or later. ([#3793](https://github.com/craftcms/commerce/issues/3793))
 
 ## 4.7.0 - 2024-10-16
 
