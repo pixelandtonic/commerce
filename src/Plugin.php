@@ -257,7 +257,7 @@ class Plugin extends BasePlugin
     /**
      * @inheritDoc
      */
-    public string $schemaVersion = '5.2.0.5';
+    public string $schemaVersion = '5.2.7.0';
 
     /**
      * @inheritdoc
@@ -797,7 +797,10 @@ class Plugin extends BasePlugin
 
         // Add Commerce info to user edit screen
         Event::on(UsersController::class, UsersController::EVENT_DEFINE_EDIT_SCREENS, function(DefineEditUserScreensEvent $event) {
-            $event->screens[CommerceUsersController::SCREEN_COMMERCE] = ['label' => Craft::t('commerce', 'Commerce')];
+            // Add Commerce screen to user edit screen if the user has permission to access Commerce
+            if (Craft::$app->getUser()->checkPermission('accessPlugin-commerce')) {
+                $event->screens[CommerceUsersController::SCREEN_COMMERCE] = ['label' => Craft::t('commerce', 'Commerce')];
+            }
         });
 
         // Site models are instantiated early meaning we have to manually attach the behavior alongside using the event

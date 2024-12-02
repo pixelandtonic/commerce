@@ -52,6 +52,12 @@ class PurchasableStockField extends BaseNativeField
      */
     public function inputHtml(ElementInterface $element = null, bool $static = false): ?string
     {
+        // If this is a revision get the canonical element to show the stock for.
+        // @TODO re-evaluate this when we have a better way to handle revisions and inventory.
+        if ($element->getIsRevision()) {
+            $element = $element->getCanonical();
+        }
+
         $view = Craft::$app->getView();
         $view->registerAssetBundle(InventoryAsset::class);
 
