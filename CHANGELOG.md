@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Fixed an error that occurred on the Orders index page. ([#3793](https://github.com/craftcms/commerce/issues/3793))
 - Fixed a bug where a structured product type’s “Max Levels” setting wasn’t being respected. ([#3785](https://github.com/craftcms/commerce/issues/3785))
 - Fixed a bug where users could access the Commerce user screen when the current user didn’t have permission. 
 
