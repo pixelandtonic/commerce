@@ -1,5 +1,9 @@
 # Release Notes for Craft Commerce
 
+## Unreleased
+
+- Fixed a bug where purchasable line items were missing their CP edit URL on the Edit Order page. ([#3792](https://github.com/craftcms/commerce/issues/3792))
+
 ## 5.2.7 - 2024-11
 
 - Fixed an error that occurred on the Orders index page when running Craft CMS 5.5.4 or later. ([#3793](https://github.com/craftcms/commerce/issues/3793))
