@@ -743,6 +743,14 @@ class Variant extends Purchasable implements NestedElementInterface
     /**
      * @inheritdoc
      */
+    public function getCpEditUrl(): ?string
+    {
+        return $this->getOwner() ? $this->getOwner()->getCpEditUrl() : null;
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function getUrl(): ?string
     {
         $productUrl = $this->getOwner()?->getUrl();
