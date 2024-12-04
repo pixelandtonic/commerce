@@ -3,6 +3,7 @@
 ## Unreleased
 
 - Fixed a bug where the price was not formatted correctly according to the locale in the payment model on the Order Edit screens. ([#3789](https://github.com/craftcms/commerce/issues/3789))
+- Fixed a bug where it wasn’t possible to set store settings to environment variables. ([#3786](https://github.com/craftcms/commerce/issues/3786))
 
 ## 5.2.7 - 2024-11
 
