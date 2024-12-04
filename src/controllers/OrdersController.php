@@ -1245,7 +1245,7 @@ JS, []);
         $paymentAmount = MoneyHelper::toMoney(['value' => $paymentAmount, 'currency' => $baseCurrency, 'locale' => $locale]);
         $paymentAmount = MoneyHelper::toDecimal($paymentAmount);
 
-        $baseCurrencyPaymentAmount = $paymentCurrencies->convertCurrency($paymentAmount, $paymentCurrency, $baseCurrency);
+        $baseCurrencyPaymentAmount = $paymentCurrencies->convertCurrency((float)$paymentAmount, $paymentCurrency, $baseCurrency);
         $baseCurrencyPaymentAmountAsCurrency = Craft::t('commerce', 'Pay {amount} of {currency} on the order.', ['amount' => Currency::formatAsCurrency($baseCurrencyPaymentAmount, $baseCurrency), 'currency' => $baseCurrency]);
 
         $outstandingBalance = $order->outstandingBalance;
