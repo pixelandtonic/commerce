@@ -2,6 +2,7 @@
 
 namespace craft\commerce\migrations;
 
+use craft\commerce\db\Table;
 use craft\db\Migration;
 use craft\db\Query;
 use craft\helpers\App;
@@ -18,7 +19,7 @@ class m241204_091901_fix_store_environment_variables extends Migration
     {
         // Get all the stores current data
         $stores = (new Query())
-            ->from('{{%commerce_stores}}')
+            ->from(Table::STORES)
             ->all();
 
         // Get the store settings for each store from the project config
@@ -42,7 +43,7 @@ class m241204_091901_fix_store_environment_variables extends Migration
 
         // Update stores env var DB columns
         foreach ($storeProperties as $storeProperty) {
-            $this->alterColumn('{{%commerce_stores}}', $storeProperty, $this->string()->notNull()->defaultValue('false'));
+            $this->alterColumn(Table::STORES, $storeProperty, $this->string()->notNull()->defaultValue('false'));
         }
 
         // Loop through each store and update values in the DB to match the PC values
@@ -80,7 +81,7 @@ class m241204_091901_fix_store_environment_variables extends Migration
                 continue;
             }
 
-            $this->update('{{%commerce_stores}}', $updateData, ['id' => $store['id']]);
+            $this->update(Table::STORES, $updateData, ['id' => $store['id']]);
         }
 
         return true;
