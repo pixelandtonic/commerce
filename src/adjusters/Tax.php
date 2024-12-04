@@ -289,7 +289,7 @@ class Tax extends Component implements AdjusterInterface
      */
     protected function getTaxRates(?int $storeId = null): Collection
     {
-        return Plugin::getInstance()->getTaxRates()->getAllTaxRates($storeId);
+        return Plugin::getInstance()->getTaxRates()->getAllEnabledTaxRates($storeId);
     }
 
     /**

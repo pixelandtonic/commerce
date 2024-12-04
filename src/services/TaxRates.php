@@ -74,6 +74,18 @@ class TaxRates extends Component
     }
 
     /**
+     * @param int|null $storeId
+     * @return Collection
+     * @throws InvalidConfigException
+     * @throws StoreNotFoundException
+     * @since 5.3.0
+     */
+    public function getAllEnabledTaxRates(?int $storeId = null): Collection
+    {
+        return $this->getAllTaxRates($storeId)->where('enabled', true);
+    }
+
+    /**
      * Returns an array of all rates belonging to the specified zone.
      *
      * @param int $taxZoneId The ID of the tax zone whose rates we’d like returned

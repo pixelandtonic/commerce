@@ -9,7 +9,6 @@
     'Tax Category',
     'Tax Zone',
     'Yes',
-    'Enabled?',
 ]) %}
 
 {% block actionButton %}
@@ -35,7 +34,6 @@
         url: taxRate.getCpEditUrl(),
         rate: taxRate.rateAsPercent,
         included: taxRate.include ? true : false,
-        enabled: taxRate.enabled ? true : false,
         removeIncluded: taxRate.removeIncluded ? true : false,
         vat: taxRate.isVat ? true : false,
         zone: taxRate.isEverywhere ? 'Everywhere'|t('commerce') : { label: taxRate.taxZone.name|t('site')|e, url: taxRate.taxZone.cpEditUrl },
