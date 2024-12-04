@@ -207,6 +207,7 @@ class Inventory extends Component
     {
         $levels = $this->getInventoryLevelQuery(withTrashed: $withTrashed)
             ->andWhere(['inventoryLocationId' => $inventoryLocation->id])
+            ->andWhere(['not', ['elements.id' => null]])
             ->collect();
 
         $inventoryItems = Plugin::getInstance()->getInventory()->getInventoryItemsByIds($levels->pluck('inventoryItemId')->unique()->toArray());
@@ -262,8 +263,12 @@ class Inventory extends Component
             ->limit($limit)
             ->offset($offset);
 
+        $query->leftJoin(
+            ['elements' => CraftTable::ELEMENTS],
+            '[[ii.purchasableId]] = [[elements.id]] AND [[elements.draftId]] IS NULL AND [[elements.revisionId]] IS NULL'
+        );
+
         if (!$withTrashed) {
-            $query->leftJoin(['elements' => CraftTable::ELEMENTS], '[[ii.purchasableId]] = [[elements.id]]');
             $query->andWhere(['elements.dateDeleted' => null]);
         }
 
