@@ -283,6 +283,7 @@ class InventoryLocations extends Component
                 'dateCreated',
                 'dateUpdated',
             ])
+            ->orderBy(['name' => SORT_ASC])
             ->from([Table::INVENTORYLOCATIONS]);
 
         if (!$withTrashed) {

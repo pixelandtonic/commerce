@@ -1,5 +1,11 @@
 # Release Notes for Craft Commerce
 
+## Unreleased
+
+- Fixed a bug where draft purchasables would show up on the Inventory page.
+- Fixed a PHP error that could occur when creating inventory transfers.
+- Fixed a bug where the price was not formatted correctly according to the locale in the payment model on the Order Edit screens. ([#3789](https://github.com/craftcms/commerce/issues/3789))
+
 ## 5.2.7 - 2024-11
 
 - Fixed an error that occurred on the Orders index page when running Craft CMS 5.5.4 or later. ([#3793](https://github.com/craftcms/commerce/issues/3793))
