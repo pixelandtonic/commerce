@@ -262,8 +262,12 @@ class Inventory extends Component
             ->limit($limit)
             ->offset($offset);
 
+        $query->leftJoin(
+            ['elements' => CraftTable::ELEMENTS],
+            '[[ii.purchasableId]] = [[elements.id]] AND [[elements.draftId]] IS NULL AND [[elements.revisionId]] IS NULL'
+        );
+
         if (!$withTrashed) {
-            $query->leftJoin(['elements' => CraftTable::ELEMENTS], '[[ii.purchasableId]] = [[elements.id]]');
             $query->andWhere(['elements.dateDeleted' => null]);
         }
 
