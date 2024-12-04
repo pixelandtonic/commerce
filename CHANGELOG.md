@@ -1,6 +1,6 @@
 # Release Notes for Craft Commerce
 
-## Unreleased
+## 5.2.8 - 2024-12-04
 
 - Fixed a bug where line items weren’t getting hyperlinked within Edit Order pages. ([#3792](https://github.com/craftcms/commerce/issues/3792))
 - Fixed a bug where Inventory pages were showing draft purchasables.
