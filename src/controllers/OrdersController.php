@@ -1236,10 +1236,14 @@ JS, []);
         $paymentCurrencies = Plugin::getInstance()->getPaymentCurrencies();
         $paymentCurrency = $this->request->getRequiredParam('paymentCurrency');
         $paymentAmount = $this->request->getRequiredParam('paymentAmount');
+        $locale = $this->request->getRequiredParam('locale');
         $orderId = $this->request->getRequiredParam('orderId');
         /** @var Order $order */
         $order = Order::find()->id($orderId)->one();
         $baseCurrency = $order->currency;
+
+        $paymentAmount = MoneyHelper::toMoney(['value' => $paymentAmount, 'currency' => $baseCurrency, 'locale' => $locale]);
+        $paymentAmount = MoneyHelper::toDecimal($paymentAmount);
 
         $baseCurrencyPaymentAmount = $paymentCurrencies->convertCurrency($paymentAmount, $paymentCurrency, $baseCurrency);
         $baseCurrencyPaymentAmountAsCurrency = Craft::t('commerce', 'Pay {amount} of {currency} on the order.', ['amount' => Currency::formatAsCurrency($baseCurrencyPaymentAmount, $baseCurrency), 'currency' => $baseCurrency]);
