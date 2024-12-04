@@ -101,6 +101,9 @@ class Tax extends Component implements AdjusterInterface
         $adjustments = [];
 
         foreach ($this->_taxRates as $rate) {
+            if (!$rate->enabled) {
+                continue;
+            }
             $newAdjustments = $this->_getAdjustments($rate);
             if ($newAdjustments) {
                 $adjustments[] = $newAdjustments;
