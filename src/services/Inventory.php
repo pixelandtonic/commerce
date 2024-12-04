@@ -207,6 +207,7 @@ class Inventory extends Component
     {
         $levels = $this->getInventoryLevelQuery(withTrashed: $withTrashed)
             ->andWhere(['inventoryLocationId' => $inventoryLocation->id])
+            ->andWhere(['not', ['elements.id' => null]])
             ->collect();
 
         $inventoryItems = Plugin::getInstance()->getInventory()->getInventoryItemsByIds($levels->pluck('inventoryItemId')->unique()->toArray());
