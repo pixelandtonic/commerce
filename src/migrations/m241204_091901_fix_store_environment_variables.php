@@ -62,18 +62,12 @@ class m241204_091901_fix_store_environment_variables extends Migration
                     continue;
                 }
 
-                // If the value in PC is a bool and the same as the DB value, skip it
-                if (in_array($storeSettingsForStore[$storeProperty], ['0', '1', 0, 1, false, true, 'false', 'true'], true) && $storeSettingsForStore[$storeProperty] == $store[$storeProperty]) {
-                    continue;
-                }
-
-                // If the value in PC is a string and is different from the DB value, skip it to avoid change in behavior
+                // Parse the value from the PC
                 $envVarValue = App::parseBooleanEnv($storeSettingsForStore[$storeProperty]);
-                if ($envVarValue != $store[$storeProperty]) {
+                if ($envVarValue === null) {
                     continue;
                 }
 
-                // Else update the DB with the environment variable name
                 $updateData[$storeProperty] = $storeSettingsForStore[$storeProperty];
             }
 
