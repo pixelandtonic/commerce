@@ -326,6 +326,32 @@ class Inventory extends Component
     }
 
     /**
+     * @param int $inventoryItemId
+     * @param int $quantity
+     * @param array $updateInventoryLevelAttributes
+     * @return void
+     * @throws Exception
+     * @throws InvalidConfigException
+     */
+    public function updateInventoryLevel(int $inventoryItemId, int $quantity, array $updateInventoryLevelAttributes = [])
+    {
+        $updateInventoryLevelAttributes += [
+            'quantity' => $quantity,
+            'updateAction' => InventoryUpdateQuantityType::SET,
+            'inventoryLocationId' => $this->getStore()->getInventoryLocations()->first()->id,
+            'type' => InventoryTransactionType::AVAILABLE->value,
+        ];
+
+        $updateInventoryLevel = new UpdateInventoryLevel($updateInventoryLevelAttributes);
+        $updateInventoryLevel->inventoryItemId = $inventoryItemId;
+
+        $updateInventoryLevels = UpdateInventoryLevelCollection::make();
+        $updateInventoryLevels->push($updateInventoryLevel);
+
+        Plugin::getInstance()->getInventory()->executeUpdateInventoryLevels($updateInventoryLevels);
+    }
+
+    /**
      * @param UpdateInventoryLevel|UpdateInventoryLevelInTransfer $updateInventoryLevel
      * @return bool
      */

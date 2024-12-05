@@ -956,28 +956,15 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
 
     /**
      * @param int $quantity
-     * @param array $updateAttributes
+     * @param array $updateInventoryLevelAttributes
      * @return void
      * @throws InvalidConfigException
      * @throws Exception
      * @since 5.3.0
      */
-    public function setStockLevel(int $quantity, array $updateAttributes = []): void
+    public function setStockLevel(int $quantity, array $updateInventoryLevelAttributes = []): void
     {
-        $updateAttributes += [
-            'quantity' => $quantity,
-            'updateAction' => InventoryUpdateQuantityType::SET,
-            'inventoryLocationId' => $this->getStore()->getInventoryLocations()->first()->id,
-            'type' => InventoryTransactionType::AVAILABLE->value,
-        ];
-
-        $updateInventoryLevel = new UpdateInventoryLevel($updateAttributes);
-        $updateInventoryLevel->inventoryItemId = $this->inventoryItemId;
-
-        $updateInventoryLevels = UpdateInventoryLevelCollection::make();
-        $updateInventoryLevels->push($updateInventoryLevel);
-
-        Plugin::getInstance()->getInventory()->executeUpdateInventoryLevels($updateInventoryLevels);
+        Plugin::getInstance()->getInventory()->updateInventoryLevel($this->inventoryItemId, $quantity, $updateInventoryLevelAttributes);
 
         $this->_stock = null;
     }

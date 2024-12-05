@@ -12,3 +12,4 @@
 - Added `craft\commerce\base\InventoryItemTrait`.
 - Added `craft\commerce\base\InventoryLocationTrait`.
 - Added `craft\commerce\base\Purchasable::setStockLevel()`.
+- Added `craft\commerce\services\Inventory::updateInventoryLevel()`.
