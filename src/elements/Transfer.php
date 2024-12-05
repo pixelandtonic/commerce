@@ -191,7 +191,7 @@ class Transfer extends Element
     }
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     public static function displayName(): string
     {
@@ -199,7 +199,7 @@ class Transfer extends Element
     }
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     public static function lowerDisplayName(): string
     {
@@ -207,7 +207,7 @@ class Transfer extends Element
     }
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     public static function pluralDisplayName(): string
     {
@@ -215,7 +215,7 @@ class Transfer extends Element
     }
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     public static function pluralLowerDisplayName(): string
     {
@@ -223,7 +223,7 @@ class Transfer extends Element
     }
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     public static function refHandle(): ?string
     {
@@ -231,7 +231,7 @@ class Transfer extends Element
     }
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     public static function trackChanges(): bool
     {
@@ -239,7 +239,7 @@ class Transfer extends Element
     }
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     public static function hasTitles(): bool
     {
@@ -247,7 +247,7 @@ class Transfer extends Element
     }
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     public static function hasContent(): bool
     {
@@ -255,7 +255,7 @@ class Transfer extends Element
     }
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     public static function hasUris(): bool
     {
@@ -263,7 +263,7 @@ class Transfer extends Element
     }
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     public static function isLocalized(): bool
     {
@@ -271,7 +271,7 @@ class Transfer extends Element
     }
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     public static function hasStatuses(): bool
     {
@@ -280,7 +280,7 @@ class Transfer extends Element
 
     /**
      * @return TransferQuery
-     * @inheritDoc
+     * @inheritdoc
      */
     public static function find(): ElementQueryInterface
     {
@@ -288,7 +288,7 @@ class Transfer extends Element
     }
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     public static function createCondition(): ElementConditionInterface
     {
@@ -296,7 +296,7 @@ class Transfer extends Element
     }
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     protected static function includeSetStatusAction(): bool
     {
@@ -331,7 +331,7 @@ class Transfer extends Element
     }
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     protected static function defineTableAttributes(): array
     {
@@ -347,7 +347,7 @@ class Transfer extends Element
     }
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     protected static function defineDefaultTableAttributes(string $source): array
     {
@@ -359,7 +359,7 @@ class Transfer extends Element
     }
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     protected function attributeHtml(string $attribute): string
     {
@@ -384,7 +384,7 @@ class Transfer extends Element
     }
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     protected function defineRules(): array
     {
@@ -436,7 +436,7 @@ class Transfer extends Element
     }
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     public function getUriFormat(): ?string
     {
@@ -480,7 +480,7 @@ class Transfer extends Element
 
     /**
      *
-     * @inheritDoc
+     * @inheritdoc
      */
     protected function previewTargets(): array
     {
@@ -497,6 +497,10 @@ class Transfer extends Element
         return $previewTargets;
     }
 
+
+    /**
+     * @inheritdoc
+     */
     protected function safeActionMenuItems(): array
     {
         $safeActions = parent::safeActionMenuItems();
@@ -518,7 +522,7 @@ class Transfer extends Element
 
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     protected function route(): array|string|null
     {
@@ -533,7 +537,7 @@ class Transfer extends Element
     }
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     public function canView(User $user): bool
     {
@@ -545,7 +549,7 @@ class Transfer extends Element
     }
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     public function canSave(User $user): bool
     {
@@ -557,7 +561,7 @@ class Transfer extends Element
     }
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     public function canDuplicate(User $user): bool
     {
@@ -565,7 +569,7 @@ class Transfer extends Element
     }
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     public function canDelete(User $user): bool
     {
@@ -583,7 +587,7 @@ class Transfer extends Element
     }
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     public function canCreateDrafts(User $user): bool
     {
@@ -591,7 +595,7 @@ class Transfer extends Element
     }
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     protected function cpEditUrl(): ?string
     {
@@ -599,7 +603,7 @@ class Transfer extends Element
     }
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     public function getPostEditUrl(): ?string
     {
@@ -607,7 +611,7 @@ class Transfer extends Element
     }
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     public function prepareEditScreen(Response $response, string $containerId): void
     {
@@ -735,7 +739,7 @@ JS, [
     }
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     public function getFieldLayout(): ?FieldLayout
     {
@@ -743,7 +747,7 @@ JS, [
     }
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     public function beforeValidate()
     {
@@ -755,7 +759,7 @@ JS, [
     }
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     public function afterSave(bool $isNew): void
     {
