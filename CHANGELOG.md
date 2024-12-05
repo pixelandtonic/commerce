@@ -1,12 +1,14 @@
 # Release Notes for Craft Commerce
 
-## Unreleased
+## 5.2.8 - 2024-12-04
 
-- Fixed a bug where draft purchasables would show up on the Inventory page.
-- Fixed a PHP error that could occur when creating inventory transfers.
-- Fixed a bug where the price was not formatted correctly according to the locale in the payment model on the Order Edit screens. ([#3789](https://github.com/craftcms/commerce/issues/3789))
+- Fixed a bug where line items weren’t getting hyperlinked within Edit Order pages. ([#3792](https://github.com/craftcms/commerce/issues/3792))
+- Fixed a bug where Inventory pages were showing draft purchasables.
+- Fixed a PHP error that could occur when creating inventory transfers. ([#3696](https://github.com/craftcms/commerce/issues/3696))
+- Fixed a bug where prices weren’t getting formatted per the user’s formatting locale, in payment models on Edit Order pages. ([#3789](https://github.com/craftcms/commerce/issues/3789))
+- Fixed a bug where store settings weren’t respecting environment variables. ([#3786](https://github.com/craftcms/commerce/issues/3786))
 
-## 5.2.7 - 2024-11
+## 5.2.7 - 2024-12-02
 
 - Fixed an error that occurred on the Orders index page when running Craft CMS 5.5.4 or later. ([#3793](https://github.com/craftcms/commerce/issues/3793))
 - Fixed a bug where a structured product type’s “Max Levels” setting wasn’t being respected. ([#3785](https://github.com/craftcms/commerce/issues/3785))
