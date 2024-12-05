@@ -779,26 +779,26 @@ JS, [
             if ($this->getTransferStatus() === TransferStatusType::PENDING && $originalTransferStatus == TransferStatusType::DRAFT->value) {
                 $inventoryUpdateCollection = new UpdateInventoryLevelCollection();
                 foreach ($this->getDetails() as $detail) {
-                    $inventoryUpdate1 = new UpdateInventoryLevelInTransfer([
-                        'type' => InventoryTransactionType::INCOMING->value,
-                        'updateAction' => InventoryUpdateQuantityType::ADJUST,
-                        'inventoryItem' => $detail->getInventoryItem(),
-                        'transferId' => $this->id,
-                        'inventoryLocation' => $this->getDestinationLocation(),
-                        'quantity' => $detail->quantity,
-                        'note' => Craft::t('commerce', 'Incoming transfer from Transfer ID: ') . $this->id,
-                    ]);
+                    $inventoryUpdate1 = new UpdateInventoryLevelInTransfer();
+                    $inventoryUpdate1->type = InventoryTransactionType::INCOMING->value;
+                    $inventoryUpdate1->updateAction = InventoryUpdateQuantityType::ADJUST;
+                    $inventoryUpdate1->inventoryItemId = $detail->inventoryItemId;
+                    $inventoryUpdate1->transferId = $this->id;
+                    $inventoryUpdate1->inventoryLocationId = $this->destinationLocationId;
+                    $inventoryUpdate1->quantity = $detail->quantity;
+                    $inventoryUpdate1->note = Craft::t('commerce', 'Incoming transfer from Transfer ID: ') . $this->id;
+
                     $inventoryUpdateCollection->push($inventoryUpdate1);
 
-                    $inventoryUpdate2 = new UpdateInventoryLevelInTransfer([
-                        'type' => 'onHand',
-                        'updateAction' => InventoryUpdateQuantityType::ADJUST,
-                        'inventoryItem' => $detail->getInventoryItem(),
-                        'transferId' => $this->id,
-                        'inventoryLocation' => $this->getOriginLocation(),
-                        'quantity' => $detail->quantity * -1,
-                        'note' => Craft::t('commerce', 'Outgoing transfer from Transfer ID: ') . $this->id,
-                    ]);
+                    $inventoryUpdate2 = new UpdateInventoryLevelInTransfer();
+                    $inventoryUpdate2->type = 'onHand';
+                    $inventoryUpdate2->updateAction = InventoryUpdateQuantityType::ADJUST;
+                    $inventoryUpdate2->inventoryItemId = $detail->inventoryItemId;
+                    $inventoryUpdate2->transferId = $this->id;
+                    $inventoryUpdate2->inventoryLocationId = $this->originLocationId;
+                    $inventoryUpdate2->quantity = $detail->quantity * -1;
+                    $inventoryUpdate2->note = Craft::t('commerce', 'Outgoing transfer from Transfer ID: ') . $this->id;
+
                     $inventoryUpdateCollection->push($inventoryUpdate2);
                 }
 

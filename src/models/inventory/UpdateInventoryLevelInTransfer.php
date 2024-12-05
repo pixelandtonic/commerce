@@ -3,6 +3,8 @@
 namespace craft\commerce\models\inventory;
 
 use craft\base\Model;
+use craft\commerce\base\InventoryItemTrait;
+use craft\commerce\base\InventoryLocationTrait;
 use craft\commerce\enums\InventoryTransactionType;
 use craft\commerce\enums\InventoryUpdateQuantityType;
 use craft\commerce\models\InventoryItem;
@@ -15,6 +17,8 @@ use craft\commerce\models\InventoryLocation;
  */
 class UpdateInventoryLevelInTransfer extends Model
 {
+    use InventoryItemTrait, InventoryLocationTrait;
+
     /**
      * The type is the set of InventoryTransactionType values, plus the `onHand` type.
      * @var string The inventory update type.
@@ -31,16 +35,6 @@ class UpdateInventoryLevelInTransfer extends Model
      * @var InventoryUpdateQuantityType The action to perform on the inventory.
      */
     public InventoryUpdateQuantityType $updateAction;
-
-    /**
-     * @var InventoryItem The inventory item
-     */
-    public InventoryItem $inventoryItem;
-
-    /**
-     * @var InventoryLocation The inventory location.
-     */
-    public InventoryLocation $inventoryLocation;
 
     /**
      * @var int The quantity to update.

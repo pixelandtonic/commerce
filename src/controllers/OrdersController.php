@@ -259,10 +259,10 @@ class OrdersController extends Controller
             $qty = (int)$fulfillment['quantity'];
             if ($qty != 0) {
                 $inventoryLocation = Plugin::getInstance()->getInventoryLocations()->getInventoryLocationById($fulfillment['inventoryLocationId']);
-                $inventoryItem = Plugin::getInstance()->getInventory()->getInventoryItemById($fulfillment['inventoryItemId']);
+
                 $movement = new InventoryFulfillMovement();
                 $movement->fromInventoryLocation = $inventoryLocation;
-                $movement->inventoryItem = $inventoryItem;
+                $movement->inventoryItemId = $fulfillment['inventoryItemId'];
                 $movement->toInventoryLocation = $inventoryLocation;
                 $movement->fromInventoryTransactionType = InventoryTransactionType::COMMITTED;
                 $movement->toInventoryTransactionType = InventoryTransactionType::FULFILLED;
