@@ -338,7 +338,7 @@ class Inventory extends Component
         $updateInventoryLevelAttributes += [
             'quantity' => $quantity,
             'updateAction' => InventoryUpdateQuantityType::SET,
-            'inventoryLocationId' => $this->getStore()->getInventoryLocations()->first()->id,
+            'inventoryLocationId' => Plugin::getInstance()->getInventoryLocations()->getAllInventoryLocations()->first()->id,
             'type' => InventoryTransactionType::AVAILABLE->value,
         ];
 

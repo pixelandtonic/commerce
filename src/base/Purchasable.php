@@ -960,6 +960,10 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
      */
     public function setStockLevel(int $quantity, array $updateInventoryLevelAttributes = []): void
     {
+        $updateInventoryLevelAttributes += [
+            'inventoryLocationId' => $this->getStore()->getInventoryLocations()->first()->id,
+        ];
+
         Plugin::getInstance()->getInventory()->updateInventoryLevel($this->inventoryItemId, $quantity, $updateInventoryLevelAttributes);
 
         $this->_stock = null;
