@@ -13,6 +13,8 @@ use craft\base\NestedElementInterface;
 use craft\commerce\collections\UpdateInventoryLevelCollection;
 use craft\commerce\db\Table;
 use craft\commerce\elements\Order;
+use craft\commerce\enums\InventoryTransactionType;
+use craft\commerce\enums\InventoryUpdateQuantityType;
 use craft\commerce\errors\StoreNotFoundException;
 use craft\commerce\helpers\Currency;
 use craft\commerce\helpers\Localization;
@@ -44,6 +46,7 @@ use Illuminate\Support\Collection;
 use Money\Money;
 use Money\Teller;
 use yii\base\InvalidConfigException;
+use yii\db\Exception;
 use yii\validators\Validator;
 
 /**
@@ -952,67 +955,32 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
     }
 
     /**
+     * @param int $quantity
+     * @param array $updateAttributes
      * @return void
+     * @throws InvalidConfigException
+     * @throws Exception
      * @since 5.3.0
      */
-    public function setStockLevel($amount): void
+    public function setStockLevel(int $quantity, array $updateAttributes = []): void
     {
+        $updateAttributes += [
+            'quantity' => $quantity,
+            'updateAction' => InventoryUpdateQuantityType::SET,
+            'inventoryLocationId' => $this->getStore()->getInventoryLocations()->first()->id,
+            'type' => InventoryTransactionType::AVAILABLE->value,
+        ];
 
-        // $commercePlugin = Plugin::getInstance();
-        //
-        // // For simplicity let's just get the first inventory location
-        // $inventoryLocation = $commercePlugin->getInventoryLocations()->getAllInventoryLocations()->first();
-        //
-        // // Retrieve the inventory item ID for the variants you want to update
-        // $variantInventoryItemQuery = \craft\commerce\elements\Variant::find()
-        //     // ->select(['inventoryitems.id as inventoryItemId']);
-        //     ->select(['inventoryitems.id as inventoryItemId'])
-        //     ->andWhere(['elements.id' => 327]);
-        // // Can add extra criteria to the query if needed
-        //
-        // // Retrieve the inventory items for the variants
-        // $inventoryItems = $commercePlugin->getInventory()->getInventoryItemQuery()
-        //     ->andWhere(['id' => $variantInventoryItemQuery])
-        //     ->collect()
-        //     ->map(function($inventoryItem) {
-        //         return new InventoryItem($inventoryItem);
-        //     });
-        //
-        // // Retrieve the inventory levels for the inventory items
-        // $inventoryLevels = $commercePlugin->getInventory()->getInventoryLevelQuery()
-        //     ->andWhere(['ii.id' => $variantInventoryItemQuery])
-        //     ->andWhere(['it.inventoryLocationId' => $inventoryLocation->id])
-        //     ->collect()
-        //     ->map(function($inventoryLevel) {
-        //         unset($inventoryLevel['purchasableId']);
-        //         return new InventoryLevel($inventoryLevel);
-        //     });
-        //
-        // $updateInventoryLevels = UpdateInventoryLevelCollection::make();
-        //
-        // $inventoryLevels->each(function(InventoryLevel $inventoryLevel) use ($updateInventoryLevels, $inventoryItems, $inventoryLocation) {
-        //     // Update action can be `SET` or `ADJUST` based on inserting or updating the stock
-        //     $updateAction = \craft\commerce\enums\InventoryUpdateQuantityType::SET;
-        //
-        //     // Stock amount, this would need to be based on your requirements/data being imported
-        //     $stock = 1; // stock amount
-        //
-        //     $updateInventoryLevels->push(new UpdateInventoryLevel([
-        //             'type' => InventoryTransactionType::AVAILABLE->value,
-        //             'updateAction' => $updateAction,
-        //             'inventoryItem' => $inventoryItems->firstWhere('id', $inventoryLevel->inventoryItemId),
-        //             'inventoryLocation' => $inventoryLocation,
-        //             'quantity' => $stock,
-        //             'note' => '',
-        //         ])
-        //     );
-        // });
-        //
-        // if ($updateInventoryLevels->count() > 0) {
-        //     $commercePlugin->getInventory()->executeUpdateInventoryLevels($updateInventoryLevels);
-        // }
+        $updateInventoryLevel = new UpdateInventoryLevel($updateAttributes);
+        $updateInventoryLevel->inventoryItemId = $this->inventoryItemId;
+
+        $updateInventoryLevels = UpdateInventoryLevelCollection::make();
+        $updateInventoryLevels->push($updateInventoryLevel);
+
+        Plugin::getInstance()->getInventory()->executeUpdateInventoryLevels($updateInventoryLevels);
+
+        $this->_stock = null;
     }
-
 
     /**
      * Returns the total stock across all locations this purchasable is tracked in.
