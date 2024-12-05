@@ -7,8 +7,6 @@ use craft\commerce\base\InventoryItemTrait;
 use craft\commerce\base\InventoryLocationTrait;
 use craft\commerce\enums\InventoryTransactionType;
 use craft\commerce\enums\InventoryUpdateQuantityType;
-use craft\commerce\models\InventoryItem;
-use craft\commerce\models\InventoryLocation;
 
 /**
  * Update (Set and Adjust) Inventory Quantity model

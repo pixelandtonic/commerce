@@ -8,7 +8,6 @@
 namespace craft\commerce\base;
 
 use craft\commerce\enums\InventoryTransactionType;
-use craft\commerce\models\InventoryItem;
 use craft\commerce\models\InventoryLocation;
 
 /**
