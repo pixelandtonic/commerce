@@ -960,6 +960,10 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
      */
     public function setStockLevel(int $quantity, array $updateInventoryLevelAttributes = []): void
     {
+        if ($this->inventoryItemId === null) {
+            throw new InvalidConfigException('Cannot set stock level on a purchasable without an inventory item.');
+        }
+
         $updateInventoryLevelAttributes += [
             'inventoryLocationId' => $this->getStore()->getInventoryLocations()->first()->id,
         ];
