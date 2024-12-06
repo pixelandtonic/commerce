@@ -1251,6 +1251,7 @@ class OrdersController extends Controller
 
         if ($variables['order']->hasErrors()) {
             $response['order']['errors'] = $variables['order']->getErrors();
+            $response['errors'] = $variables['order']->getErrors();
             $response['error'] = Craft::t('commerce', 'The order is not valid.');
         }
 

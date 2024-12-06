@@ -1,5 +1,9 @@
 # Release Notes for Craft Commerce
 
+## Unreleased
+
+- Fixed a bug where order errors weren't showing on the Edit Order page.
+
 ## 4.7.1 - 2024-12-02
 
 - Fixed an error that occurred on the Orders index page when running Craft CMS 4.13.4 or later. ([#3793](https://github.com/craftcms/commerce/issues/3793))
