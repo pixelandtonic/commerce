@@ -332,6 +332,7 @@ class Inventory extends Component
      * @return void
      * @throws Exception
      * @throws InvalidConfigException
+     * @since 5.3.0
      */
     public function updateInventoryLevel(int $inventoryItemId, int $quantity, array $updateInventoryLevelAttributes = [])
     {
@@ -349,6 +350,32 @@ class Inventory extends Component
         $updateInventoryLevels->push($updateInventoryLevel);
 
         Plugin::getInstance()->getInventory()->executeUpdateInventoryLevels($updateInventoryLevels);
+    }
+
+    /**
+     * @param Purchasable $purchasable
+     * @param int $quantity
+     * @param array $updateInventoryLevelAttributes
+     * @return void
+     * @throws Exception
+     * @throws InvalidConfigException
+     * @throws \craft\errors\DeprecationException
+     * @since 5.3.0
+     */
+    public function updatePurchasableInventoryLevel(Purchasable $purchasable, int $quantity, array $updateInventoryLevelAttributes = [])
+    {
+        $updateInventoryLevelAttributes += [
+            'quantity' => $quantity,
+            'updateAction' => InventoryUpdateQuantityType::SET,
+            'inventoryItemId' => $purchasable->inventoryItemId,
+            'inventoryLocationId' => $purchasable->getStore()->getInventoryLocations()->first()->id,
+            'type' => InventoryTransactionType::AVAILABLE->value,
+        ];
+
+        $this->updateInventoryLevel($purchasable->inventoryItemId, $quantity, $updateInventoryLevelAttributes);
+
+        // Clear the stock cache for the class instance
+        unset($purchasable->stock);
     }
 
     /**

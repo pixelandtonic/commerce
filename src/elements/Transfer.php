@@ -82,11 +82,17 @@ class Transfer extends Element
         ]);
     }
 
+    /**
+     * @inheritdoc
+     */
     public static function hasDrafts(): bool
     {
         return false;
     }
 
+    /**
+     * @inheritdoc
+     */
     protected function metadata(): array
     {
         $additionalMeta = [];
@@ -497,7 +503,6 @@ class Transfer extends Element
         return $previewTargets;
     }
 
-
     /**
      * @inheritdoc
      */
@@ -519,7 +524,6 @@ class Transfer extends Element
 
         return $safeActions;
     }
-
 
     /**
      * @inheritdoc

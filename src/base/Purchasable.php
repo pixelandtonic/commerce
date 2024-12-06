@@ -387,6 +387,20 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
     /**
      * @inheritdoc
      */
+    public function __unset($name)
+    {
+        // Allow clearing of specific memoized properties
+        if (in_array($name, ['stock', 'shippingCategory', 'taxCategory'])) {
+            $this->{'_' . $name} = null;
+            return;
+        }
+
+        parent::__unset($name);
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function getStore(): Store
     {
         if ($this->_store === null || !in_array($this->siteId, $this->_store->getSites()->pluck('id')->all())) {
@@ -948,29 +962,6 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
         }
 
         return $this->_stock;
-    }
-
-    /**
-     * @param int $quantity
-     * @param array $updateInventoryLevelAttributes
-     * @return void
-     * @throws InvalidConfigException
-     * @throws Exception
-     * @since 5.3.0
-     */
-    public function setStockLevel(int $quantity, array $updateInventoryLevelAttributes = []): void
-    {
-        if ($this->inventoryItemId === null) {
-            throw new InvalidConfigException('Cannot set stock level on a purchasable without an inventory item.');
-        }
-
-        $updateInventoryLevelAttributes += [
-            'inventoryLocationId' => $this->getStore()->getInventoryLocations()->first()->id,
-        ];
-
-        Plugin::getInstance()->getInventory()->updateInventoryLevel($this->inventoryItemId, $quantity, $updateInventoryLevelAttributes);
-
-        $this->_stock = null;
     }
 
     /**

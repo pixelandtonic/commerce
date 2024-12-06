@@ -5,20 +5,24 @@
  * @license https://craftcms.github.io/license/
  */
 
-namespace unit\elements\variant;
+namespace craftcommercetests\unit\services;
 
 use Codeception\Test\Unit;
 use craft\commerce\elements\Variant;
 use craft\commerce\enums\InventoryUpdateQuantityType;
+use craft\commerce\Plugin;
+use craft\errors\DeprecationException;
 use craftcommercetests\fixtures\ProductFixture;
+use yii\base\InvalidConfigException;
+use yii\db\Exception;
 
 /**
- * VariantStockTest
+ * InventoryTest
  *
  * @author Pixel & Tonic, Inc. <support@pixelandtonic.com>
  * @since 5.3.0
  */
-class VariantStockTest extends Unit
+class InventoryTest extends Unit
 {
     /**
      * @return array
@@ -34,12 +38,14 @@ class VariantStockTest extends Unit
 
     /**
      * @param array $updateConfigs
+     * @param int $expected
      * @return void
-     * @throws \yii\base\InvalidConfigException
-     * @throws \yii\db\Exception
+     * @throws DeprecationException
+     * @throws InvalidConfigException
+     * @throws Exception
      * @dataProvider setStockLevelDataProvider
      */
-    public function testSetStockLevel(array $updateConfigs, int $expected): void
+    public function testUpdatePurchasableInventoryLevel(array $updateConfigs, int $expected): void
     {
         $variant = Variant::find()->sku('rad-hood')->one();
         $originalStock = $variant->getStock();
@@ -48,12 +54,12 @@ class VariantStockTest extends Unit
             $qty = $updateConfig['quantity'];
             unset($updateConfig['quantity']);
 
-            $variant->setStockLevel($qty, $updateConfig);
+            Plugin::getInstance()->getInventory()->updatePurchasableInventoryLevel($variant, $qty, $updateConfig);
         }
 
         self::assertEquals($expected, $variant->getStock());
 
-        $variant->setStockLevel($originalStock);
+        Plugin::getInstance()->getInventory()->updatePurchasableInventoryLevel($variant, $originalStock);
     }
 
     /**
