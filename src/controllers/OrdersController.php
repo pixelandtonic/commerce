@@ -1444,6 +1444,7 @@ JS, []);
 
         if ($order->hasErrors()) {
             $response['order']['errors'] = $order->getErrors();
+            $response['errors'] = $order->getErrors();
             $response['error'] = Craft::t('commerce', 'The order is not valid.');
         }
 

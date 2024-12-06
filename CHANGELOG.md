@@ -1,5 +1,9 @@
 # Release Notes for Craft Commerce
 
+## Unreleased
+
+- Fixed a bug where order errors weren't showing on the Edit Order page.
+
 ## 5.2.8 - 2024-12-04
 
 - Fixed a bug where line items weren’t getting hyperlinked within Edit Order pages. ([#3792](https://github.com/craftcms/commerce/issues/3792))
