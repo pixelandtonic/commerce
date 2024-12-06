@@ -42,7 +42,6 @@ use Illuminate\Support\Collection;
 use Money\Money;
 use Money\Teller;
 use yii\base\InvalidConfigException;
-use yii\db\Exception;
 use yii\validators\Validator;
 
 /**
