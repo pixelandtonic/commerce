@@ -38,6 +38,7 @@ class OrderCondition extends ElementCondition
             ItemTotalConditionRule::class,
             OrderStatusConditionRule::class,
             OrderSiteConditionRule::class,
+            PaymentGatewayConditionRule::class,
             ReferenceConditionRule::class,
             ShippingMethodConditionRule::class,
             TotalDiscountConditionRule::class,

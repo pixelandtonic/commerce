@@ -831,6 +831,7 @@ return [
     'Payment Amount' => 'Payment Amount',
     'Payment Currencies' => 'Payment Currencies',
     'Payment Method' => 'Payment Method',
+    'Payment Gateway' => 'Payment Gateway',
     'Payment error: {message}' => 'Payment error: {message}',
     'Payment method issue' => 'Payment method issue',
     'Payment source created.' => 'Payment source created.',
