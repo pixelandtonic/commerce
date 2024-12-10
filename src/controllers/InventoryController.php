@@ -242,6 +242,8 @@ class InventoryController extends Controller
         $inventoryQuery->leftJoin(['purchasables' => Table::PURCHASABLES], '[[ii.purchasableId]] = [[purchasables.id]]');
         $inventoryQuery->addGroupBy(['[[purchasables.description]]', '[[purchasables.sku]]']);
 
+        $inventoryQuery->andWhere(['not', ['elements.id' => null]]);
+
         if ($search) {
             $inventoryQuery->andWhere(['or', ['like', 'purchasables.description', $search], ['like', 'purchasables.sku', $search]]);
         }
