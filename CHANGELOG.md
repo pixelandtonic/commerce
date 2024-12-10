@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Fixed a bug where a product’s default price was showing incorrectly on the Products index page. ([#3807](https://github.com/craftcms/commerce/issues/3807))
 - Fixed a bug where order errors weren't showing on the Edit Order page.
 
 ## 5.2.8 - 2024-12-04
