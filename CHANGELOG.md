@@ -3,6 +3,7 @@
 ## Unreleased
 
 - Fixed a bug where a product’s default price was showing incorrectly on the Products index page. ([#3807](https://github.com/craftcms/commerce/issues/3807))
+- Fixed a bug where inline-editable Matrix fields weren’t saving content on product variants. ([#3805](https://github.com/craftcms/commerce/issues/3805))
 - Fixed a bug where order errors weren't showing on the Edit Order page.
 
 ## 5.2.8 - 2024-12-04
