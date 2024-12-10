@@ -570,7 +570,7 @@ class Product extends Element implements HasStoreInterface
      */
     public static function attributePreviewHtml(array $attribute): mixed
     {
-        return match($attribute['value']) {
+        return match ($attribute['value']) {
             'defaultSku' => $attribute['placeholder'],
             default => parent::attributePreviewHtml($attribute)
         };

@@ -1281,7 +1281,7 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
             $dimensions = array_filter([
                 $this->length,
                 $this->width,
-                $this->height
+                $this->height,
             ]);
         }
 
@@ -1348,9 +1348,9 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
      */
     public static function attributePreviewHtml(array $attribute): mixed
     {
-        return match($attribute['value']) {
+        return match ($attribute['value']) {
             'sku', 'priceView', 'dimensions', 'weight' => $attribute['placeholder'],
-            'availableForPurchase', 'promotable' =>  Html::tag('span', '', [
+            'availableForPurchase', 'promotable' => Html::tag('span', '', [
                     'class' => 'checkbox-icon',
                     'role' => 'img',
                     'title' => $attribute['label'],
@@ -1415,7 +1415,7 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
             'weight' => [
                 'label' => Craft::t('commerce', 'Weight'),
                 'placeholder' => 123 . Plugin::getInstance()->getSettings()->weightUnits,
-            ]
+            ],
         ]);
     }
 
