@@ -1276,6 +1276,24 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
             }
         }
 
+        $dimensions = [];
+        if ($attribute === 'dimensions') {
+            $dimensions = array_filter([
+                $this->length,
+                $this->width,
+                $this->height
+            ]);
+        }
+
+        if ($attribute === 'priceView') {
+            $price = $this->basePriceAsCurrency;
+            if ($this->getBasePromotionalPrice() && $this->getBasePromotionalPrice() < $this->getBasePrice()) {
+                $price = Html::tag('del', $price, ['style' => 'opacity: .5']) . ' ' . $this->basePromotionalPriceAsCurrency;
+            }
+
+            return $price;
+        }
+
         return match ($attribute) {
             'sku' => (string)Html::encode($this->getSkuAsText()),
             'price' => $this->basePriceAsCurrency,
@@ -1287,6 +1305,7 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
             'minQty' => (string)$this->minQty,
             'maxQty' => (string)$this->maxQty,
             'stock' => $stock,
+            'dimensions' => !empty($dimensions) ? implode(' x ', $dimensions) . ' ' . Plugin::getInstance()->getSettings()->dimensionUnits : '',
             default => parent::attributeHtml($attribute),
         };
     }
@@ -1322,6 +1341,82 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
             'sku',
             'price',
         ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public static function attributePreviewHtml(array $attribute): mixed
+    {
+        return match($attribute['value']) {
+            'sku', 'priceView', 'dimensions', 'weight' => $attribute['placeholder'],
+            'availableForPurchase', 'promotable' =>  Html::tag('span', '', [
+                    'class' => 'checkbox-icon',
+                    'role' => 'img',
+                    'title' => $attribute['label'],
+                    'aria' => [
+                        'label' => $attribute['label'],
+                    ],
+                ]) .
+                Html::tag('span', $attribute['label'], [
+                    'class' => 'checkbox-preview-label',
+                ]),
+            default => parent::attributePreviewHtml($attribute)
+        };
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected static function defineDefaultCardAttributes(): array
+    {
+        return array_merge(parent::defineDefaultCardAttributes(), [
+            'sku',
+            'priceView',
+        ]);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected static function defineCardAttributes(): array
+    {
+        return array_merge(Element::defineCardAttributes(), [
+            'availableForPurchase' => [
+                'label' => Craft::t('commerce', 'Available for purchase'),
+            ],
+            'basePrice' => [
+                'label' => Craft::t('commerce', 'Base Price'),
+                'placeholder' => '¤' . Craft::$app->getFormattingLocale()->getFormatter()->asDecimal(123.99),
+            ],
+            'basePromotionalPrice' => [
+                'label' => Craft::t('commerce', 'Base Promotional Price'),
+                'placeholder' => '¤' . Craft::$app->getFormattingLocale()->getFormatter()->asDecimal(123.99),
+            ],
+            'dimensions' => [
+                'label' => Craft::t('commerce', 'Dimensions'),
+                'placeholder' => '1 x 2 x 3 ' . Plugin::getInstance()->getSettings()->dimensionUnits,
+            ],
+            'priceView' => [
+                'label' => Craft::t('commerce', 'Price'),
+                'placeholder' => Html::tag('del', '¤' . Craft::$app->getFormattingLocale()->getFormatter()->asDecimal(199.99), ['style' => 'opacity: .5']) . ' ¤' . Craft::$app->getFormattingLocale()->getFormatter()->asDecimal(123.99),
+            ],
+            'promotable' => [
+                'label' => Craft::t('commerce', 'Promotable'),
+            ],
+            'sku' => [
+                'label' => Craft::t('commerce', 'SKU'),
+                'placeholder' => Html::tag('code', 'SKU123'),
+            ],
+            'stock' => [
+                'label' => Craft::t('commerce', 'Stock'),
+                'placeholder' => 10,
+            ],
+            'weight' => [
+                'label' => Craft::t('commerce', 'Weight'),
+                'placeholder' => 123 . Plugin::getInstance()->getSettings()->weightUnits,
+            ]
+        ]);
     }
 
     /**

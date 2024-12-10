@@ -1341,73 +1341,6 @@ class Variant extends Purchasable implements NestedElementInterface
     /**
      * @inheritdoc
      */
-    public static function attributePreviewHtml(array $attribute): mixed
-    {
-        return match($attribute['value']) {
-            'sku', 'priceView' => $attribute['placeholder'],
-            'availableForPurchase', 'promotable' =>  Html::tag('span', '', [
-                    'class' => 'checkbox-icon',
-                    'role' => 'img',
-                    'title' => $attribute['label'],
-                    'aria' => [
-                        'label' => $attribute['label'],
-                    ],
-                ]) .
-                Html::tag('span', $attribute['label'], [
-                    'class' => 'checkbox-preview-label',
-                ]),
-            default => parent::attributePreviewHtml($attribute)
-        };
-    }
-
-    /**
-     * @inheritdoc
-     */
-    protected static function defineCardAttributes(): array
-    {
-        return array_merge(parent::defineCardAttributes(), [
-            'basePromotionalPrice' => [
-                'label' => Craft::t('commerce', 'Base Promotional Price'),
-                'placeholder' => '¤' . Craft::$app->getFormattingLocale()->getFormatter()->asDecimal(123.99),
-            ],
-            'basePrice' => [
-                'label' => Craft::t('commerce', 'Base Price'),
-                'placeholder' => '¤' . Craft::$app->getFormattingLocale()->getFormatter()->asDecimal(123.99),
-            ],
-            'product' => [
-                'label' => Craft::t('commerce', 'Product'),
-            ],
-            'promotable' => [
-                'label' => Craft::t('commerce', 'Promotable'),
-            ],
-            'availableForPurchase' => [
-                'label' => Craft::t('commerce', 'Available for purchase'),
-            ],
-            'priceView' => [
-                'label' => Craft::t('commerce', 'Price'),
-                'placeholder' => Html::tag('del','¤' . Craft::$app->getFormattingLocale()->getFormatter()->asDecimal(199.99), ['style' => 'opacity: .5']) . ' ¤' . Craft::$app->getFormattingLocale()->getFormatter()->asDecimal(123.99),
-            ],
-            'sku' => [
-                'label' => Craft::t('commerce', 'SKU'),
-                'placeholder' => Html::tag('code', 'SKU123'),
-            ],
-        ]);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    protected static function defineDefaultCardAttributes(): array
-    {
-        return array_merge(parent::defineDefaultCardAttributes(), [
-            'sku',
-            'priceView',
-        ]);
-    }
-
-    /**
-     * @inheritdoc
-     */
     protected static function defineTableAttributes(): array
     {
         return array_merge(parent::defineTableAttributes(), [
@@ -1442,6 +1375,18 @@ class Variant extends Purchasable implements NestedElementInterface
     /**
      * @inheritdoc
      */
+    protected static function defineCardAttributes(): array
+    {
+        return array_merge(parent::defineCardAttributes(), [
+            'product' => [
+                'label' => Craft::t('commerce', 'Product'),
+            ],
+        ]);
+    }
+
+    /**
+     * @inheritdoc
+     */
     protected function attributeHtml(string $attribute): string
     {
         if ($attribute === 'product') {
@@ -1451,15 +1396,6 @@ class Variant extends Purchasable implements NestedElementInterface
             }
 
             return sprintf('<span class="status %s"></span> %s', $product->getStatus(), Html::encode($product->title));
-        }
-
-        if ($attribute === 'priceView') {
-            $price = $this->basePriceAsCurrency;
-            if ($this->getBasePromotionalPrice() && $this->getBasePromotionalPrice() < $this->getBasePrice()) {
-                $price = Html::tag('del', $price, ['style' => 'opacity: .5']) . ' ' . $this->basePromotionalPriceAsCurrency;
-            }
-
-            return $price;
         }
 
         return parent::attributeHtml($attribute);
