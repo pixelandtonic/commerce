@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Fixed a PHP error when making a partial payment on an order from the control panel. ([#3804](https://github.com/craftcms/commerce/issues/3804))
 - Fixed a PHP error that could occur when calculating order totals. ([#3802](https://github.com/craftcms/commerce/issues/3802)) 
 - Fixed a bug where a product’s default price was showing incorrectly on the Products index page. ([#3807](https://github.com/craftcms/commerce/issues/3807))
 - Fixed a bug where inline-editable Matrix fields weren’t saving content on product variants. ([#3805](https://github.com/craftcms/commerce/issues/3805))
