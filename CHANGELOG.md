@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Fixed a PHP error that occurred when updating inventory of a non-primary site purchasable on Edit Variant screens. ([#3788](https://github.com/craftcms/commerce/issues/3788))
 - Fixed a PHP error when making a partial payment on an order from the control panel. ([#3804](https://github.com/craftcms/commerce/issues/3804))
 - Fixed a PHP error that could occur when calculating order totals. ([#3802](https://github.com/craftcms/commerce/issues/3802)) 
 - Fixed a bug where a product’s default price was showing incorrectly on the Products index page. ([#3807](https://github.com/craftcms/commerce/issues/3807))
