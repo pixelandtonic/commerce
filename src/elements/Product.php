@@ -1066,6 +1066,18 @@ class Product extends Element implements HasStoreInterface
     }
 
     /**
+     * @return VariantCollection
+     * @throws InvalidConfigException
+     * @internal Do not use. Temporary method until we get a nested element manager provider in core.
+     *
+     * TODO: Remove this once we have a nested element manager provider interface in core.
+     */
+    public function getAllVariants(): VariantCollection
+    {
+        return $this->getVariants(true);
+    }
+
+    /**
      * @inheritdoc
      */
     public function getSupportedSites(): array
@@ -1187,9 +1199,9 @@ class Product extends Element implements HasStoreInterface
                 /** @phpstan-ignore-next-line */
                 fn(Product $product) => self::createVariantQuery($product),
                 [
-                    'attribute' => 'variants',
+                    'attribute' => 'allVariants', // TODO: can change this back to 'variants' once we have a nested element manager provider in core.
                     'propagationMethod' => $this->getType()->propagationMethod,
-                    'valueGetter' => fn(Product $product) => $product->getVariants(true),
+                    'valueSetter' => fn($variants) => $this->setVariants($variants), // TODO: can change this back to 'variants' once we have a nested element manager provider in core.
                 ],
             );
         }

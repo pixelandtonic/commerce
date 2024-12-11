@@ -329,15 +329,30 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
      */
     protected function inlineAttributeInputHtml(string $attribute): string
     {
+        $localizePrice = function(string $attribute) {
+            $price = $this->{$attribute};
+            if (empty($this->getErrors($attribute))) {
+                if ($price === null && $attribute === 'basePromotionalPrice') {
+                    return null;
+                } elseif ($price === null) {
+                    $price = 0;
+                }
+
+                $price = Craft::$app->getFormatter()->asDecimal($price);
+            }
+
+            return $price;
+        };
+
         return match ($attribute) {
             'availableForPurchase' => PurchasableHelper::availableForPurchaseInputHtml($this->availableForPurchase),
-            'price' => Currency::moneyInputHtml($this->basePrice, [
+            'price' => Currency::moneyInputHtml($localizePrice('basePrice'), [
                 'id' => 'base-price',
                 'name' => 'basePrice',
                 'currency' => $this->getStore()->getCurrency()->getCode(),
                 'currencyLabel' => $this->getStore()->getCurrency()->getCode(),
             ]),
-            'promotionalPrice' => Currency::moneyInputHtml($this->basePromotionalPrice, [
+            'promotionalPrice' => Currency::moneyInputHtml($localizePrice('basePromotionalPrice'), [
                 'id' => 'base-promotional-price',
                 'name' => 'basePromotionalPrice',
                 'currency' => $this->getStore()->getCurrency()->getCode(),
@@ -1104,6 +1119,8 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
      */
     public function afterPropagate(bool $isNew): void
     {
+        parent::afterPropagate($isNew);
+
         Plugin::getInstance()->getCatalogPricing()->createCatalogPricingJob([
             'purchasableIds' => [$this->getCanonicalId()],
             'storeId' => $this->getStoreId(),
@@ -1262,7 +1279,7 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
         return match ($attribute) {
             'sku' => (string)Html::encode($this->getSkuAsText()),
             'price' => $this->basePriceAsCurrency,
-            'promotionalPrice' => $this->basePromotionalPriceAsCurrency,
+            'promotionalPrice' => $this->basePromotionalPrice !== null ? $this->basePromotionalPriceAsCurrency : '',
             'weight' => $this->weight !== null ? Craft::$app->getFormattingLocale()->getFormatter()->asDecimal($this->$attribute) . ' ' . Plugin::getInstance()->getSettings()->weightUnits : '',
             'length' => $this->length !== null ? Craft::$app->getFormattingLocale()->getFormatter()->asDecimal($this->$attribute) . ' ' . Plugin::getInstance()->getSettings()->dimensionUnits : '',
             'width' => $this->width !== null ? Craft::$app->getFormattingLocale()->getFormatter()->asDecimal($this->$attribute) . ' ' . Plugin::getInstance()->getSettings()->dimensionUnits : '',
