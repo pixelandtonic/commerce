@@ -8,17 +8,13 @@
 - Tax rates now have statuses. ([#3790](https://github.com/craftcms/commerce/discussions/3790))
 
 ### Administration
-- The `to`, `bcc`, and `cc` email fields now support environment variables. ([#3738](https://github.com/craftcms/commerce/issues/3738))
+- Added support for environment variables to the `to`, `bcc`, and `cc` email fields. ([#3738](https://github.com/craftcms/commerce/issues/3738))
 
 ### Development
 - Added the `couponCode` order query param.
-- Added an `originalCart` value to the `commerce/update-cart` failed ajax response. ([#430](https://github.com/craftcms/commerce/issues/430))
-- Added a new "Payment Gateway" order condition rule. ([#3722](https://github.com/craftcms/commerce/discussions/3722))
+- Added an `originalCart` value to `commerce/update-cart` action, for failed ajax responses. ([#430](https://github.com/craftcms/commerce/issues/430))
 
 ### Extensibility
-
-- Added `craft\commerce\elements\Order::getTeller()`.
-- Added `craft\commerce\elements\conditions\variants\ProductConditionRule`.
 - Added `craft\commerce\base\InventoryItemTrait`.
 - Added `craft\commerce\base\InventoryLocationTrait`.
 - Added `craft\commerce\elements\conditions\orders\CouponCodeConditionRule`.
@@ -28,7 +24,6 @@
 - Added `craft\commerce\events\CartPurgeEvent`.
 - Added `craft\commerce\services\Inventory::updateInventoryLevel()`.
 - Added `craft\commerce\services\Inventory::updatePurchasableInventoryLevel()`.
-- Added `craft\commerce\services\TaxRates::getAllEnabledTaxRates()`.
 
 ### System
 - Craft Commerce now requires Craft CMS 5.5 or later.
