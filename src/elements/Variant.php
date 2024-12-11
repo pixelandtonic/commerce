@@ -743,6 +743,14 @@ class Variant extends Purchasable implements NestedElementInterface
     /**
      * @inheritdoc
      */
+    public function getCpEditUrl(): ?string
+    {
+        return $this->getOwner() ? $this->getOwner()->getCpEditUrl() : null;
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function getUrl(): ?string
     {
         $productUrl = $this->getOwner()?->getUrl();
@@ -1060,6 +1068,7 @@ class Variant extends Purchasable implements NestedElementInterface
         parent::afterSave($isNew);
 
         if (!$this->propagating && $this->isDefault && $ownerId && $this->duplicateOf === null) {
+            // @TODO - this data is now joined in on the product query so can be removed at the next breaking change
             $defaultData = [
                 'defaultVariantId' => $this->id,
                 'defaultSku' => $this->getSkuAsText(),
@@ -1361,6 +1370,18 @@ class Variant extends Purchasable implements NestedElementInterface
     protected static function defineSearchableAttributes(): array
     {
         return [...parent::defineSearchableAttributes(), ...['productTitle']];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected static function defineCardAttributes(): array
+    {
+        return array_merge(parent::defineCardAttributes(), [
+            'product' => [
+                'label' => Craft::t('commerce', 'Product'),
+            ],
+        ]);
     }
 
     /**

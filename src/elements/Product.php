@@ -568,6 +568,45 @@ class Product extends Element implements HasStoreInterface
     /**
      * @inheritdoc
      */
+    public static function attributePreviewHtml(array $attribute): mixed
+    {
+        return match ($attribute['value']) {
+            'defaultSku' => $attribute['placeholder'],
+            default => parent::attributePreviewHtml($attribute)
+        };
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected static function defineCardAttributes(): array
+    {
+        return array_merge(parent::defineCardAttributes(), [
+            'defaultPrice' => [
+                'label' => Craft::t('commerce', 'Price'),
+                'placeholder' => '¤' . Craft::$app->getFormattingLocale()->getFormatter()->asDecimal(123.99),
+            ],
+            'defaultSku' => [
+                'label' => Craft::t('commerce', 'SKU'),
+                'placeholder' => Html::tag('code', 'SKU123'),
+            ],
+        ]);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected static function defineDefaultCardAttributes(): array
+    {
+        return array_merge(parent::defineDefaultCardAttributes(), [
+            'defaultSku',
+            'defaultPrice',
+        ]);
+    }
+
+    /**
+     * @inheritdoc
+     */
     public static function eagerLoadingMap(array $sourceElements, string $handle): array|null|false
     {
         if ($handle == 'variants') {
@@ -1066,6 +1105,18 @@ class Product extends Element implements HasStoreInterface
     }
 
     /**
+     * @return VariantCollection
+     * @throws InvalidConfigException
+     * @internal Do not use. Temporary method until we get a nested element manager provider in core.
+     *
+     * TODO: Remove this once we have a nested element manager provider interface in core.
+     */
+    public function getAllVariants(): VariantCollection
+    {
+        return $this->getVariants(true);
+    }
+
+    /**
      * @inheritdoc
      */
     public function getSupportedSites(): array
@@ -1187,9 +1238,9 @@ class Product extends Element implements HasStoreInterface
                 /** @phpstan-ignore-next-line */
                 fn(Product $product) => self::createVariantQuery($product),
                 [
-                    'attribute' => 'variants',
+                    'attribute' => 'allVariants', // TODO: can change this back to 'variants' once we have a nested element manager provider in core.
                     'propagationMethod' => $this->getType()->propagationMethod,
-                    'valueGetter' => fn(Product $product) => $product->getVariants(true),
+                    'valueSetter' => fn($variants) => $this->setVariants($variants), // TODO: can change this back to 'variants' once we have a nested element manager provider in core.
                 ],
             );
         }
