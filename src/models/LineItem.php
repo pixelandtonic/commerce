@@ -703,7 +703,8 @@ class LineItem extends Model
      */
     public function getTotal(): float
     {
-        return $this->getSubtotal() + $this->getAdjustmentsTotal();
+        $teller = Plugin::getInstance()->getCurrencies()->getTeller($this->order->currency);
+        return (float)$teller->add($this->getSubtotal(), $this->getAdjustmentsTotal());
     }
 
     /**
