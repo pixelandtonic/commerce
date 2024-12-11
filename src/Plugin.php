@@ -1154,10 +1154,9 @@ class Plugin extends BasePlugin
                         $criteria['type'] = explode(',', $controller->type);
                     }
 
-                    // @TODO Remove this check when Commerce requires Craft 5.5 (also remove phpstan ignores)
+                    // @TODO Remove this check when Commerce requires Craft 5.5
                     if (version_compare(Craft::$app->getInfo()->version, '5.5.0', '>=') && !empty($controller->withFields)) {
                         $handles = Collection::make(self::getInstance()->getProductTypes()->getAllProductTypes())
-                            /** @phpstan-ignore-next-line  */
                             ->filter(fn(ProductType $productType) => $controller->hasTheFields($productType->getFieldLayout()))
                             ->map(fn(ProductType $productType) => $productType->handle)
                             ->all();
@@ -1168,7 +1167,6 @@ class Plugin extends BasePlugin
                         }
 
                         if (empty($criteria['type'])) {
-                            /** @phpstan-ignore-next-line  */
                             $controller->output($controller->markdownToAnsi('No product types satisfy `--with-fields`.'));
                             return ExitCode::UNSPECIFIED_ERROR;
                         }
@@ -1187,12 +1185,10 @@ class Plugin extends BasePlugin
                 'action' => function(): int {
                     /** @var ResaveController $controller */
                     $controller = Craft::$app->controller;
-                    // @TODO Remove this check when Commerce requires Craft 5.5 (also remove phpstan ignores)
+                    // @TODO Remove this check when Commerce requires Craft 5.5
                     if (version_compare(Craft::$app->getInfo()->version, '5.5.0', '>=') && !empty($controller->withFields)) {
                         $fieldLayout = Craft::$app->getFields()->getLayoutByType(Order::class);
-                        /** @phpstan-ignore-next-line  */
                         if (!$controller->hasTheFields($fieldLayout)) {
-                            /** @phpstan-ignore-next-line  */
                             $controller->output($controller->markdownToAnsi('The order field layout doesn’t satisfy `--with-fields`.'));
                             return ExitCode::UNSPECIFIED_ERROR;
                         }
@@ -1213,9 +1209,7 @@ class Plugin extends BasePlugin
                     // @TODO Remove this check when Commerce requires Craft 5.5
                     if (version_compare(Craft::$app->getInfo()->version, '5.5.0', '>=') && !empty($controller->withFields)) {
                         $fieldLayout = Craft::$app->getFields()->getLayoutByType(Order::class);
-                        /** @phpstan-ignore-next-line  */
                         if (!$controller->hasTheFields($fieldLayout)) {
-                            /** @phpstan-ignore-next-line  */
                             $controller->output($controller->markdownToAnsi('The order field layout doesn’t satisfy `--with-fields`.'));
                             return ExitCode::UNSPECIFIED_ERROR;
                         }
