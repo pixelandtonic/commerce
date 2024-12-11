@@ -52,20 +52,25 @@ class InventoryItem extends Model
      */
     public ?\DateTime $dateUpdated = null;
 
-    public function getCpEditUrl(): string
-    {
-        return UrlHelper::cpUrl('commerce/inventory/item/' . $this->id);
-    }
-
+    /**
+     * @var Purchasable|null
+     */
+    private ?Purchasable $_purchasable = null;
+    
     /**
      * @return ?Purchasable
+     * @var null|string|int $siteId
      */
-    public function getPurchasable(): ?Purchasable
+    public function getPurchasable(null|string|int $siteId = null): ?Purchasable
     {
-        /** @var ?Purchasable $purchasable */
-        $purchasable = \Craft::$app->getElements()->getElementById($this->purchasableId);
+        if ($this->_purchasable !== null) {
+            return $this->_purchasable;
+        }
 
-        return $purchasable;
+        /** @var ?Purchasable $purchasable */
+        $this->_purchasable = \Craft::$app->getElements()->getElementById(elementId: $this->purchasableId, siteId: $siteId);
+
+        return $this->_purchasable;
     }
 
     public function getSku(): string
