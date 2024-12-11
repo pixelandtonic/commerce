@@ -8,6 +8,7 @@
 namespace craft\commerce\collections;
 
 use craft\commerce\models\inventory\UpdateInventoryLevel;
+use craft\commerce\models\inventory\UpdateInventoryLevelInTransfer;
 use Illuminate\Support\Collection;
 
 /**
@@ -46,7 +47,7 @@ class UpdateInventoryLevelCollection extends Collection
      */
     public function getPurchasables(): array
     {
-        return $this->map(function(UpdateInventoryLevel $updateInventoryLevel) {
+        return $this->map(function(UpdateInventoryLevel|UpdateInventoryLevelInTransfer $updateInventoryLevel) {
             return $updateInventoryLevel->inventoryItem->getPurchasable();
         })->all();
     }

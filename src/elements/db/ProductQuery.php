@@ -768,18 +768,20 @@ class ProductQuery extends ElementQuery
             'commerce_products.postDate',
             'commerce_products.expiryDate',
             'subquery.price as defaultPrice',
-            'commerce_products.defaultPrice as defaultBasePrice',
+            'purchasablesstores.basePrice as defaultBasePrice',
             'commerce_products.defaultVariantId',
-            'commerce_products.defaultSku',
-            'commerce_products.defaultWeight',
-            'commerce_products.defaultLength',
-            'commerce_products.defaultWidth',
-            'commerce_products.defaultHeight',
+            'purchasables.sku as defaultSku',
+            'purchasables.weight as defaultWeight',
+            'purchasables.length as defaultLength',
+            'purchasables.width as defaultWidth',
+            'purchasables.height as defaultHeight',
             'sitestores.storeId',
         ]);
 
         // Join in sites stores to get product's store for current request
         $this->query->leftJoin(['sitestores' => Table::SITESTORES], '[[elements_sites.siteId]] = [[sitestores.siteId]]');
+        $this->query->leftJoin(['purchasables' => Table::PURCHASABLES], '[[purchasables.id]] = [[commerce_products.defaultVariantId]]');
+        $this->query->leftJoin(['purchasablesstores' => Table::PURCHASABLES_STORES], '[[purchasablesstores.purchasableId]] = [[commerce_products.defaultVariantId]] and [[sitestores.storeId]] = [[purchasablesstores.storeId]]');
 
         $this->subQuery->addSelect(['catalogprices.price']);
 
