@@ -20,6 +20,7 @@
 - Added `craft\commerce\elements\conditions\variants\ProductConditionRule`.
 - Added `craft\commerce\elements\db\OrderQuery::$couponCode`.
 - Added `craft\commerce\elements\db\OrderQuery::couponCode()`.
+- Added `craft\commerce\events\CartPurgeEvent`.
 - Added `craft\commerce\services\Inventory::updateInventoryLevel()`.
 - Added `craft\commerce\services\Inventory::updatePurchasableInventoryLevel()`.
 
