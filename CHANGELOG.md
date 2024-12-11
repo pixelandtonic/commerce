@@ -1,6 +1,6 @@
 # Release Notes for Craft Commerce
 
-## Unreleased
+## 5.2.9 - 2024-12-11
 
 - Fixed a PHP error that could occur when updating the inventory of a purchasable for a non-primary site. ([#3788](https://github.com/craftcms/commerce/issues/3788))
 - Fixed a PHP error that occurred when making a partial payment on an order from the control panel. ([#3804](https://github.com/craftcms/commerce/issues/3804))
