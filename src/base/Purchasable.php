@@ -1132,6 +1132,8 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
      */
     public function afterPropagate(bool $isNew): void
     {
+        parent::afterPropagate($isNew);
+
         Plugin::getInstance()->getCatalogPricing()->createCatalogPricingJob([
             'purchasableIds' => [$this->getCanonicalId()],
             'storeId' => $this->getStoreId(),

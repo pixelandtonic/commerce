@@ -1068,6 +1068,7 @@ class Variant extends Purchasable implements NestedElementInterface
         parent::afterSave($isNew);
 
         if (!$this->propagating && $this->isDefault && $ownerId && $this->duplicateOf === null) {
+            // @TODO - this data is now joined in on the product query so can be removed at the next breaking change
             $defaultData = [
                 'defaultVariantId' => $this->id,
                 'defaultSku' => $this->getSkuAsText(),
