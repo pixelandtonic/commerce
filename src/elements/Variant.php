@@ -1375,6 +1375,18 @@ class Variant extends Purchasable implements NestedElementInterface
     /**
      * @inheritdoc
      */
+    protected static function defineCardAttributes(): array
+    {
+        return array_merge(parent::defineCardAttributes(), [
+            'product' => [
+                'label' => Craft::t('commerce', 'Product'),
+            ],
+        ]);
+    }
+
+    /**
+     * @inheritdoc
+     */
     protected function attributeHtml(string $attribute): string
     {
         if ($attribute === 'product') {
