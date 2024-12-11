@@ -386,6 +386,20 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
     /**
      * @inheritdoc
      */
+    public function __unset($name)
+    {
+        // Allow clearing of specific memoized properties
+        if (in_array($name, ['stock', 'shippingCategory', 'taxCategory'])) {
+            $this->{'_' . $name} = null;
+            return;
+        }
+
+        parent::__unset($name);
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function getStore(): Store
     {
         if ($this->_store === null || !in_array($this->siteId, $this->_store->getSites()->pluck('id')->all())) {
@@ -948,7 +962,6 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
 
         return $this->_stock;
     }
-
 
     /**
      * Returns the total stock across all locations this purchasable is tracked in.

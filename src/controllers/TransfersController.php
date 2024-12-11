@@ -197,7 +197,7 @@ class TransfersController extends BaseStoreManagementController
                 $inventoryAcceptedMovement = new InventoryTransferMovement();
                 $inventoryAcceptedMovement->quantity = $acceptedAmount;
                 $inventoryAcceptedMovement->transferId = $transfer->id;
-                $inventoryAcceptedMovement->inventoryItem = $detail->getInventoryItem();
+                $inventoryAcceptedMovement->setInventoryItem($detail->getInventoryItem());
                 $inventoryAcceptedMovement->toInventoryLocation = $transfer->getDestinationLocation();
                 $inventoryAcceptedMovement->fromInventoryLocation = $transfer->getDestinationLocation(); // we are moving from incoming to available
                 $inventoryAcceptedMovement->toInventoryTransactionType = InventoryTransactionType::AVAILABLE;
@@ -213,9 +213,9 @@ class TransfersController extends BaseStoreManagementController
                 $inventoryRejectedMovement = new UpdateInventoryLevel();
                 $inventoryRejectedMovement->quantity = $rejectedAmount * -1;
                 $inventoryRejectedMovement->updateAction = InventoryUpdateQuantityType::ADJUST;
-                $inventoryRejectedMovement->inventoryItem = $detail->getInventoryItem();
+                $inventoryRejectedMovement->inventoryItemId = $detail->inventoryItemId;
                 $inventoryRejectedMovement->transferId = $transfer->id;
-                $inventoryRejectedMovement->inventoryLocation = $transfer->getDestinationLocation();
+                $inventoryRejectedMovement->setInventoryLocation($transfer->getDestinationLocation());
                 $inventoryRejectedMovement->type = InventoryTransactionType::INCOMING->value;
 
                 $inventoryUpdateCollection->push($inventoryRejectedMovement);
