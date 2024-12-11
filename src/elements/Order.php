@@ -1700,8 +1700,8 @@ class Order extends Element implements HasStoreInterface
         $justPaid = $paidInFull && $this->datePaid == null;
         $justAuthorized = $authorizedInFull && $this->dateAuthorized == null;
 
-        $completeTotal = $this->_getTeller()->add($this->getTotalAuthorized(), $this->getTotalPaid());
-        $canComplete = $this->_getTeller()->greaterThan($completeTotal, 0);
+        $completeTotal = $this->getTeller()->add($this->getTotalAuthorized(), $this->getTotalPaid());
+        $canComplete = $this->getTeller()->greaterThan($completeTotal, 0);
 
         // If it is no longer paid in full, set datePaid to null
         if (!$paidInFull) {
@@ -2663,7 +2663,7 @@ class Order extends Element implements HasStoreInterface
      */
     public function getTotal(): float
     {
-        return (float)$this->_getTeller()->add($this->getItemSubtotal(), $this->getAdjustmentsTotal());
+        return (float)$this->getTeller()->add($this->getItemSubtotal(), $this->getAdjustmentsTotal());
     }
 
     /**
@@ -2671,16 +2671,16 @@ class Order extends Element implements HasStoreInterface
      */
     public function getTotalPrice(): float
     {
-        $total = (float)$this->_getTeller()->add($this->getItemSubtotal(), $this->getAdjustmentsTotal());
+        $total = (float)$this->getTeller()->add($this->getItemSubtotal(), $this->getAdjustmentsTotal());
         // Don't get the pre-rounded total.
         $strategy = $this->getStore()->getMinimumTotalPriceStrategy();
 
         if ($strategy === Store::MINIMUM_TOTAL_PRICE_STRATEGY_ZERO) {
-            return (float)$this->_getTeller()->max(0, $total);
+            return (float)$this->getTeller()->max(0, $total);
         }
 
         if ($strategy === Store::MINIMUM_TOTAL_PRICE_STRATEGY_SHIPPING) {
-            return (float)$this->_getTeller()->max($this->getTotalShippingCost(), $total);
+            return (float)$this->getTeller()->max($this->getTotalShippingCost(), $total);
         }
 
         return $total;
