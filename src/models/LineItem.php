@@ -715,8 +715,8 @@ class LineItem extends Model
     {
         return match ($taxable) {
             TaxRateRecord::TAXABLE_SHIPPING => $this->getShippingCost(),
-            TaxRateRecord::TAXABLE_PRICE_SHIPPING => $this->order->getTeller()->add($this->getSubtotal(), $this->getDiscount() , $this->getShippingCost()),
-            default => $this->order->getTeller()->add($this->getSubtotal() , $this->getDiscount()), // TaxRateRecord::TAXABLE_PRICE is default
+            TaxRateRecord::TAXABLE_PRICE_SHIPPING => (float)$this->order->getTeller()->sum($this->getSubtotal(), $this->getDiscount() , $this->getShippingCost()),
+            default => (float)$this->order->getTeller()->add($this->getSubtotal() , $this->getDiscount()), // TaxRateRecord::TAXABLE_PRICE is default
         };
     }
 
