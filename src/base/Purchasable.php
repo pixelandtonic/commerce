@@ -329,15 +329,30 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
      */
     protected function inlineAttributeInputHtml(string $attribute): string
     {
+        $localizePrice = function(string $attribute) {
+            $price = $this->{$attribute};
+            if (empty($this->getErrors($attribute))) {
+                if ($price === null && $attribute === 'basePromotionalPrice') {
+                    return null;
+                } elseif ($price === null) {
+                    $price = 0;
+                }
+
+                $price = Craft::$app->getFormatter()->asDecimal($price);
+            }
+
+            return $price;
+        };
+
         return match ($attribute) {
             'availableForPurchase' => PurchasableHelper::availableForPurchaseInputHtml($this->availableForPurchase),
-            'price' => Currency::moneyInputHtml($this->basePrice, [
+            'price' => Currency::moneyInputHtml($localizePrice('basePrice'), [
                 'id' => 'base-price',
                 'name' => 'basePrice',
                 'currency' => $this->getStore()->getCurrency()->getCode(),
                 'currencyLabel' => $this->getStore()->getCurrency()->getCode(),
             ]),
-            'promotionalPrice' => Currency::moneyInputHtml($this->basePromotionalPrice, [
+            'promotionalPrice' => Currency::moneyInputHtml($localizePrice('basePromotionalPrice'), [
                 'id' => 'base-promotional-price',
                 'name' => 'basePromotionalPrice',
                 'currency' => $this->getStore()->getCurrency()->getCode(),
@@ -366,6 +381,20 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
     private function _getTeller(): Teller
     {
         return Plugin::getInstance()->getCurrencies()->getTeller($this->getStore()->getCurrency());
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function __unset($name)
+    {
+        // Allow clearing of specific memoized properties
+        if (in_array($name, ['stock', 'shippingCategory', 'taxCategory'])) {
+            $this->{'_' . $name} = null;
+            return;
+        }
+
+        parent::__unset($name);
     }
 
     /**
@@ -934,7 +963,6 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
         return $this->_stock;
     }
 
-
     /**
      * Returns the total stock across all locations this purchasable is tracked in.
      * @return Collection<InventoryLevel>
@@ -1104,6 +1132,8 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
      */
     public function afterPropagate(bool $isNew): void
     {
+        parent::afterPropagate($isNew);
+
         Plugin::getInstance()->getCatalogPricing()->createCatalogPricingJob([
             'purchasableIds' => [$this->getCanonicalId()],
             'storeId' => $this->getStoreId(),
@@ -1259,10 +1289,28 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
             }
         }
 
+        $dimensions = [];
+        if ($attribute === 'dimensions') {
+            $dimensions = array_filter([
+                $this->length,
+                $this->width,
+                $this->height,
+            ]);
+        }
+
+        if ($attribute === 'priceView') {
+            $price = $this->basePriceAsCurrency;
+            if ($this->getBasePromotionalPrice() && $this->getBasePromotionalPrice() < $this->getBasePrice()) {
+                $price = Html::tag('del', $price, ['style' => 'opacity: .5']) . ' ' . $this->basePromotionalPriceAsCurrency;
+            }
+
+            return $price;
+        }
+
         return match ($attribute) {
             'sku' => (string)Html::encode($this->getSkuAsText()),
             'price' => $this->basePriceAsCurrency,
-            'promotionalPrice' => $this->basePromotionalPriceAsCurrency,
+            'promotionalPrice' => $this->basePromotionalPrice !== null ? $this->basePromotionalPriceAsCurrency : '',
             'weight' => $this->weight !== null ? Craft::$app->getFormattingLocale()->getFormatter()->asDecimal($this->$attribute) . ' ' . Plugin::getInstance()->getSettings()->weightUnits : '',
             'length' => $this->length !== null ? Craft::$app->getFormattingLocale()->getFormatter()->asDecimal($this->$attribute) . ' ' . Plugin::getInstance()->getSettings()->dimensionUnits : '',
             'width' => $this->width !== null ? Craft::$app->getFormattingLocale()->getFormatter()->asDecimal($this->$attribute) . ' ' . Plugin::getInstance()->getSettings()->dimensionUnits : '',
@@ -1270,6 +1318,7 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
             'minQty' => (string)$this->minQty,
             'maxQty' => (string)$this->maxQty,
             'stock' => $stock,
+            'dimensions' => !empty($dimensions) ? implode(' x ', $dimensions) . ' ' . Plugin::getInstance()->getSettings()->dimensionUnits : '',
             default => parent::attributeHtml($attribute),
         };
     }
@@ -1305,6 +1354,82 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
             'sku',
             'price',
         ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public static function attributePreviewHtml(array $attribute): mixed
+    {
+        return match ($attribute['value']) {
+            'sku', 'priceView', 'dimensions', 'weight' => $attribute['placeholder'],
+            'availableForPurchase', 'promotable' => Html::tag('span', '', [
+                    'class' => 'checkbox-icon',
+                    'role' => 'img',
+                    'title' => $attribute['label'],
+                    'aria' => [
+                        'label' => $attribute['label'],
+                    ],
+                ]) .
+                Html::tag('span', $attribute['label'], [
+                    'class' => 'checkbox-preview-label',
+                ]),
+            default => parent::attributePreviewHtml($attribute)
+        };
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected static function defineDefaultCardAttributes(): array
+    {
+        return array_merge(parent::defineDefaultCardAttributes(), [
+            'sku',
+            'priceView',
+        ]);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected static function defineCardAttributes(): array
+    {
+        return array_merge(Element::defineCardAttributes(), [
+            'availableForPurchase' => [
+                'label' => Craft::t('commerce', 'Available for purchase'),
+            ],
+            'basePrice' => [
+                'label' => Craft::t('commerce', 'Base Price'),
+                'placeholder' => '¤' . Craft::$app->getFormattingLocale()->getFormatter()->asDecimal(123.99),
+            ],
+            'basePromotionalPrice' => [
+                'label' => Craft::t('commerce', 'Base Promotional Price'),
+                'placeholder' => '¤' . Craft::$app->getFormattingLocale()->getFormatter()->asDecimal(123.99),
+            ],
+            'dimensions' => [
+                'label' => Craft::t('commerce', 'Dimensions'),
+                'placeholder' => '1 x 2 x 3 ' . Plugin::getInstance()->getSettings()->dimensionUnits,
+            ],
+            'priceView' => [
+                'label' => Craft::t('commerce', 'Price'),
+                'placeholder' => Html::tag('del', '¤' . Craft::$app->getFormattingLocale()->getFormatter()->asDecimal(199.99), ['style' => 'opacity: .5']) . ' ¤' . Craft::$app->getFormattingLocale()->getFormatter()->asDecimal(123.99),
+            ],
+            'promotable' => [
+                'label' => Craft::t('commerce', 'Promotable'),
+            ],
+            'sku' => [
+                'label' => Craft::t('commerce', 'SKU'),
+                'placeholder' => Html::tag('code', 'SKU123'),
+            ],
+            'stock' => [
+                'label' => Craft::t('commerce', 'Stock'),
+                'placeholder' => 10,
+            ],
+            'weight' => [
+                'label' => Craft::t('commerce', 'Weight'),
+                'placeholder' => 123 . Plugin::getInstance()->getSettings()->weightUnits,
+            ],
+        ]);
     }
 
     /**

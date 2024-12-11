@@ -51,6 +51,7 @@ use craft\commerce\gql\queries\Variant as GqlVariantQueries;
 use craft\commerce\helpers\ProjectConfigData;
 use craft\commerce\linktypes\Product as ProductLinkType;
 use craft\commerce\migrations\Install;
+use craft\commerce\models\ProductType;
 use craft\commerce\models\Settings;
 use craft\commerce\plugin\Routes;
 use craft\commerce\plugin\Services as CommerceServices;
@@ -165,7 +166,9 @@ use craft\utilities\ClearCaches;
 use craft\web\Application;
 use craft\web\twig\variables\CraftVariable;
 use Exception;
+use Illuminate\Support\Collection;
 use yii\base\Event;
+use yii\console\ExitCode;
 use yii\web\User;
 
 /**
@@ -254,7 +257,7 @@ class Plugin extends BasePlugin
     /**
      * @inheritDoc
      */
-    public string $schemaVersion = '5.2.0.5';
+    public string $schemaVersion = '5.2.7.1';
 
     /**
      * @inheritdoc
@@ -794,7 +797,10 @@ class Plugin extends BasePlugin
 
         // Add Commerce info to user edit screen
         Event::on(UsersController::class, UsersController::EVENT_DEFINE_EDIT_SCREENS, function(DefineEditUserScreensEvent $event) {
-            $event->screens[CommerceUsersController::SCREEN_COMMERCE] = ['label' => Craft::t('commerce', 'Commerce')];
+            // Add Commerce screen to user edit screen if the user has permission to access Commerce
+            if (Craft::$app->getUser()->checkPermission('accessPlugin-commerce')) {
+                $event->screens[CommerceUsersController::SCREEN_COMMERCE] = ['label' => Craft::t('commerce', 'Commerce')];
+            }
         });
 
         // Site models are instantiated early meaning we have to manually attach the behavior alongside using the event
@@ -1143,12 +1149,32 @@ class Plugin extends BasePlugin
                     /** @var ResaveController $controller */
                     $controller = Craft::$app->controller;
                     $criteria = [];
+
                     if ($controller->type !== null) {
                         $criteria['type'] = explode(',', $controller->type);
                     }
+
+                    // @TODO Remove this check when Commerce requires Craft 5.5
+                    if (version_compare(Craft::$app->getInfo()->version, '5.5.0', '>=') && !empty($controller->withFields)) {
+                        $handles = Collection::make(self::getInstance()->getProductTypes()->getAllProductTypes())
+                            ->filter(fn(ProductType $productType) => $controller->hasTheFields($productType->getFieldLayout()))
+                            ->map(fn(ProductType $productType) => $productType->handle)
+                            ->all();
+                        if (isset($criteria['type'])) {
+                            $criteria['type'] = array_intersect($criteria['type'], $handles);
+                        } else {
+                            $criteria['type'] = $handles;
+                        }
+
+                        if (empty($criteria['type'])) {
+                            $controller->output($controller->markdownToAnsi('No product types satisfy `--with-fields`.'));
+                            return ExitCode::UNSPECIFIED_ERROR;
+                        }
+                    }
+
                     return $controller->resaveElements(Product::class, $criteria);
                 },
-                'options' => ['type'],
+                'options' => array_filter(['type', (property_exists(ResaveController::class, 'withFields') ? 'withFields' : null)]),
                 'helpSummary' => 'Re-saves Commerce products.',
                 'optionsHelp' => [
                     'type' => 'The product type handle(s) of the products to resave.',
@@ -1159,11 +1185,20 @@ class Plugin extends BasePlugin
                 'action' => function(): int {
                     /** @var ResaveController $controller */
                     $controller = Craft::$app->controller;
+                    // @TODO Remove this check when Commerce requires Craft 5.5
+                    if (version_compare(Craft::$app->getInfo()->version, '5.5.0', '>=') && !empty($controller->withFields)) {
+                        $fieldLayout = Craft::$app->getFields()->getLayoutByType(Order::class);
+                        if (!$controller->hasTheFields($fieldLayout)) {
+                            $controller->output($controller->markdownToAnsi('The order field layout doesn’t satisfy `--with-fields`.'));
+                            return ExitCode::UNSPECIFIED_ERROR;
+                        }
+                    }
+
                     return $controller->resaveElements(Order::class, [
                         'isCompleted' => true,
                     ]);
                 },
-                'options' => [],
+                'options' => array_filter([(property_exists(ResaveController::class, 'withFields') ? 'withFields' : null)]),
                 'helpSummary' => 'Re-saves completed Commerce orders.',
             ];
 
@@ -1171,11 +1206,20 @@ class Plugin extends BasePlugin
                 'action' => function(): int {
                     /** @var ResaveController $controller */
                     $controller = Craft::$app->controller;
+                    // @TODO Remove this check when Commerce requires Craft 5.5
+                    if (version_compare(Craft::$app->getInfo()->version, '5.5.0', '>=') && !empty($controller->withFields)) {
+                        $fieldLayout = Craft::$app->getFields()->getLayoutByType(Order::class);
+                        if (!$controller->hasTheFields($fieldLayout)) {
+                            $controller->output($controller->markdownToAnsi('The order field layout doesn’t satisfy `--with-fields`.'));
+                            return ExitCode::UNSPECIFIED_ERROR;
+                        }
+                    }
+
                     return $controller->resaveElements(Order::class, [
                         'isCompleted' => false,
                     ]);
                 },
-                'options' => [],
+                'options' => array_filter([(property_exists(ResaveController::class, 'withFields') ? 'withFields' : null)]),
                 'helpSummary' => 'Re-saves Commerce carts.',
             ];
         });
