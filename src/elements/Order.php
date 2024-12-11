@@ -1700,7 +1700,8 @@ class Order extends Element implements HasStoreInterface
         $justPaid = $paidInFull && $this->datePaid == null;
         $justAuthorized = $authorizedInFull && $this->dateAuthorized == null;
 
-        $canComplete = ($this->getTotalAuthorized() + $this->getTotalPaid()) > 0;
+        $completeTotal = $this->_getTeller()->add($this->getTotalAuthorized(), $this->getTotalPaid());
+        $canComplete = $this->_getTeller()->greaterThan($completeTotal, 0);
 
         // If it is no longer paid in full, set datePaid to null
         if (!$paidInFull) {
@@ -2662,7 +2663,7 @@ class Order extends Element implements HasStoreInterface
      */
     public function getTotal(): float
     {
-        return Currency::round($this->getItemSubtotal() + $this->getAdjustmentsTotal());
+        return (float)$this->_getTeller()->add($this->getItemSubtotal(), $this->getAdjustmentsTotal());
     }
 
     /**
@@ -2670,18 +2671,19 @@ class Order extends Element implements HasStoreInterface
      */
     public function getTotalPrice(): float
     {
-        $total = $this->getItemSubtotal() + $this->getAdjustmentsTotal(); // Don't get the pre-rounded total.
+        $total = (float)$this->_getTeller()->add($this->getItemSubtotal(), $this->getAdjustmentsTotal());
+        // Don't get the pre-rounded total.
         $strategy = $this->getStore()->getMinimumTotalPriceStrategy();
 
         if ($strategy === Store::MINIMUM_TOTAL_PRICE_STRATEGY_ZERO) {
-            return Currency::round(max(0, $total));
+            return (float)$this->_getTeller()->max(0, $total);
         }
 
         if ($strategy === Store::MINIMUM_TOTAL_PRICE_STRATEGY_SHIPPING) {
-            return Currency::round(max($this->getTotalShippingCost(), $total));
+            return (float)$this->_getTeller()->max($this->getTotalShippingCost(), $total);
         }
 
-        return Currency::round($total);
+        return $total;
     }
 
     public function getItemTotal(): float
