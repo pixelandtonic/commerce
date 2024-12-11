@@ -2,6 +2,7 @@
 
 namespace craft\commerce\models;
 
+use Craft;
 use craft\commerce\base\Model;
 use craft\commerce\base\Purchasable;
 
@@ -58,7 +59,6 @@ class InventoryItem extends Model
     
     /**
      * @return ?Purchasable
-     * @var null|string|int $siteId
      */
     public function getPurchasable(null|string|int $siteId = null): ?Purchasable
     {
@@ -66,15 +66,16 @@ class InventoryItem extends Model
             return $this->_purchasable;
         }
 
-        /** @var ?Purchasable $purchasable */
-        $this->_purchasable = \Craft::$app->getElements()->getElementById(elementId: $this->purchasableId, siteId: $siteId);
+        /** @phpstan-ignore-next-line */
+        $this->_purchasable = Craft::$app->getElements()->getElementById(elementId: $this->purchasableId, siteId: $siteId);
 
+        /** @phpstan-ignore-next-line */
         return $this->_purchasable;
     }
 
     public function getSku(): string
     {
-        return $this->getPurchasable()->sku;
+        return $this->getPurchasable('*')->sku;
     }
 
     protected function defineRules(): array

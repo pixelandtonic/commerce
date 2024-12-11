@@ -129,7 +129,6 @@ class InventoryLevel extends Model
 
     /**
      * @return Purchasable
-     * @var null|string|int $siteId
      */
     public function getPurchasable(null|string|int $siteId = null): Purchasable
     {

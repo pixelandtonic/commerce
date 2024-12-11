@@ -163,7 +163,10 @@ class Purchasables extends Component
     public function updateStoreStockCache(Purchasable $purchasable, bool $allSites = false): void
     {
         if ($allSites) {
-            $purchasables = $purchasable::find()->siteid('*')->id($purchasable->id)->status(null)->all();
+            $purchasables = $purchasable::find()
+                ->siteId('*')
+                ->id($purchasable->id)
+                ->status(null)->all();
         } else {
             $purchasables = [$purchasable];
         }

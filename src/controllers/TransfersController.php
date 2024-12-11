@@ -21,6 +21,7 @@ use craft\commerce\models\inventory\UpdateInventoryLevel;
 use craft\commerce\models\TransferDetail;
 use craft\commerce\Plugin;
 use craft\commerce\services\Transfers;
+use craft\helpers\Cp as CraftCp;
 use craft\helpers\Html;
 use craft\helpers\StringHelper;
 use craft\helpers\UrlHelper;
@@ -267,8 +268,8 @@ class TransfersController extends BaseStoreManagementController
         $tableRows = '';
         foreach ($transfer->getDetails() as $detail) {
             $key = $detail->uid;
-            $purchasable = $detail->getInventoryItem()?->getPurchasable();
-            $label = $purchasable ? \craft\helpers\Cp::elementChipHtml($purchasable) : $detail->inventoryItemDescription;
+            $purchasable = $detail->getInventoryItem()?->getPurchasable(CraftCp::requestedSite()->id);
+            $label = $purchasable ? CraftCp::elementChipHtml($purchasable) : $detail->inventoryItemDescription;
             $tableRows .= Html::beginTag('tr');
             $tableRows .= Html::tag('td', $label);
             $tableRows .= Html::tag('td', (string)$detail->quantityAccepted, ['class' => 'rightalign']);
