@@ -133,7 +133,6 @@ class InventoryLevel extends Model
      */
     public function getPurchasable(null|string|int $siteId = null): Purchasable
     {
-
         return $this->getInventoryItem()->getPurchasable($siteId);
     }
 }

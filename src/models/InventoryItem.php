@@ -4,7 +4,6 @@ namespace craft\commerce\models;
 
 use craft\commerce\base\Model;
 use craft\commerce\base\Purchasable;
-use craft\helpers\UrlHelper;
 
 /**
  * Inventory Item model
