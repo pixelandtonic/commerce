@@ -16,6 +16,9 @@
 - Added a new "Payment Gateway" order condition rule. ([#3722](https://github.com/craftcms/commerce/discussions/3722))
 
 ### Extensibility
+
+- Added `craft\commerce\elements\Order::getTeller()`.
+- Added `craft\commerce\elements\conditions\variants\ProductConditionRule`.
 - Added `craft\commerce\base\InventoryItemTrait`.
 - Added `craft\commerce\base\InventoryLocationTrait`.
 - Added `craft\commerce\elements\conditions\orders\CouponCodeConditionRule`.
