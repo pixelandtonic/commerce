@@ -703,8 +703,7 @@ class LineItem extends Model
      */
     public function getTotal(): float
     {
-        $teller = Plugin::getInstance()->getCurrencies()->getTeller($this->order->currency);
-        return (float)$teller->add($this->getSubtotal(), $this->getAdjustmentsTotal());
+        return (float)$this->order->getTeller()->add($this->getSubtotal(), $this->getAdjustmentsTotal());
     }
 
     /**
@@ -715,10 +714,9 @@ class LineItem extends Model
     public function getTaxableSubtotal(string $taxable): float
     {
         return match ($taxable) {
-            TaxRateRecord::TAXABLE_PRICE => $this->getSubtotal() + $this->getDiscount(),
             TaxRateRecord::TAXABLE_SHIPPING => $this->getShippingCost(),
-            TaxRateRecord::TAXABLE_PRICE_SHIPPING => $this->getSubtotal() + $this->getDiscount() + $this->getShippingCost(),
-            default => $this->getSubtotal() + $this->getDiscount(),
+            TaxRateRecord::TAXABLE_PRICE_SHIPPING => $this->order->getTeller()->add($this->getSubtotal(), $this->getDiscount() , $this->getShippingCost()),
+            default => $this->order->getTeller()->add($this->getSubtotal() , $this->getDiscount()), // TaxRateRecord::TAXABLE_PRICE is default
         };
     }
 

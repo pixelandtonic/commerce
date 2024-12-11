@@ -1542,9 +1542,9 @@ class Order extends Element implements HasStoreInterface
     /**
      * @return Teller
      * @throws InvalidConfigException
-     * @since 5.0.0
+     * @since 5.3.0
      */
-    private function _getTeller(): Teller
+    public function getTeller(): Teller
     {
         return Plugin::getInstance()->getCurrencies()->getTeller($this->currency);
     }
@@ -2546,7 +2546,7 @@ class Order extends Element implements HasStoreInterface
 
         // Only convert if we have differing currencies
         if ($this->currency !== $this->getPaymentCurrency()) {
-            $teller = $this->_getTeller();
+            $teller = $this->getTeller();
             $tellerTo = Plugin::getInstance()->getCurrencies()->getTeller($this->getPaymentCurrency());
             $outstandingBalanceAmount = $teller->convertToMoney($this->getOutstandingBalance());
             $outstandingBalanceInPaymentCurrency = Plugin::getInstance()->getPaymentCurrencies()->convertAmount($outstandingBalanceAmount, $this->getPaymentCurrency(), $this->getStore()->id);
@@ -2594,8 +2594,8 @@ class Order extends Element implements HasStoreInterface
     public function getPaidStatus(): string
     {
         if ($this->getIsPaid() &&
-            $this->_getTeller()->greaterThan($this->getTotalPrice(), 0) &&
-            $this->_getTeller()->greaterThan($this->getTotalPaid(), $this->getTotalPrice())
+            $this->getTeller()->greaterThan($this->getTotalPrice(), 0) &&
+            $this->getTeller()->greaterThan($this->getTotalPaid(), $this->getTotalPrice())
         ) {
             return self::PAID_STATUS_OVERPAID;
         }
@@ -2604,7 +2604,7 @@ class Order extends Element implements HasStoreInterface
             return self::PAID_STATUS_PAID;
         }
 
-        if ($this->_getTeller()->greaterThan($this->getTotalPaid(), 0)) {
+        if ($this->getTeller()->greaterThan($this->getTotalPaid(), 0)) {
             return self::PAID_STATUS_PARTIAL;
         }
 
@@ -2718,7 +2718,7 @@ class Order extends Element implements HasStoreInterface
      */
     public function getOutstandingBalance(): float
     {
-        return (float)$this->_getTeller()->subtract($this->getTotalPrice(), $this->getTotalPaid());
+        return (float)$this->getTeller()->subtract($this->getTotalPrice(), $this->getTotalPaid());
     }
 
     /**
@@ -2726,7 +2726,7 @@ class Order extends Element implements HasStoreInterface
      */
     public function hasOutstandingBalance(): bool
     {
-        return $this->_getTeller()->greaterThan($this->getOutstandingBalance(), 0);
+        return $this->getTeller()->greaterThan($this->getOutstandingBalance(), 0);
     }
 
     /**
@@ -2756,7 +2756,7 @@ class Order extends Element implements HasStoreInterface
                 && $transaction->type == TransactionRecord::TYPE_REFUND;
         })->sum('amount');
 
-        return (float)$this->_getTeller()->subtract($paid, $refunded);
+        return (float)$this->getTeller()->subtract($paid, $refunded);
     }
 
     /**
@@ -2794,7 +2794,7 @@ class Order extends Element implements HasStoreInterface
             }
         }
 
-        return (float)$this->_getTeller()->subtract($authorized, $captured);
+        return (float)$this->getTeller()->subtract($authorized, $captured);
     }
 
     /**
