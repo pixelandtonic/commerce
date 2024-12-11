@@ -2,12 +2,12 @@
 
 ## Unreleased
 
-- Fixed a PHP error that occurred when updating inventory of a non-primary site purchasable on Edit Variant screens. ([#3788](https://github.com/craftcms/commerce/issues/3788))
-- Fixed a PHP error when making a partial payment on an order from the control panel. ([#3804](https://github.com/craftcms/commerce/issues/3804))
+- Fixed a PHP error that could occur when updating the inventory of a purchasable for a non-primary site. ([#3788](https://github.com/craftcms/commerce/issues/3788))
+- Fixed a PHP error that occurred when making a partial payment on an order from the control panel. ([#3804](https://github.com/craftcms/commerce/issues/3804))
 - Fixed a PHP error that could occur when calculating order totals. ([#3802](https://github.com/craftcms/commerce/issues/3802)) 
-- Fixed a bug where a product’s default price was showing incorrectly on the Products index page. ([#3807](https://github.com/craftcms/commerce/issues/3807))
-- Fixed a bug where inline-editable Matrix fields weren’t saving content on product variants. ([#3805](https://github.com/craftcms/commerce/issues/3805))
-- Fixed a bug where order errors weren't showing on the Edit Order page.
+- Fixed a bug where product indexes weren’t always showing the correct price. ([#3807](https://github.com/craftcms/commerce/issues/3807))
+- Fixed a bug where changes to inline-editable Matrix fields weren’t getting saved for product variants. ([#3805](https://github.com/craftcms/commerce/issues/3805))
+- Fixed a bug where the Edit Order page wasn’t showing order errors.
 
 ## 5.2.8 - 2024-12-04
 
