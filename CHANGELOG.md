@@ -1,5 +1,9 @@
 # Release Notes for Craft Commerce
 
+## Unreleased
+
+- Fixed a bug where line item promotional prices weren’t updated when upgrading to Commerce 5.
+
 ## 5.2.9 - 2024-12-11
 
 - Fixed a PHP error that could occur when updating the inventory of a purchasable for a non-primary site. ([#3788](https://github.com/craftcms/commerce/issues/3788))
