@@ -1,6 +1,6 @@
 # Release Notes for Craft Commerce
 
-## Unreleased
+## 5.2.9.1 - 2024-12-13
 
 - Fixed a bug where line item promotional prices weren’t updated when upgrading to Commerce 5.
 
