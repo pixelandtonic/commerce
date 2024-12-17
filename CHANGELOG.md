@@ -1,5 +1,9 @@
 # Release Notes for Craft Commerce
 
+## Unreleased
+
+- Fixed a PHP error when eager loading a variant’s owner. ([#3817](https://github.com/craftcms/commerce/issues/3817))
+
 ## 5.2.9.1 - 2024-12-13
 
 - Fixed a bug where line item promotional prices weren’t updated when upgrading to Commerce 5.
