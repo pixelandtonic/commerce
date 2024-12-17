@@ -1338,9 +1338,9 @@ class Variant extends Purchasable implements NestedElementInterface
         // Restore
         $actions[] = Craft::$app->getElements()->createAction([
             'type' => Restore::class,
-            'successMessage' => Craft::t('commerce', 'Products restored.'),
-            'partialSuccessMessage' => Craft::t('commerce', 'Some products restored.'),
-            'failMessage' => Craft::t('commerce', 'Products not restored.'),
+            'successMessage' => Craft::t('commerce', 'Variants restored.'),
+            'partialSuccessMessage' => Craft::t('commerce', 'Some variants restored.'),
+            'failMessage' => Craft::t('commerce', 'Variants not restored.'),
         ]);
 
         $actions[] = ['type' => SetDefaultVariant::class];
