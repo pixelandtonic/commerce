@@ -6,6 +6,7 @@
 - Order conditions can now have a “Payment Gateway” rule. ([#3722](https://github.com/craftcms/commerce/discussions/3722))
 - Variant conditions can now have a “Product” rule.
 - Tax rates now have statuses. ([#3790](https://github.com/craftcms/commerce/discussions/3790))
+- Soft-deleted variants can now be restored.
 
 ### Administration
 - Added support for environment variables to the `to`, `bcc`, and `cc` email fields. ([#3738](https://github.com/craftcms/commerce/issues/3738))
