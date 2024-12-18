@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-- Fixed a bug where order errors weren't showing on the Edit Order page.
+- Fixed a bug where the Edit Order page wasn’t showing order errors.
 
 ## 4.7.1 - 2024-12-02
 
