@@ -2,8 +2,8 @@
 
 ## Unreleased
 
-- Fixed a PHP error when eager loading a variant’s owner. ([#3817](https://github.com/craftcms/commerce/issues/3817))
-- Fixed a bug where variant chips were displaying incorrectly. ([#3813](https://github.com/craftcms/commerce/issues/3813))
+- Fixed a PHP error that could occur when eager-loading variants’ owners. ([#3817](https://github.com/craftcms/commerce/issues/3817))
+- Fixed a bug where variant chips weren’t rendering correctly. ([#3813](https://github.com/craftcms/commerce/issues/3813))
 
 ## 5.2.9.1 - 2024-12-13
 
