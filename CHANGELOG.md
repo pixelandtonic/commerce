@@ -1,6 +1,6 @@
 # Release Notes for Craft Commerce
 
-## Unreleased
+## 5.2.10 - 2024-12-18
 
 - Fixed a PHP error that could occur when eager-loading variants’ owners. ([#3817](https://github.com/craftcms/commerce/issues/3817))
 - Fixed a bug where variant chips weren’t rendering correctly. ([#3813](https://github.com/craftcms/commerce/issues/3813))
