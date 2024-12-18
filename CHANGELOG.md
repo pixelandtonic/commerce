@@ -1,6 +1,6 @@
 # Release Notes for Craft Commerce
 
-## Unreleased
+## 4.7.2 - 2024-12-18
 
 - Fixed a bug where the Edit Order page wasn’t showing order errors.
 
