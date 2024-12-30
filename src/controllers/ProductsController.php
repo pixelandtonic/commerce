@@ -360,6 +360,11 @@ class ProductsController extends BaseController
      */
     public function actionDuplicateProduct(): ?Response
     {
+        $product = ProductHelper::productFromPost($this->request);
+        if (!Craft::$app->getElements()->canDuplicate($product)) {
+            throw new ForbiddenHttpException('User is not permitted to duplicate this product');
+        }
+
         return $this->runAction('save-product', ['duplicate' => true]);
     }
 
