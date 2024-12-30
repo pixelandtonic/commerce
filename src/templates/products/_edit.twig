@@ -23,11 +23,13 @@
   }
 ] %}
 {% if product.id %}
-  {% set formActions = formActions|push({
-    label: 'Save as a new {type}'|t('app', { type: product.lowerDisplayName() }),
-    redirect: '{cpEditUrl}'|hash,
-    action: 'commerce/products/duplicate-product'
-  }) %}
+  {% if canDuplicate(product) %}
+    {% set formActions = formActions|push({
+      label: 'Save as a new {type}'|t('app', { type: product.lowerDisplayName() }),
+      redirect: '{cpEditUrl}'|hash,
+      action: 'commerce/products/duplicate-product'
+    }) %}
+  {% endif %}
   {% if canDelete(product) %}
   {% set formActions = formActions|push({
     action: 'commerce/products/delete-product',
