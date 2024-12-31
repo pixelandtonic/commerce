@@ -63,6 +63,10 @@ class ProductVariantStockConditionRule extends BaseNumberConditionRule implement
     {
         /** @var Variant $variant */
         foreach ($element->getVariants() as $variant) {
+            if (!$this::hasInventory()) {
+                return true;
+            }
+
             if ($variant->inventoryTracked === true && $this->matchValue($variant->getStock())) {
                 // Skip out early if we have a match
                 return true;

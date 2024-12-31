@@ -37,6 +37,11 @@ class Donation extends Purchasable
      */
     public bool $availableForPurchase = false;
 
+    public static function hasInventory(): bool
+    {
+        return false;
+    }
+
     public function behaviors(): array
     {
         $behaviors = parent::behaviors();
@@ -271,6 +276,7 @@ class Donation extends Purchasable
                 $purchasableStoreRecord->basePromotionalPrice = null;
                 $purchasableStoreRecord->stock = null;
                 $purchasableStoreRecord->inventoryTracked = false;
+                $purchasableStoreRecord->allowOutOfStockPurchases = false;
                 $purchasableStoreRecord->minQty = null;
                 $purchasableStoreRecord->maxQty = null;
                 $purchasableStoreRecord->promotable = false;

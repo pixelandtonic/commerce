@@ -181,6 +181,7 @@ return [
     'Condition' => 'Condition',
     'Conditions here are matched against an order before looking through the rules. This is useful if you want qualify a method’s availabililty early or if there are common conditions to all rules for this method.' => 'Conditions here are matched against an order before looking through the rules. This is useful if you want qualify a method’s availabililty early or if there are common conditions to all rules for this method.',
     'Conditions' => 'Conditions',
+    'Continue selling when out of stock.' => 'Continue selling when out of stock.',
     'Control Panel Settings' => 'Control Panel Settings',
     'Control panel' => 'Control panel',
     'Conversion Rate' => 'Conversion Rate',

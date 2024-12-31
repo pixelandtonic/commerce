@@ -229,6 +229,14 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
     public bool $inventoryTracked = false;
 
     /**
+     * This is if the store to sell  inventory items.
+     *
+     * @var bool
+     * @since 5.3.0
+     */
+    public bool $allowOutOfStockPurchases = false;
+
+    /**
      * This is the cached total available stock across all inventory locations.
      *
      * @var int
@@ -254,6 +262,8 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
         $names[] = 'sku';
         $names[] = 'stock';
         $names[] = 'inventoryTracked';
+        $names[] = 'allowOutOfStockPurchases';
+
         return $names;
     }
 
@@ -443,9 +453,11 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
             return false;
         }
 
-        // Is the inventory tracked and is there stock?
-        if ($this->inventoryTracked && $this->getStock() < 1) {
-            return false;
+        if ($this::hasInventory()) {
+            // Is the inventory tracked and is there stock?
+            if ($this->inventoryTracked && !$this->allowOutOfStockPurchases && $this->getStock() < 1) {
+                return false;
+            }
         }
 
         // Temporary SKU can not be added to the cart
@@ -647,7 +659,7 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
      */
     public function hasStock(): bool
     {
-        return !$this->inventoryTracked || $this->getStock() > 0;
+        return !$this->inventoryTracked || $this->allowOutOfStockPurchases || $this->getStock() > 0;
     }
 
     /**
@@ -746,7 +758,7 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
         // Since we do not have a proper stock reservation system, we need deduct stock if they have more in the cart than is available, and to do this quietly.
         // If this occurs in the payment request, the user will be notified the order has changed.
         if (($order = $lineItem->getOrder()) && !$order->isCompleted) {
-            if ($this->inventoryTracked && ($lineItem->qty > $this->getStock())) {
+            if ($this::hasInventory() && !$this->allowOutOfStockPurchases && $this->inventoryTracked && ($lineItem->qty > $this->getStock())) {
                 $message = Craft::t('commerce', '{description} only has {stock} in stock.', ['description' => $lineItem->getDescription(), 'stock' => $this->getStock()]);
                 /** @var OrderNotice $notice */
                 $notice = Craft::createObject([
@@ -809,14 +821,14 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
             [
                 'qty',
                 function($attribute, $params, Validator $validator) use ($lineItem, $lineItemQuantitiesById, $lineItemQuantitiesByPurchasableId) {
-                    if (!$this->hasStock()) {
+                    if (!$this->availableForPurchase && !$this->hasStock()) {
                         $error = Craft::t('commerce', '“{description}” is currently out of stock.', ['description' => $lineItem->purchasable->getDescription()]);
                         $validator->addError($lineItem, $attribute, $error);
                     }
 
                     $lineItemQty = $lineItem->id !== null ? $lineItemQuantitiesById[$lineItem->id] : $lineItemQuantitiesByPurchasableId[$lineItem->purchasableId];
 
-                    if ($this->hasStock() && $this->inventoryTracked && $lineItemQty > $this->getStock()) {
+                    if (!$this->availableForPurchase && $this->hasStock() && $this->inventoryTracked && $lineItemQty > $this->getStock()) {
                         $error = Craft::t('commerce', 'There are only {num} “{description}” items left in stock.', ['num' => $this->getStock(), 'description' => $lineItem->purchasable->getDescription()]);
                         $validator->addError($lineItem, $attribute, $error);
                     }
@@ -859,7 +871,7 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
             ],
             [['basePrice'], 'number'],
             [['basePromotionalPrice', 'minQty', 'maxQty'], 'number', 'skipOnEmpty' => true],
-            [['freeShipping', 'inventoryTracked', 'promotable', 'availableForPurchase'], 'boolean'],
+            [['freeShipping', 'inventoryTracked', 'allowOutOfStockPurchases', 'promotable', 'availableForPurchase'], 'boolean'],
             [['taxCategoryId', 'shippingCategoryId', 'price', 'promotionalPrice', 'productSlug', 'productTypeHandle'], 'safe'],
         ]);
     }
@@ -922,7 +934,7 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
      */
     public function getHasUnlimitedStock(): bool
     {
-        return !$this->inventoryTracked;
+        return !$this::hasInventory() || !$this->inventoryTracked;
     }
 
     /**
@@ -931,6 +943,14 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
     public function setHasUnlimitedStock($value): bool
     {
         return $this->inventoryTracked = !$value;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getInventoryUnlimited(): bool
+    {
+        return (!$this->inventoryTracked || ($this->inventoryTracked && $this->allowOutOfStockPurchases));
     }
 
     /**
@@ -1035,27 +1055,29 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
 
             // Always create the inventory item even if it's a temporary draft (in the slide) since we want to allow stock to be
             // added to inventory before it is saved as a permanent variant.
-            if ($canonicalPurchasableId) {
-                if ($isOwnerDraftApplying && $this->duplicateOf !== null) {
-                    /** @var InventoryItemRecord|null $inventoryItem */
-                    $inventoryItem = InventoryItemRecord::find()->where(['purchasableId' => $this->duplicateOf->id])->one();
-                    if ($inventoryItem) {
-                        $inventoryItem->purchasableId = $canonicalPurchasableId;
-                        $inventoryItem->save();
-                        $this->inventoryItemId = $inventoryItem->id;
-                    }
-                } else {
-                    // Set the inventory item data
-                    /** @var InventoryItemRecord|null $inventoryItem */
-                    $inventoryItem = InventoryItemRecord::find()->where(['purchasableId' => $canonicalPurchasableId])->one();
-                    if (!$inventoryItem) {
-                        $inventoryItem = new InventoryItemRecord();
-                        $inventoryItem->purchasableId = $canonicalPurchasableId;
-                        $inventoryItem->countryCodeOfOrigin = '';
-                        $inventoryItem->administrativeAreaCodeOfOrigin = '';
-                        $inventoryItem->harmonizedSystemCode = '';
-                        $inventoryItem->save();
-                        $this->inventoryItemId = $inventoryItem->id;
+            if (static::hasInventory()) {
+                if ($canonicalPurchasableId) {
+                    if ($isOwnerDraftApplying && $this->duplicateOf !== null) {
+                        /** @var InventoryItemRecord|null $inventoryItem */
+                        $inventoryItem = InventoryItemRecord::find()->where(['purchasableId' => $this->duplicateOf->id])->one();
+                        if ($inventoryItem) {
+                            $inventoryItem->purchasableId = $canonicalPurchasableId;
+                            $inventoryItem->save();
+                            $this->inventoryItemId = $inventoryItem->id;
+                        }
+                    } else {
+                        // Set the inventory item data
+                        /** @var InventoryItemRecord|null $inventoryItem */
+                        $inventoryItem = InventoryItemRecord::find()->where(['purchasableId' => $canonicalPurchasableId])->one();
+                        if (!$inventoryItem) {
+                            $inventoryItem = new InventoryItemRecord();
+                            $inventoryItem->purchasableId = $canonicalPurchasableId;
+                            $inventoryItem->countryCodeOfOrigin = '';
+                            $inventoryItem->administrativeAreaCodeOfOrigin = '';
+                            $inventoryItem->harmonizedSystemCode = '';
+                            $inventoryItem->save();
+                            $this->inventoryItemId = $inventoryItem->id;
+                        }
                     }
                 }
             }
@@ -1076,6 +1098,7 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
                     $purchasableStoreRecord->basePromotionalPrice = null;
                     $purchasableStoreRecord->stock = Plugin::getInstance()->getInventory()->getInventoryLevelsForPurchasable($this)->sum('availableTotal');
                     $purchasableStoreRecord->inventoryTracked = false;
+                    $purchasableStoreRecord->allowOutOfStockPurchases = false;
                     $purchasableStoreRecord->minQty = null;
                     $purchasableStoreRecord->maxQty = null;
                     $purchasableStoreRecord->promotable = false;
@@ -1096,6 +1119,7 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
                             $purchasableStoreRecord->basePromotionalPrice = $purchasableStoreRecordDuplicate->basePromotionalPrice;
                             $purchasableStoreRecord->stock = Plugin::getInstance()->getInventory()->getInventoryLevelsForPurchasable($this)->sum('availableTotal');
                             $purchasableStoreRecord->inventoryTracked = $purchasableStoreRecordDuplicate->inventoryTracked;
+                            $purchasableStoreRecord->allowOutOfStockPurchases = $purchasableStoreRecordDuplicate->allowOutOfStockPurchases;
                             $purchasableStoreRecord->minQty = $purchasableStoreRecordDuplicate->minQty;
                             $purchasableStoreRecord->maxQty = $purchasableStoreRecordDuplicate->maxQty;
                             $purchasableStoreRecord->promotable = $purchasableStoreRecordDuplicate->promotable;
@@ -1111,7 +1135,8 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
                 $purchasableStoreRecord->basePrice = $this->basePrice;
                 $purchasableStoreRecord->basePromotionalPrice = $this->basePromotionalPrice;
                 $purchasableStoreRecord->stock = Plugin::getInstance()->getInventory()->getInventoryLevelsForPurchasable($this)->sum('availableTotal');
-                $purchasableStoreRecord->inventoryTracked = $this->inventoryTracked;
+                $purchasableStoreRecord->inventoryTracked = $this::hasInventory() ? $this->inventoryTracked : false;
+                $purchasableStoreRecord->allowOutOfStockPurchases = $this->allowOutOfStockPurchases;
                 $purchasableStoreRecord->minQty = $this->minQty;
                 $purchasableStoreRecord->maxQty = $this->maxQty;
                 $purchasableStoreRecord->promotable = $this->promotable;
@@ -1317,7 +1342,7 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
             'height' => $this->height !== null ? Craft::$app->getFormattingLocale()->getFormatter()->asDecimal($this->$attribute) . ' ' . Plugin::getInstance()->getSettings()->dimensionUnits : '',
             'minQty' => (string)$this->minQty,
             'maxQty' => (string)$this->maxQty,
-            'stock' => $stock,
+            'stock' => $this::hasInventory() ? $stock : '',
             'dimensions' => !empty($dimensions) ? implode(' x ', $dimensions) . ' ' . Plugin::getInstance()->getSettings()->dimensionUnits : '',
             default => parent::attributeHtml($attribute),
         };
@@ -1354,6 +1379,15 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
             'sku',
             'price',
         ];
+    }
+
+    /**
+     * @return bool
+     * @since 5.3.0
+     */
+    public static function hasInventory(): bool
+    {
+        return true;
     }
 
     /**
