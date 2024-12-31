@@ -652,9 +652,8 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
      */
     public function hasStock(): bool
     {
-        return $this->inventoryTracked && $this->getStock() > 0;
+        return !$this->inventoryTracked || $this->getStock() > 0;
     }
-
     /**
      * @param int|null $taxCategoryId
      * @return void
