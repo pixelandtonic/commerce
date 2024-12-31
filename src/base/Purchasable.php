@@ -652,7 +652,7 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
      */
     public function hasStock(): bool
     {
-        return !$this->inventoryTracked || $this->allowOutOfStockPurchases || $this->getStock() > 0;
+        return $this->inventoryTracked && $this->getStock() > 0;
     }
 
     /**
@@ -939,14 +939,6 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
     }
 
     /**
-     * @return bool
-     */
-    public function getInventoryUnlimited(): bool
-    {
-        return (!$this->inventoryTracked || ($this->inventoryTracked && $this->allowOutOfStockPurchases));
-    }
-
-    /**
      * @return int
      */
     private function _getStock(): int
@@ -964,7 +956,7 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
     /**
      * @return bool
      */
-    public function getOutOfStockPurchasesAllowed(): bool
+    public function getIsOutOfStockPurchasesAllowed(): bool
     {
         return $this->allowOutOfStockPurchases;
     }

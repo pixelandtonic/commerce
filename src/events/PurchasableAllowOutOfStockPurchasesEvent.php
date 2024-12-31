@@ -38,5 +38,5 @@ class PurchasableAllowOutOfStockPurchasesEvent extends Event
     /**
      * @var bool Is this purchasable available to be purchased when out of stock
      */
-    public bool $allowOutOfStockPurchases = false;
+    public bool $outOfStockPurchasesAllowed = false;
 }

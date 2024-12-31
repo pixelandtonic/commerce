@@ -18,13 +18,17 @@
 ### Extensibility
 - Added `craft\commerce\base\InventoryItemTrait`.
 - Added `craft\commerce\base\InventoryLocationTrait`.
+- Added `craft\commerce\elements\Purchasable::$allowOutOfStockPurchases`.
+- Added `craft\commerce\elements\Purchasable::getIsOutOfStockPurchasesAllowed()`.
 - Added `craft\commerce\elements\conditions\orders\CouponCodeConditionRule`.
 - Added `craft\commerce\elements\conditions\variants\ProductConditionRule`.
 - Added `craft\commerce\elements\db\OrderQuery::$couponCode`.
 - Added `craft\commerce\elements\db\OrderQuery::couponCode()`.
 - Added `craft\commerce\events\CartPurgeEvent`.
+- Added `craft\commerce\events\PurchasableAllowOutOfStockPurchasesEvent`.
 - Added `craft\commerce\services\Inventory::updateInventoryLevel()`.
 - Added `craft\commerce\services\Inventory::updatePurchasableInventoryLevel()`.
+- Added `craft\commerce\services\Purchasable::EVENT_PURCHASABLE_ALLOW_OUT_OF_STOCK_PURCHASES`.
 
 ### System
 - Craft Commerce now requires Craft CMS 5.5 or later.
