@@ -453,13 +453,6 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
             return false;
         }
 
-        if ($this::hasInventory()) {
-            // Is the inventory tracked and is there stock?
-            if ($this->inventoryTracked && !$this->allowOutOfStockPurchases && $this->getStock() < 1) {
-                return false;
-            }
-        }
-
         // Temporary SKU can not be added to the cart
         if (PurchasableHelper::isTempSku($this->getSku())) {
             return false;
@@ -966,6 +959,14 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
         }
 
         return $saleableAmount;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getOutOfStockPurchasesAllowed(): bool
+    {
+        return $this->allowOutOfStockPurchases;
     }
 
     /**
