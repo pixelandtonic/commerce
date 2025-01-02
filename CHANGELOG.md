@@ -1,5 +1,9 @@
 # Release Notes for Craft Commerce
 
+## Unreleased
+
+- Fixed an error that occurred when rendering a Link field with a product selected on the front end. ([#3833](https://github.com/craftcms/commerce/issues/3833))
+
 ## 5.2.10 - 2024-12-18
 
 - Fixed a PHP error that could occur when eager-loading variants’ owners. ([#3817](https://github.com/craftcms/commerce/issues/3817))
