@@ -136,7 +136,7 @@ class Purchasables extends Component
     private ?Collection $_purchasableById = null;
 
 
-    public function canPurchaseOutOfStock(PurchasableInterface $purchasable, Order $order = null, User $currentUser = null): bool
+    public function isOutOfStockPurchasesAllowed(PurchasableInterface $purchasable, Order $order = null, User $currentUser = null): bool
     {
         if ($currentUser === null) {
             $currentUser = Craft::$app->getUser()->getIdentity();

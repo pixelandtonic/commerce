@@ -12,6 +12,7 @@ use craft\base\Element;
 use craft\base\NestedElementInterface;
 use craft\commerce\db\Table;
 use craft\commerce\elements\Order;
+use craft\commerce\enums\LineItemType;
 use craft\commerce\errors\StoreNotFoundException;
 use craft\commerce\helpers\Currency;
 use craft\commerce\helpers\Localization;
@@ -654,6 +655,7 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
     {
         return !$this->inventoryTracked || $this->getStock() > 0;
     }
+
     /**
      * @param int|null $taxCategoryId
      * @return void
@@ -805,7 +807,7 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
                         $validator->addError($lineItem, $attribute, Craft::t('commerce', 'No purchasable available.'));
                     }
 
-                    if (!$purchasable->getIsAvailable()) {
+                    if (!Plugin::getInstance()->getPurchasables()->isPurchasableAvailable($lineItem->getPurchasable(), $lineItem->getOrder())) {
                         $validator->addError($lineItem, $attribute, Craft::t('commerce', 'The item is not enabled for sale.'));
                     }
                 },
@@ -813,16 +815,24 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
             [
                 'qty',
                 function($attribute, $params, Validator $validator) use ($lineItem, $lineItemQuantitiesById, $lineItemQuantitiesByPurchasableId) {
-                    if (!$this->availableForPurchase && !$this->hasStock()) {
-                        $error = Craft::t('commerce', '“{description}” is currently out of stock.', ['description' => $lineItem->purchasable->getDescription()]);
-                        $validator->addError($lineItem, $attribute, $error);
+                    if ($lineItem->type == LineItemType::Custom) {
+                        return;
+                    }
+
+                    if (!$this->hasStock()) {
+                        if (!Plugin::getInstance()->getPurchasables()->isOutOfStockPurchasesAllowed($lineItem->getPurchasable(), $lineItem->getOrder())) {
+                            $error = Craft::t('commerce', '“{description}” is currently out of stock.', ['description' => $lineItem->purchasable->getDescription()]);
+                            $validator->addError($lineItem, $attribute, $error);
+                        }
                     }
 
                     $lineItemQty = $lineItem->id !== null ? $lineItemQuantitiesById[$lineItem->id] : $lineItemQuantitiesByPurchasableId[$lineItem->purchasableId];
 
-                    if (!$this->availableForPurchase && $this->hasStock() && $this->inventoryTracked && $lineItemQty > $this->getStock()) {
-                        $error = Craft::t('commerce', 'There are only {num} “{description}” items left in stock.', ['num' => $this->getStock(), 'description' => $lineItem->purchasable->getDescription()]);
-                        $validator->addError($lineItem, $attribute, $error);
+                    if ($this->hasStock() && $this->inventoryTracked && $lineItemQty > $this->getStock()) {
+                        if (!Plugin::getInstance()->getPurchasables()->isOutOfStockPurchasesAllowed($lineItem->getPurchasable(), $lineItem->getOrder())) {
+                            $error = Craft::t('commerce', 'There are only {num} “{description}” items left in stock.', ['num' => $this->getStock(), 'description' => $lineItem->purchasable->getDescription()]);
+                            $validator->addError($lineItem, $attribute, $error);
+                        }
                     }
 
                     if ($this->minQty > 1 && $lineItemQty < $this->minQty) {

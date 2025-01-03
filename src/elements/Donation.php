@@ -32,7 +32,6 @@ use yii\validators\Validator;
  */
 class Donation extends Purchasable
 {
-
     /**
      * By default the donation is not available for purchase.
      *
