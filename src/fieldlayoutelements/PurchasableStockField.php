@@ -212,7 +212,7 @@ JS, [
             'id' => 'store-backorder-allowed',
             'name' => 'allowOutOfStockPurchases',
             'small' => true,
-            'on' => $element->allowOutOfStockPurchases,
+            'on' => $element->getIsOutOfStockPurchasingAllowed(),
             'disabled' => $static,
         ];
 

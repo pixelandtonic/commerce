@@ -13,12 +13,12 @@ use craft\elements\User;
 use yii\base\Event;
 
 /**
- * Class PurchasableAllowOutOfStockPurchasesEvent
+ * Class PurchasableOutOfStockPurchasesAllowedEvent
  *
  * @author Pixel & Tonic, Inc. <support@pixelandtonic.com>
  * @since 5.3.0
  */
-class PurchasableAllowOutOfStockPurchasesEvent extends Event
+class PurchasableOutOfStockPurchasesAllowedEvent extends Event
 {
     /**
      * @var Order|null The order element.

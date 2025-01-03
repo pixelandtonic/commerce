@@ -438,6 +438,15 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
     }
 
     /**
+     * @return bool
+     * @throws InvalidConfigException
+     */
+    public function getIsAvailableForPurchase(): bool
+    {
+        return Plugin::getInstance()->getPurchasables()->isPurchasableAvailable($this);
+    }
+
+    /**
      * @inheritdoc
      * @throws InvalidConfigException
      * @since 5.0.0
@@ -457,6 +466,12 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
         // Temporary SKU can not be added to the cart
         if (PurchasableHelper::isTempSku($this->getSku())) {
             return false;
+        }
+
+        if (static::hasInventory() && $this->inventoryTracked && $this->getStock() < 1) {
+            if (!Plugin::getInstance()->getPurchasables()->isPurchasableOutOfStockPurchasingAllowed($this)) {
+                return false;
+            }
         }
 
         return true;
@@ -752,7 +767,11 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
         // Since we do not have a proper stock reservation system, we need deduct stock if they have more in the cart than is available, and to do this quietly.
         // If this occurs in the payment request, the user will be notified the order has changed.
         if (($order = $lineItem->getOrder()) && !$order->isCompleted) {
-            if ($this::hasInventory() && !$this->allowOutOfStockPurchases && $this->inventoryTracked && ($lineItem->qty > $this->getStock())) {
+            if ($this::hasInventory() &&
+                !$this->getIsOutOfStockPurchasingAllowed() &&
+                $this->inventoryTracked &&
+                ($lineItem->qty > $this->getStock())
+            ) {
                 $message = Craft::t('commerce', '{description} only has {stock} in stock.', ['description' => $lineItem->getDescription(), 'stock' => $this->getStock()]);
                 /** @var OrderNotice $notice */
                 $notice = Craft::createObject([
@@ -820,7 +839,7 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
                     }
 
                     if (!$this->hasStock()) {
-                        if (!Plugin::getInstance()->getPurchasables()->isOutOfStockPurchasesAllowed($lineItem->getPurchasable(), $lineItem->getOrder())) {
+                        if (!Plugin::getInstance()->getPurchasables()->isPurchasableOutOfStockPurchasingAllowed($lineItem->getPurchasable(), $lineItem->getOrder())) {
                             $error = Craft::t('commerce', '“{description}” is currently out of stock.', ['description' => $lineItem->purchasable->getDescription()]);
                             $validator->addError($lineItem, $attribute, $error);
                         }
@@ -829,7 +848,7 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
                     $lineItemQty = $lineItem->id !== null ? $lineItemQuantitiesById[$lineItem->id] : $lineItemQuantitiesByPurchasableId[$lineItem->purchasableId];
 
                     if ($this->hasStock() && $this->inventoryTracked && $lineItemQty > $this->getStock()) {
-                        if (!Plugin::getInstance()->getPurchasables()->isOutOfStockPurchasesAllowed($lineItem->getPurchasable(), $lineItem->getOrder())) {
+                        if (!Plugin::getInstance()->getPurchasables()->isPurchasableOutOfStockPurchasingAllowed($lineItem->getPurchasable(), $lineItem->getOrder())) {
                             $error = Craft::t('commerce', 'There are only {num} “{description}” items left in stock.', ['num' => $this->getStock(), 'description' => $lineItem->purchasable->getDescription()]);
                             $validator->addError($lineItem, $attribute, $error);
                         }
@@ -966,7 +985,7 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
      * @return bool
      * @since 5.3.0
      */
-    public function getIsOutOfStockPurchasesAllowed(): bool
+    public function getIsOutOfStockPurchasingAllowed(): bool
     {
         return $this->allowOutOfStockPurchases;
     }

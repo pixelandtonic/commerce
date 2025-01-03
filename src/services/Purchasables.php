@@ -14,8 +14,8 @@ use craft\commerce\db\Table;
 use craft\commerce\elements\db\PurchasableQuery;
 use craft\commerce\elements\Order;
 use craft\commerce\elements\Variant;
-use craft\commerce\events\PurchasableAllowOutOfStockPurchasesEvent;
 use craft\commerce\events\PurchasableAvailableEvent;
+use craft\commerce\events\PurchasableOutOfStockPurchasesAllowedEvent;
 use craft\commerce\events\PurchasableShippableEvent;
 use craft\commerce\Plugin;
 use craft\elements\User;
@@ -59,7 +59,7 @@ class Purchasables extends Component
      * );
      * ```
      */
-    public const EVENT_PURCHASABLE_ALLOW_OUT_OF_STOCK_PURCHASES = 'allowOutOfStockPurchases';
+    public const EVENT_PURCHASABLE_OUT_OF_STOCK_PURCHASES_ALLOWED = 'allowOutOfStockPurchases';
 
     /**
      * @event PurchasableAvailableEvent The event that is triggered when the availability of a purchasables is checked.
@@ -144,18 +144,18 @@ class Purchasables extends Component
      * @throws Throwable
      * @since 5.3.0
      */
-    public function isOutOfStockPurchasesAllowed(PurchasableInterface $purchasable, Order $order = null, User $currentUser = null): bool
+    public function isPurchasableOutOfStockPurchasingAllowed(PurchasableInterface $purchasable, Order $order = null, User $currentUser = null): bool
     {
         if ($currentUser === null) {
             $currentUser = Craft::$app->getUser()->getIdentity();
         }
 
-        $outOfStockPurchasesAllowed = $purchasable->getIsOutOfStockPurchasesAllowed();
+        $outOfStockPurchasesAllowed = $purchasable->getIsOutOfStockPurchasingAllowed();
 
-        $event = new PurchasableAllowOutOfStockPurchasesEvent(compact('order', 'purchasable', 'currentUser', 'outOfStockPurchasesAllowed'));
+        $event = new PurchasableOutOfStockPurchasesAllowedEvent(compact('order', 'purchasable', 'currentUser', 'outOfStockPurchasesAllowed'));
 
-        if ($this->hasEventHandlers(self::EVENT_PURCHASABLE_ALLOW_OUT_OF_STOCK_PURCHASES)) {
-            $this->trigger(self::EVENT_PURCHASABLE_ALLOW_OUT_OF_STOCK_PURCHASES, $event);
+        if ($this->hasEventHandlers(self::EVENT_PURCHASABLE_OUT_OF_STOCK_PURCHASES_ALLOWED)) {
+            $this->trigger(self::EVENT_PURCHASABLE_OUT_OF_STOCK_PURCHASES_ALLOWED, $event);
         }
 
         return $event->outOfStockPurchasesAllowed;
