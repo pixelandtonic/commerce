@@ -22,6 +22,7 @@ use craft\elements\Address;
 use DvK\Vat\Validator;
 use Exception;
 use Illuminate\Support\Collection;
+use Money\Teller;
 use yii\base\InvalidConfigException;
 use function in_array;
 
@@ -146,9 +147,9 @@ class Tax extends Component implements AdjusterInterface
                 $amount = -$this->_getTaxAmount($orderTaxableAmount, $taxRate->rate, $taxRate->include);
 
                 if ($taxRate->taxable === TaxRateRecord::TAXABLE_ORDER_TOTAL_PRICE) {
-                    $this->_costRemovedForOrderTotalPrice += $amount;
+                    $this->_costRemovedForOrderTotalPrice = $this->_getTeller()->add($this->_costRemovedForOrderTotalPrice, $amount);
                 } elseif ($taxRate->taxable === TaxRateRecord::TAXABLE_ORDER_TOTAL_SHIPPING) {
-                    $this->_costRemovedForOrderShipping += $amount;
+                    $this->_costRemovedForOrderShipping = $this->_getTeller()->add($this->_costRemovedForOrderShipping, $amount);
                 }
 
                 $adjustment = $this->_createAdjustment($taxRate);
@@ -298,17 +299,16 @@ class Tax extends Component implements AdjusterInterface
      */
     private function _getTaxAmount($taxableAmount, $rate, $included): float
     {
+        $teller = $this->_getTeller();
         if (!$included) {
-            $incTax = $taxableAmount * (1 + $rate);
-            $incTax = Currency::round($incTax);
-            $tax = $incTax - $taxableAmount;
+            $incTax = $teller->multiply($taxableAmount,  (1 + $rate));
+            $tax = $teller->subtract($incTax, $taxableAmount);
         } else {
-            $exTax = $taxableAmount / (1 + $rate);
-            $exTax = Currency::round($exTax);
-            $tax = $taxableAmount - $exTax;
+            $exTax = $teller->divide($taxableAmount, (1 + $rate));
+            $tax = $teller->subtract($taxableAmount, $exTax);
         }
 
-        return $tax;
+        return (float)$tax;
     }
 
     /**
@@ -429,5 +429,15 @@ class Tax extends Component implements AdjusterInterface
         }
 
         return $address;
+    }
+
+    /**
+     * @return Teller
+     * @throws InvalidConfigException
+     * @since 5.3.0
+     */
+    private function _getTeller(): Teller
+    {
+        return Plugin::getInstance()->getCurrencies()->getTeller($this->_order->currency);
     }
 }
