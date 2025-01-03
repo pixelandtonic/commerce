@@ -79,11 +79,48 @@ class Tax extends Component implements AdjusterInterface
     private float $_costRemovedForOrderShipping = 0;
 
     /**
-     * Track the additional discounts created inside the tax adjuster for order total price
+     * Track the additional discounts created inside the tax adjuster for order shipping
+     * This should not be modified directly, use _addAmountRemovedForOrderShipping() instead
      *
      * @var float
+     * @see _addAmountRemovedForOrderTotalPrice()
      */
     private float $_costRemovedForOrderTotalPrice = 0;
+
+    /**
+     * The way to internally interact with the _costRemovedForOrderShipping property
+     *
+     * @param float $amount
+     * @return void
+     * @throws Exception
+     */
+    private function _addAmountRemovedForOrderShipping(float $amount): void
+    {
+        if($amount < 0)
+        {
+            throw new Exception('Amount added to the total removed shipping must be a positive number');
+        }
+
+        $this->_costRemovedForOrderShipping += $amount;
+    }
+
+
+    /**
+     * The way to interact with the _costRemovedForOrderTotalPrice property
+     *
+     * @param float $amount
+     * @return void
+     * @throws Exception
+     */
+    private function _addAmountRemovedForOrderTotalPrice(float $amount): void
+    {
+        if($amount < 0)
+        {
+            throw new Exception('Amount added to the total removed price must be a positive number');
+        }
+
+        $this->_costRemovedForOrderTotalPrice += $amount;
+    }
 
     /**
      * @inheritdoc
@@ -123,6 +160,7 @@ class Tax extends Component implements AdjusterInterface
     {
         $adjustments = [];
         $hasValidEuVatId = false;
+        $teller = $this->_getTeller();
 
         $zoneMatches = $taxRate->getIsEverywhere() || ($taxRate->getTaxZone() && $this->_matchAddress($taxRate->getTaxZone()));
 
@@ -134,7 +172,7 @@ class Tax extends Component implements AdjusterInterface
         $removeDueToVat = ($zoneMatches && $hasValidEuVatId && $taxRate->removeVatIncluded);
         if ($removeIncluded || $removeDueToVat) {
 
-            // Is this an order level tax rate?
+            // Remove included tax for order level taxable.
             if (in_array($taxRate->taxable, TaxRateRecord::ORDER_TAXABALES, false)) {
                 $orderTaxableAmount = 0;
 
@@ -144,41 +182,68 @@ class Tax extends Component implements AdjusterInterface
                     $orderTaxableAmount = $this->_order->getTotalShippingCost();
                 }
 
-                $amount = -$this->_getTaxAmount($orderTaxableAmount, $taxRate->rate, $taxRate->include);
+                $orderLevelAmountToBeRemovedByDiscount = $this->_getTaxAmount($orderTaxableAmount, $taxRate->rate, $taxRate->include);
 
                 if ($taxRate->taxable === TaxRateRecord::TAXABLE_ORDER_TOTAL_PRICE) {
-                    $this->_costRemovedForOrderTotalPrice = $this->_getTeller()->add($this->_costRemovedForOrderTotalPrice, $amount);
+                    $this->_addAmountRemovedForOrderTotalPrice($orderLevelAmountToBeRemovedByDiscount);
                 } elseif ($taxRate->taxable === TaxRateRecord::TAXABLE_ORDER_TOTAL_SHIPPING) {
-                    $this->_costRemovedForOrderShipping = $this->_getTeller()->add($this->_costRemovedForOrderShipping, $amount);
+                    $this->_addAmountRemovedForOrderShipping($orderLevelAmountToBeRemovedByDiscount);
                 }
 
                 $adjustment = $this->_createAdjustment($taxRate);
                 // We need to display the adjustment that removed the included tax
                 $adjustment->name = Craft::t('site', $taxRate->name) . ' ' . Craft::t('commerce', 'Removed');
-                $adjustment->amount = $amount;
+                $adjustment->amount = -$orderLevelAmountToBeRemovedByDiscount;
                 $adjustment->type = 'discount'; // TODO Not use a discount adjustment, but modify the price of the item instead. #COM-26
                 $adjustment->included = false;
 
                 $adjustments[] = $adjustment;
             }
 
+            // Not an order level taxable, add tax adjustments to the line items.
             if (!in_array($taxRate->taxable, TaxRateRecord::ORDER_TAXABALES, false)) {
                 // Not an order level taxable, add tax adjustments to the line items.
                 foreach ($this->_order->getLineItems() as $item) {
                     if ($item->taxCategoryId == $taxRate->taxCategoryId) {
                         if ($taxRate->taxable == TaxRateRecord::TAXABLE_PURCHASABLE) {
-                            $taxableAmount = $item->salePrice - Currency::round($item->getDiscount() / $item->qty);
-                            $amount = -($taxableAmount - ($taxableAmount / (1 + $taxRate->rate)));
-                            $amount = $amount * $item->qty;
+                            // taxableAmount = salePrice - (discount / qty)
+                            $taxableAmount = $teller->subtract(
+                                $item->salePrice,
+                                $teller->divide(
+                                    $item->getDiscount(), // float amount of discount
+                                    $item->qty
+                                )
+                            );
+
+                            // amount = taxableAmount - (taxableAmount / (1 + taxRate))
+                            $amount = $teller->subtract(
+                                $taxableAmount,
+                                $teller->divide(
+                                    $taxableAmount,
+                                    (1 + $taxRate->rate)
+                                )
+                            );
+
+                            // make amount negative
+                            $amount = (float)$teller->multiply($amount, $item->qty);
                         } else {
                             $taxableAmount = $item->getTaxableSubtotal($taxRate->taxable);
-                            $amount = -($taxableAmount - ($taxableAmount / (1 + $taxRate->rate)));
+                            // amount = taxableAmount - (taxableAmount / (1 + taxRate))
+                            $amount = $teller->subtract(
+                                $taxableAmount,
+                                $teller->divide(
+                                    $taxableAmount,
+                                    (1 + $taxRate->rate)
+                                )
+                            );
+
+                            // make amount negative
+                            $amount = (float)$amount;
                         }
-                        $amount = Currency::round($amount);
                         $adjustment = $this->_createAdjustment($taxRate);
                         // We need to display the adjustment that removed the included tax
                         $adjustment->name = Craft::t('site', $taxRate->name) . ' ' . Craft::t('commerce', 'Removed');
-                        $adjustment->amount = $amount;
+                        $adjustment->amount = -$amount;
                         $adjustment->setLineItem($item);
                         $adjustment->type = 'discount';
                         $adjustment->included = false;
@@ -195,6 +260,7 @@ class Tax extends Component implements AdjusterInterface
                     }
                 }
             }
+
             // Return the removed included taxes as discounts.
             return $adjustments;
         }
@@ -301,7 +367,7 @@ class Tax extends Component implements AdjusterInterface
     {
         $teller = $this->_getTeller();
         if (!$included) {
-            $incTax = $teller->multiply($taxableAmount,  (1 + $rate));
+            $incTax = $teller->multiply($taxableAmount, (1 + $rate));
             $tax = $teller->subtract($incTax, $taxableAmount);
         } else {
             $exTax = $teller->divide($taxableAmount, (1 + $rate));

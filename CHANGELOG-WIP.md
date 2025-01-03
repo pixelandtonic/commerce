@@ -1,5 +1,9 @@
 # Release Notes for Craft Commerce (WIP)
 
+### Fixed
+
+- Fixed a PHP error that could occur when calculating tax totals. ([#3822](https://github.com/craftcms/commerce/issues/3822))
+
 ### Store Management
 - Order conditions can now have a “Coupon Code” rule. ([#3776](https://github.com/craftcms/commerce/discussions/3776))
 - Order conditions can now have a “Payment Gateway” rule. ([#3722](https://github.com/craftcms/commerce/discussions/3722))
