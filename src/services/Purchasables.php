@@ -136,6 +136,14 @@ class Purchasables extends Component
     private ?Collection $_purchasableById = null;
 
 
+    /**
+     * @param PurchasableInterface $purchasable
+     * @param Order|null $order
+     * @param User|null $currentUser
+     * @return bool
+     * @throws Throwable
+     * @since 5.3.0
+     */
     public function isOutOfStockPurchasesAllowed(PurchasableInterface $purchasable, Order $order = null, User $currentUser = null): bool
     {
         if ($currentUser === null) {

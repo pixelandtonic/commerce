@@ -230,7 +230,7 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
     public bool $inventoryTracked = false;
 
     /**
-     * This is if the store to sell  inventory items.
+     * Should this purchases of this purchasable be allowed if it is out of stock.
      *
      * @var bool
      * @since 5.3.0
@@ -964,6 +964,7 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
 
     /**
      * @return bool
+     * @since 5.3.0
      */
     public function getIsOutOfStockPurchasesAllowed(): bool
     {
