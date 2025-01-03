@@ -16,6 +16,7 @@
 - Added an `originalCart` value to `commerce/update-cart` action, for failed ajax responses. ([#430](https://github.com/craftcms/commerce/issues/430))
 
 ### Extensibility
+- Added `craft\commerce\base\Purchasable::hasInventory()`.
 - Added `craft\commerce\base\InventoryItemTrait`.
 - Added `craft\commerce\base\InventoryLocationTrait`.
 - Added `craft\commerce\elements\Purchasable::$allowOutOfStockPurchases`.
