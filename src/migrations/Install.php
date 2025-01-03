@@ -701,6 +701,7 @@ class Install extends Migration
             'availableForPurchase' => $this->boolean()->notNull()->defaultValue(true),
             'freeShipping' => $this->boolean()->notNull()->defaultValue(true),
             'inventoryTracked' => $this->boolean()->notNull()->defaultValue(true),
+            'allowOutOfStockPurchases' => $this->boolean()->notNull()->defaultValue(false),
             'stock' => $this->integer(), // This is a summary value used for searching and sorting
             'tracked' => $this->boolean()->notNull()->defaultValue(false),
             'minQty' => $this->integer(),

@@ -139,6 +139,9 @@ class Tax extends Component implements AdjusterInterface
         $adjustments = [];
 
         foreach ($this->_taxRates as $rate) {
+            if (!$rate->enabled) {
+                continue;
+            }
             $newAdjustments = $this->_getAdjustments($rate);
             if ($newAdjustments) {
                 $adjustments[] = $newAdjustments;
@@ -353,7 +356,7 @@ class Tax extends Component implements AdjusterInterface
      */
     protected function getTaxRates(?int $storeId = null): Collection
     {
-        return Plugin::getInstance()->getTaxRates()->getAllTaxRates($storeId);
+        return Plugin::getInstance()->getTaxRates()->getAllEnabledTaxRates($storeId);
     }
 
     /**

@@ -408,6 +408,7 @@
 
         {{ forms.fieldLayoutDesignerField({
             fieldLayout: productType.getProductFieldLayout(),
+            withCardViewDesigner: true,
         }) }}
 
     </div>
@@ -417,6 +418,7 @@
         {% namespace "variant-layout" %}
             {{ forms.fieldLayoutDesignerField({
                 fieldLayout: productType.getVariantFieldLayout(),
+                withCardViewDesigner: true,
             }) }}
         {% endnamespace %}
 

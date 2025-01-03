@@ -31,6 +31,7 @@ use craft\commerce\Plugin;
 use craft\commerce\records\Variant as VariantRecord;
 use craft\db\Query;
 use craft\db\Table as CraftTable;
+use craft\elements\actions\Restore;
 use craft\elements\conditions\ElementConditionInterface;
 use craft\elements\db\EagerLoadPlan;
 use craft\elements\User;
@@ -1333,9 +1334,17 @@ class Variant extends Purchasable implements NestedElementInterface
 
     protected static function defineActions(string $source): array
     {
-        return [...parent::defineActions($source), ...[
-            ['type' => SetDefaultVariant::class],
-        ]];
+        $actions = parent::defineActions($source);
+        // Restore
+        $actions[] = Craft::$app->getElements()->createAction([
+            'type' => Restore::class,
+            'successMessage' => Craft::t('commerce', 'Variants restored.'),
+            'partialSuccessMessage' => Craft::t('commerce', 'Some variants restored.'),
+            'failMessage' => Craft::t('commerce', 'Variants not restored.'),
+        ]);
+
+        $actions[] = ['type' => SetDefaultVariant::class];
+        return $actions;
     }
 
     /**
@@ -1370,6 +1379,18 @@ class Variant extends Purchasable implements NestedElementInterface
     protected static function defineSearchableAttributes(): array
     {
         return [...parent::defineSearchableAttributes(), ...['productTitle']];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected static function defineCardAttributes(): array
+    {
+        return array_merge(parent::defineCardAttributes(), [
+            'product' => [
+                'label' => Craft::t('commerce', 'Product'),
+            ],
+        ]);
     }
 
     /**
