@@ -28,7 +28,8 @@
 - Added `craft\commerce\events\PurchasableAllowOutOfStockPurchasesEvent`.
 - Added `craft\commerce\services\Inventory::updateInventoryLevel()`.
 - Added `craft\commerce\services\Inventory::updatePurchasableInventoryLevel()`.
-- Added `craft\commerce\services\Purchasable::EVENT_PURCHASABLE_ALLOW_OUT_OF_STOCK_PURCHASES`.
+- Added `craft\commerce\services\Purchasables::EVENT_PURCHASABLE_ALLOW_OUT_OF_STOCK_PURCHASES`.
+- Added `craft\commerce\services\Purchasables::isOutOfStockPurchasesAllowed()`.
 
 ### System
 - Craft Commerce now requires Craft CMS 5.5 or later.
