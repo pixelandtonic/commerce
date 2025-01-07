@@ -200,7 +200,7 @@ class Gateways extends Component
      */
     public function getGatewayByHandle(string $handle): ?Gateway
     {
-        return ArrayHelper::firstWhere($this->_getAllGateways(), 'handle', $handle);
+        return ArrayHelper::firstWhere($this->getAllGateways(), 'handle', $handle);
     }
 
     /**
