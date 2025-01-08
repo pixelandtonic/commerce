@@ -96,8 +96,7 @@ class Tax extends Component implements AdjusterInterface
      */
     private function _addAmountRemovedForOrderShipping(float $amount): void
     {
-        if($amount < 0)
-        {
+        if ($amount < 0) {
             throw new Exception('Amount added to the total removed shipping must be a positive number');
         }
 
@@ -114,12 +113,11 @@ class Tax extends Component implements AdjusterInterface
      */
     private function _addAmountRemovedForOrderTotalPrice(float $amount): void
     {
-        if($amount < 0)
-        {
+        if ($amount < 0) {
             throw new Exception('Amount added to the total removed price must be a positive number');
         }
 
-        $this->_costRemovedForOrderTotalPrice += $amount;
+        $this->_costRemovedForOrderTotalPrice = $this->_getTeller()->add($this->_costRemovedForOrderTotalPrice, $amount);
     }
 
     /**
@@ -370,7 +368,7 @@ class Tax extends Component implements AdjusterInterface
     {
         $teller = $this->_getTeller();
         if (!$included) {
-            $incTax = $teller->multiply($taxableAmount, (1 + $rate));
+            $incTax = $teller->multiply($taxableAmount,  (1 + $rate));
             $tax = $teller->subtract($incTax, $taxableAmount);
         } else {
             $exTax = $teller->divide($taxableAmount, (1 + $rate));
