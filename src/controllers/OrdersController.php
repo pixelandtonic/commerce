@@ -18,6 +18,7 @@ use craft\commerce\collections\InventoryMovementCollection;
 use craft\commerce\db\Table;
 use craft\commerce\elements\db\PurchasableQuery;
 use craft\commerce\elements\Order;
+use craft\commerce\elements\Variant;
 use craft\commerce\enums\InventoryTransactionType;
 use craft\commerce\enums\LineItemType;
 use craft\commerce\errors\CurrencyException;
@@ -613,8 +614,15 @@ JS, []);
                 continue;
             }
 
-            $purchasableCpEditUrlByPurchasableId[$purchasable->id] = $purchasable->getCpEditUrl();
+            if ($purchasable instanceof Variant) {
+                $product = $purchasable->getOwner();
+                $purchasableCpEditUrlByPurchasableId[$purchasable->id] = $product?->getCpEditUrl() ?? null;
+            } else {
+                $purchasableCpEditUrlByPurchasableId[$purchasable->id] = $purchasable->getCpEditUrl();
+            }
         }
+
+        $purchasableCpEditUrlByPurchasableId = array_filter($purchasableCpEditUrlByPurchasableId);
 
         $billingAddress = $order->getBillingAddress();
         $shippingAddress = $order->getShippingAddress();

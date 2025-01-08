@@ -744,14 +744,6 @@ class Variant extends Purchasable implements NestedElementInterface
     /**
      * @inheritdoc
      */
-    public function getCpEditUrl(): ?string
-    {
-        return $this->getOwner() ? $this->getOwner()->getCpEditUrl() : null;
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function getUrl(): ?string
     {
         $productUrl = $this->getOwner()?->getUrl();
@@ -888,7 +880,7 @@ class Variant extends Purchasable implements NestedElementInterface
      */
     public static function eagerLoadingMap(array $sourceElements, string $handle): array|null|false
     {
-        if ($handle == 'product') {
+        if (in_array($handle, ['product', 'owner', 'primaryOwner'])) {
             // Get the source element IDs
             $sourceElementIds = [];
 
@@ -1094,10 +1086,14 @@ class Variant extends Purchasable implements NestedElementInterface
      */
     public function setEagerLoadedElements(string $handle, array $elements, EagerLoadPlan $plan): void
     {
-        if ($handle == 'product') {
+        if (in_array($handle, ['product', 'owner', 'primaryOwner'])) {
             $product = $elements[0] ?? null;
             if ($product instanceof Product) {
-                $this->setOwner($product);
+                if ($handle == 'primaryOwner') {
+                    $this->setPrimaryOwner($product);
+                } else {
+                    $this->setOwner($product);
+                }
             }
         } else {
             $this->traitSetEagerLoadedElements($handle, $elements, $plan);

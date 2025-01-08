@@ -1,11 +1,26 @@
 # Release Notes for Craft Commerce
 
-## Unreleased
+## 5.2.11 - 2025-01-02
 
+- Fixed an error that occurred when rendering a Link field with a product selected on the front end. ([#3833](https://github.com/craftcms/commerce/issues/3833))
+
+## 5.2.10 - 2024-12-18
+
+- Fixed a PHP error that could occur when eager-loading variants’ owners. ([#3817](https://github.com/craftcms/commerce/issues/3817))
+- Fixed a bug where variant chips weren’t rendering correctly. ([#3813](https://github.com/craftcms/commerce/issues/3813))
+
+## 5.2.9.1 - 2024-12-13
+
+- Fixed a bug where line item promotional prices weren’t updated when upgrading to Commerce 5.
+
+## 5.2.9 - 2024-12-11
+
+- Fixed a PHP error that could occur when updating the inventory of a purchasable for a non-primary site. ([#3788](https://github.com/craftcms/commerce/issues/3788))
+- Fixed a PHP error that occurred when making a partial payment on an order from the control panel. ([#3804](https://github.com/craftcms/commerce/issues/3804))
 - Fixed a PHP error that could occur when calculating order totals. ([#3802](https://github.com/craftcms/commerce/issues/3802)) 
-- Fixed a bug where a product’s default price was showing incorrectly on the Products index page. ([#3807](https://github.com/craftcms/commerce/issues/3807))
-- Fixed a bug where inline-editable Matrix fields weren’t saving content on product variants. ([#3805](https://github.com/craftcms/commerce/issues/3805))
-- Fixed a bug where order errors weren't showing on the Edit Order page.
+- Fixed a bug where product indexes weren’t always showing the correct price. ([#3807](https://github.com/craftcms/commerce/issues/3807))
+- Fixed a bug where changes to inline-editable Matrix fields weren’t getting saved for product variants. ([#3805](https://github.com/craftcms/commerce/issues/3805))
+- Fixed a bug where the Edit Order page wasn’t showing order errors.
 
 ## 5.2.8 - 2024-12-04
 
