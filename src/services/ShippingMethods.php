@@ -125,7 +125,6 @@ class ShippingMethods extends Component
 
         /** @var ShippingMethod $method */
         foreach ($event->shippingMethods as $method) {
-
             if ($method->getIsEnabled() && $method->matchOrder($order)) {
                 $matchingMethods[$method->getHandle()] = [
                     'method' => $method,
