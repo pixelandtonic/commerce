@@ -80,8 +80,8 @@ class Tax extends Component implements AdjusterInterface
 
     /**
      * Track the additional discounts created inside the tax adjuster for order shipping
-     * This should not be modified directly, use _addAmountRemovedForOrderShipping() instead
      *
+     * @internal This should not be modified directly, use _addAmountRemovedForOrderShipping() instead
      * @var float
      * @see _addAmountRemovedForOrderTotalPrice()
      */
@@ -252,7 +252,7 @@ class Tax extends Component implements AdjusterInterface
                         $objectId = spl_object_hash($item); // We use this ID since some line items are not saved in the DB yet and have no ID.
 
                         if (isset($this->_costRemovedByLineItem[$objectId])) {
-                            $this->_costRemovedByLineItem[$objectId] += $amount;
+                            $this->_costRemovedByLineItem[$objectId] = (float)$this->_getTeller()->add($this->_costRemovedByLineItem[$objectId], $amount);
                         } else {
                             $this->_costRemovedByLineItem[$objectId] = $amount;
                         }
@@ -290,12 +290,12 @@ class Tax extends Component implements AdjusterInterface
 
             if ($taxRate->taxable === TaxRateRecord::TAXABLE_ORDER_TOTAL_PRICE) {
                 $orderTaxableAmount = $this->_getOrderTotalTaxablePrice($this->_order);
-                $orderTaxableAmount += $this->_costRemovedForOrderTotalPrice;
+                $orderTaxableAmount = (float)$this->_getTeller()->add($orderTaxableAmount, $this->_costRemovedForOrderTotalPrice);
             }
 
             if ($taxRate->taxable === TaxRateRecord::TAXABLE_ORDER_TOTAL_SHIPPING) {
                 $orderTaxableAmount = $this->_order->getTotalShippingCost();
-                $orderTaxableAmount += $this->_costRemovedForOrderShipping;
+                $orderTaxableAmount = (float)$this->_getTeller()->add($orderTaxableAmount, $this->_costRemovedForOrderShipping);
             }
 
             $orderTax = $this->_getTaxAmount($orderTaxableAmount, $taxRate->rate, $taxRate->include);
