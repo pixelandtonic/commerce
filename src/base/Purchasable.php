@@ -438,15 +438,6 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
     }
 
     /**
-     * @return bool
-     * @throws InvalidConfigException
-     */
-    public function getIsAvailableForPurchase(): bool
-    {
-        return Plugin::getInstance()->getPurchasables()->isPurchasableAvailable($this);
-    }
-
-    /**
      * @inheritdoc
      * @throws InvalidConfigException
      * @since 5.0.0
@@ -987,7 +978,7 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
      */
     public function getIsOutOfStockPurchasingAllowed(): bool
     {
-        return $this->allowOutOfStockPurchases;
+        return Plugin::getInstance()->getPurchasables()->isPurchasableOutOfStockPurchasingAllowed($this);
     }
 
     /**
