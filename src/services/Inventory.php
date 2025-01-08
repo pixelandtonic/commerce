@@ -314,9 +314,9 @@ class Inventory extends Component
 
             $transaction->commit();
 
-            foreach ($updateInventoryLevels->getPurchasables() as $purchasable) {
-                Plugin::getInstance()->getPurchasables()->updateStoreStockCache($purchasable, true);
-            }
+            // Update all purchasables stock
+            $purchasables = $updateInventoryLevels->getPurchasables();
+            Plugin::getInstance()->getPurchasables()->updateStoreStockCache($purchasables[0], true);
 
             return true;
         } catch (\Exception $e) {
