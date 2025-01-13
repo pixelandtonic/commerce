@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Fixed a bug where product type’s “Max Variants” setting was not being respected. ([#3845](https://github.com/craftcms/commerce/issues/3845))
 - Fixed a bug where products could be duplicated without the “Create products” permissions. ([#3838](https://github.com/craftcms/commerce/issues/3838))
 
 ## 5.2.11 - 2025-01-02
