@@ -29,7 +29,10 @@ class SettingsController extends BaseAdminController
      */
     public function actionEdit(): Response
     {
-        return $this->renderTemplate('commerce/settings/general', ['settings' => Plugin::getInstance()->getSettings()]);
+        return $this->renderTemplate('commerce/settings/general', [
+            'settings' => Plugin::getInstance()->getSettings(),
+            'readonly' => $this->isReadyOnlyScreen(),
+        ]);
     }
 
     /**

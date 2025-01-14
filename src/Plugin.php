@@ -10,6 +10,7 @@ namespace craft\commerce;
 use Craft;
 use craft\base\Model;
 use craft\base\Plugin as BasePlugin;
+use craft\base\PluginTrait;
 use craft\ckeditor\events\DefineLinkOptionsEvent;
 use craft\ckeditor\Field as CKEditorField;
 use craft\commerce\base\Purchasable;
@@ -279,6 +280,11 @@ class Plugin extends BasePlugin
      */
     public CmsEdition $minCmsEdition = CmsEdition::Pro;
 
+    /**
+     * @inheritdoc
+     */
+    public bool $hasReadOnlyCpSettings = true;
+
     use CommerceServices;
     use Variables;
     use Routes;
@@ -347,6 +353,14 @@ class Plugin extends BasePlugin
      * @inheritdoc
      */
     public function getSettingsResponse(): mixed
+    {
+        return Craft::$app->getResponse()->redirect(UrlHelper::cpUrl('commerce/settings/general'));
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getReadOnlySettingsResponse(): mixed
     {
         return Craft::$app->getResponse()->redirect(UrlHelper::cpUrl('commerce/settings/general'));
     }
@@ -428,7 +442,7 @@ class Plugin extends BasePlugin
             ];
         }
 
-        if (Craft::$app->getUser()->getIsAdmin() && Craft::$app->getConfig()->getGeneral()->allowAdminChanges) {
+        if (Craft::$app->getUser()->getIsAdmin()) {
             $ret['subnav']['settings'] = [
                 'label' => Craft::t('commerce', 'System Settings'),
                 'url' => 'commerce/settings/general',
