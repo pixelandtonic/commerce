@@ -7,8 +7,8 @@
 
 namespace craft\commerce\controllers;
 
-use yii\web\ForbiddenHttpException;
 use Craft;
+use yii\web\ForbiddenHttpException;
 
 /**
  * Class Base Admin Controller

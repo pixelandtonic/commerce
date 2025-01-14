@@ -10,7 +10,6 @@ namespace craft\commerce;
 use Craft;
 use craft\base\Model;
 use craft\base\Plugin as BasePlugin;
-use craft\base\PluginTrait;
 use craft\ckeditor\events\DefineLinkOptionsEvent;
 use craft\ckeditor\Field as CKEditorField;
 use craft\commerce\base\Purchasable;
