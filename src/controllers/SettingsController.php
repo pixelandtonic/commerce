@@ -29,9 +29,10 @@ class SettingsController extends BaseAdminController
      */
     public function actionEdit(): Response
     {
+        $readOnly = $this->isReadOnlyScreen();
         return $this->renderTemplate('commerce/settings/general', [
             'settings' => Plugin::getInstance()->getSettings(),
-            'readonly' => $this->isReadyOnlyScreen(),
+            'readOnly' => $this->isReadOnlyScreen(),
         ]);
     }
 

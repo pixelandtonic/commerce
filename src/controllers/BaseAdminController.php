@@ -28,7 +28,7 @@ class BaseAdminController extends BaseCpController
         $this->requireAdmin(false);
     }
 
-    protected function isReadyOnlyScreen(): bool
+    protected function isReadOnlyScreen(): bool
     {
         return !Craft::$app->getConfig()->getGeneral()->allowAdminChanges;
     }
