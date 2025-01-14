@@ -18,8 +18,25 @@
     <a href="{{ url('commerce/settings/gateways/new') }}" class="btn submit add icon">{{ 'New gateway'|t('commerce') }}</a>
 {% endblock %}
 
-{% block content %}
-    <div id="gateways-vue-admin-table"></div>
+{% block main %}
+  <div id="content">
+
+    <div class="content-pane">
+      <div id="gateways-vue-admin-table"></div>
+    </div>
+    {% if archivedGateways|length %}
+      <p>
+        <a class="fieldtoggle"
+           data-target="archived-gateways">{{ 'Show archived gateways'|t('commerce') }}</a>
+      </p>
+
+      <div id="archived-gateways" class="hidden" style="margin-top: 22px;">
+        <div class="content-pane">
+          <div id="gateways-archived-vue-admin-table"></div>
+        </div>
+      </div>
+    {% endif %}
+  </div>
 {% endblock %}
 
 {% set tableData = [] %}
@@ -73,4 +90,36 @@
         reorderFailMessage:    Craft.t('commerce', 'Couldn’t reorder gateways.'),
         tableData: {{ tableData|json_encode|raw }}
     });
+
+    {% if archivedGateways|length %}
+      new Craft.VueAdminTable({
+          columns: [
+        { name: 'id', title: Craft.t('commerce', 'ID') },
+        { name: '__slot:title', title: Craft.t('commerce', 'Name') },
+        { name: '__slot:handle', title: Craft.t('commerce', 'Handle') },
+        {
+            name: 'type',
+            title: Craft.t('commerce', 'Type'),
+            callback: function(value) {
+                if (value.missing) {
+                    return '<span class="error">'+value.name+'</span>';
+                }
+
+                return value.name;
+            }
+        },
+        {
+          name: 'hasTransactions',
+          title: Craft.t('commerce', 'Has Transactions?'),
+          callback: function(value) {
+                if (value) {
+                    return '<div data-icon="check" title="'+Craft.escapeHtml(Craft.t('commerce', 'Yes'))+'"></div>';
+                }
+            }
+        },
+    ],
+          container: '#gateways-archived-vue-admin-table',
+          tableData: {{ archivedGateways|json_encode|raw }}
+      });
+    {% endif %}
 {% endjs %}

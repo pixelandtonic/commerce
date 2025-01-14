@@ -139,6 +139,17 @@ class Gateways extends Component
     }
 
     /**
+     * @return array
+     * @throws DeprecationException
+     * @throws InvalidConfigException
+     * @sine 4.8.0
+     */
+    public function getAllArchivedGateways(): array
+    {
+        return ArrayHelper::where($this->_getAllGateways(), 'isArchived', true);
+    }
+
+    /**
      * Archives a gateway by its ID.
      *
      * @param int $id gateway ID
