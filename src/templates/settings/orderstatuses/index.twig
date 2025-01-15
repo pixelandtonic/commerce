@@ -97,3 +97,10 @@
       new Craft.VueAdminTable({{ handle }}Config);
   {% endjs %}
 {% endfor %}
+
+{% css %}
+table.data thead .vuetable-th-labelHtml,
+table.data thead .vuetable-th-slot-handle {
+    width: 30%;
+}
+{% endcss %}
