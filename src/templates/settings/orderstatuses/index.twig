@@ -12,6 +12,14 @@
     'Yes',
 ]) %}
 
+{% if not readOnly is defined %}
+    {% exit 422 %}
+{% endif %}
+
+{% if readOnly %}
+    {% set contentNotice = readOnlyNotice() %}
+{% endif %}
+
 {% block actionButton %}
     {% if not readOnly %}
     <div class="btngroup">
