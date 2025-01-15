@@ -16,15 +16,21 @@
 - Added an `originalCart` value to `commerce/update-cart` action, for failed ajax responses. ([#430](https://github.com/craftcms/commerce/issues/430))
 
 ### Extensibility
+- Added `craft\commerce\base\Purchasable::hasInventory()`.
 - Added `craft\commerce\base\InventoryItemTrait`.
 - Added `craft\commerce\base\InventoryLocationTrait`.
+- Added `craft\commerce\elements\Purchasable::$allowOutOfStockPurchases`.
+- Added `craft\commerce\elements\Purchasable::getIsOutOfStockPurchasingAllowed()`.
 - Added `craft\commerce\elements\conditions\orders\CouponCodeConditionRule`.
 - Added `craft\commerce\elements\conditions\variants\ProductConditionRule`.
 - Added `craft\commerce\elements\db\OrderQuery::$couponCode`.
 - Added `craft\commerce\elements\db\OrderQuery::couponCode()`.
 - Added `craft\commerce\events\CartPurgeEvent`.
+- Added `craft\commerce\events\PurchasableOutOfStockPurchasesAllowedEvent`.
 - Added `craft\commerce\services\Inventory::updateInventoryLevel()`.
 - Added `craft\commerce\services\Inventory::updatePurchasableInventoryLevel()`.
+- Added `craft\commerce\services\Purchasables::EVENT_PURCHASABLE_OUT_OF_STOCK_PURCHASES_ALLOWED`.
+- Added `craft\commerce\services\Purchasables::isPurchasableOutOfStockPurchasingAllowed()`.
 
 ### System
 - Craft Commerce now requires Craft CMS 5.5 or later.
