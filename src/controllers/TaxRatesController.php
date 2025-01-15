@@ -214,6 +214,7 @@ class TaxRatesController extends BaseTaxSettingsController
         $taxRate->taxCategoryId = (int)$this->request->getBodyParam('taxCategoryId') ?: null;
         $taxRate->taxZoneId = (int)$this->request->getBodyParam('taxZoneId') ?: null;
         $taxRate->rate = Localization::normalizePercentage($this->request->getBodyParam('rate'));
+        $taxRate->enabled = (bool)($this->request->getBodyParam('enabled'));
 
         // Save it
         if (Plugin::getInstance()->getTaxRates()->saveTaxRate($taxRate)) {
@@ -246,5 +247,35 @@ class TaxRatesController extends BaseTaxSettingsController
 
         Plugin::getInstance()->getTaxRates()->deleteTaxRateById($id);
         return $this->asSuccess();
+    }
+
+    /**
+     * @throws BadRequestHttpException
+     * @throws Exception
+     * @since 5.x
+     */
+    public function actionUpdateStatus(): void
+    {
+        $this->requirePostRequest();
+        $ids = $this->request->getRequiredBodyParam('ids');
+        $status = $this->request->getRequiredBodyParam('status');
+
+        if (empty($ids)) {
+            $this->setFailFlash(Craft::t('commerce', 'Couldn’t update status.'));
+        }
+
+        $transaction = Craft::$app->getDb()->beginTransaction();
+        $taxRates = TaxRateRecord::find()
+            ->where(['id' => $ids])
+            ->all();
+
+        /** @var TaxRateRecord $taxRate */
+        foreach ($taxRates as $taxRate) {
+            $taxRate->enabled = ($status == 'enabled');
+            $taxRate->save();
+        }
+        $transaction->commit();
+
+        $this->setSuccessFlash(Craft::t('commerce', 'Tax rates updated.'));
     }
 }

@@ -260,10 +260,10 @@ class OrdersController extends Controller
             $qty = (int)$fulfillment['quantity'];
             if ($qty != 0) {
                 $inventoryLocation = Plugin::getInstance()->getInventoryLocations()->getInventoryLocationById($fulfillment['inventoryLocationId']);
-                $inventoryItem = Plugin::getInstance()->getInventory()->getInventoryItemById($fulfillment['inventoryItemId']);
+
                 $movement = new InventoryFulfillMovement();
                 $movement->fromInventoryLocation = $inventoryLocation;
-                $movement->inventoryItem = $inventoryItem;
+                $movement->inventoryItemId = $fulfillment['inventoryItemId'];
                 $movement->toInventoryLocation = $inventoryLocation;
                 $movement->fromInventoryTransactionType = InventoryTransactionType::COMMITTED;
                 $movement->toInventoryTransactionType = InventoryTransactionType::FULFILLED;
@@ -1404,11 +1404,14 @@ JS, []);
         Craft::$app->getView()->registerJs('window.orderEdit.defaultShippingCategoryId = ' . Json::encode($defaultShippingCategoryId) . ';', View::POS_BEGIN);
 
         $currentUser = Craft::$app->getUser()->getIdentity();
-        $permissions = [
-            'commerce-manageOrders' => $currentUser->can('commerce-manageOrders'),
-            'commerce-editOrders' => $currentUser->can('commerce-editOrders'),
-            'commerce-deleteOrders' => $currentUser->can('commerce-deleteOrders'),
-        ];
+
+        $permissions = ArrayHelper::map([
+            'editUsers',
+            'commerce-manageOrders',
+            'commerce-editOrders',
+            'commerce-deleteOrders',
+        ], fn($permission) => $permission, fn($permission) => Craft::$app->getUser()->getIdentity()->can($permission));
+
         Craft::$app->getView()->registerJs('window.orderEdit.currentUserPermissions = ' . Json::encode($permissions) . ';', View::POS_BEGIN);
         Craft::$app->getView()->registerJs('window.orderEdit.currentUserId = ' . Json::encode($currentUser->id) . ';', View::POS_BEGIN);
 

@@ -74,6 +74,18 @@ class TaxRates extends Component
     }
 
     /**
+     * @param int|null $storeId
+     * @return Collection
+     * @throws InvalidConfigException
+     * @throws StoreNotFoundException
+     * @since 5.3.0
+     */
+    public function getAllEnabledTaxRates(?int $storeId = null): Collection
+    {
+        return $this->getAllTaxRates($storeId)->where('enabled', true);
+    }
+
+    /**
      * Returns an array of all rates belonging to the specified zone.
      *
      * @param int $taxZoneId The ID of the tax zone whose rates we’d like returned
@@ -143,6 +155,7 @@ class TaxRates extends Component
         $record->taxCategoryId = $model->taxCategoryId;
         $record->taxZoneId = $model->taxZoneId ?: null;
         $record->isEverywhere = $model->getIsEverywhere();
+        $record->enabled = $model->enabled;
 
         if (!$record->isEverywhere && $record->taxZoneId && empty($record->getErrors('taxZoneId'))) {
             $taxZone = Plugin::getInstance()->getTaxZones()->getTaxZoneById($record->taxZoneId, $record->storeId);
@@ -210,6 +223,11 @@ class TaxRates extends Component
             ])
             ->orderBy(['include' => SORT_DESC, 'isVat' => SORT_DESC])
             ->from([Table::TAXRATES]);
+
+        // if enabled column exists add the select
+        if (Craft::$app->getDb()->columnExists(Table::TAXRATES, 'enabled')) {
+            $query->addSelect(['enabled']);
+        }
 
         return $query;
     }

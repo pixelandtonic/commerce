@@ -108,6 +108,11 @@ class TaxRate extends Model implements HasStoreInterface
     public ?DateTime $dateUpdated = null;
 
     /**
+     * @var bool Whether the tax rate is enabled
+     */
+    public bool $enabled = true;
+
+    /**
      * @var TaxCategory|null
      */
     private ?TaxCategory $_taxCategory = null;
@@ -144,6 +149,7 @@ class TaxRate extends Model implements HasStoreInterface
             'taxable',
             'taxCategoryId',
             'taxZoneId',
+            'enabled',
         ], 'safe'];
 
         return $rules;

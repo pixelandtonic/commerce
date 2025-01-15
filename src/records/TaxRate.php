@@ -30,6 +30,7 @@ use yii\db\ActiveQueryInterface;
  * @property TaxZone $taxZone
  * @property bool $isEverywhere
  * @property int $taxZoneId
+ * @property bool $enabled
  * @author Pixel & Tonic, Inc. <support@pixelandtonic.com>
  * @since 2.0
  */
