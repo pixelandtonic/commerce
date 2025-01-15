@@ -22,12 +22,8 @@
     {% endif %}
 {% endblock %}
 
-{% block main %}
-    <div id="content">
-        <div class="content-pane">
-            <div id="gateways-vue-admin-table"></div>
-        </div>
-    </div>
+{% block content %}
+    <div id="gateways-vue-admin-table"></div>
 {% endblock %}
 
 
@@ -74,20 +70,20 @@
             }
         ];
 
-        var gatewayVueAdminTableConfig = {
+        let config = {
           columns: columns,
           container: '#gateways-vue-admin-table',
           tableData: {{ tableData|json_encode|raw }}
         };
 
         {% if not readOnly %}
-        gatewayVueAdminTableConfig.deleteAction = 'commerce/gateways/archive';
-        gatewayVueAdminTableConfig.reorderAction = 'commerce/gateways/reorder';
-        gatewayVueAdminTableConfig.reorderSuccessMessage = Craft.t('commerce', 'Gateways reordered.') ;
-        gatewayVueAdminTableConfig.reorderFailMessage =    Craft.t('commerce', 'Couldn’t reorder gateways.');
+        config['deleteAction'] = 'commerce/gateways/archive';
+        config['reorderAction'] = 'commerce/gateways/reorder';
+        config['reorderSuccessMessage'] = Craft.t('commerce', 'Gateways reordered.') ;
+        config['reorderFailMessage'] = Craft.t('commerce', 'Couldn’t reorder gateways.');
         {% endif %}
 
-        new Craft.VueAdminTable(gatewayVueAdminTableConfig);
+        new Craft.VueAdminTable(config);
     {% endjs %}
 
 {% css %}

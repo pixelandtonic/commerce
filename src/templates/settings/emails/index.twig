@@ -27,15 +27,14 @@
     {% endif %}
 {% endblock %}
 
-{% block main %}
-    <div id="content">
-        {% for store in stores %}
-            <h2 id="{{ store.handle }}" class="emails-margin-top">{{ store.name }}</h2>
-            <div class="content-pane">
-                <div id="emails-vue-admin-table-{{ store.handle }}"></div>
-            </div>
-        {% endfor %}
-    </div>
+{% block content %}
+    {% for store in stores %}
+        {% if stores|length > 1 %}
+            <h2 id="{{ store.handle }}" class="{% if loop.first %}first{% endif %}">{{ store.name }}</h2>
+        {% endif %}
+        <div id="emails-vue-admin-table-{{ store.handle }}"></div>
+        {% if not loop.last %}<hr>{% endif %}
+    {% endfor %}
 {% endblock %}
 
 {% for storeHandle, storeEmails in emails %}
@@ -80,23 +79,18 @@
                     },
         ];
 
-        var emailVueAdminTableConfig = {
+        let {{ storeHandle }}Config = {
             columns: columns,
+            fullPane: false,
             container: '#emails-vue-admin-table-{{ storeHandle }}',
             emptyMessage: Craft.t('commerce', 'No emails exist yet.'),
             tableData: {{ tableData|json_encode|raw }},
         };
 
         {% if not readOnly %}
-        emailVueAdminTableConfig.deleteAction = 'commerce/emails/delete';
+        {{ storeHandle }}Config['deleteAction'] = 'commerce/emails/delete';
         {% endif %}
 
-        new Craft.VueAdminTable(emailVueAdminTableConfig);
+        new Craft.VueAdminTable({{ storeHandle }}Config);
     {% endjs %}
 {% endfor %}
-
-{% css %}
-  .emails-margin-top {
-    margin-top: var(--xl);
-  }
-{% endcss %}

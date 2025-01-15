@@ -63,7 +63,7 @@
         }
     ];
 
-    var productTypeVueAdminTableConfig = {
+    let config = {
       columns: columns,
       container: '#types-vue-admin-table',
       emptyMessage: Craft.t('commerce', 'No product types exist yet.'),
@@ -71,9 +71,9 @@
     };
 
     {% if not readOnly %}
-    productTypeVueAdminTableConfig.deleteAction =  'commerce/product-types/delete-product-type';
-    productTypeVueAdminTableConfig.deleteConfirmationMessage = Craft.t('commerce', 'Are you sure you want to delete “{name}” and all its products? Please make sure you have a backup of your database before performing this destructive action.');
+    config['deleteAction'] = 'commerce/product-types/delete-product-type';
+    config['deleteConfirmationMessage'] = Craft.t('commerce', 'Are you sure you want to delete “{name}” and all its products? Please make sure you have a backup of your database before performing this destructive action.');
     {% endif %}
 
-    new Craft.VueAdminTable(productTypeVueAdminTableConfig);
+    new Craft.VueAdminTable(config);
 {% endjs %}

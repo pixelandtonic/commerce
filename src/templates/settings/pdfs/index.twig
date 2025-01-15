@@ -35,15 +35,14 @@
     {% endif %}
 {% endblock %}
 
-{% block main %}
-    <div id="content">
+{% block content %}
         {% for store in stores %}
-            <h2 id="{{ store.handle }}" class="pdfs-margin-top">{{ store.name }}</h2>
-            <div class="content-pane">
-                <div id="pdfs-vue-admin-table-{{ store.handle }}"></div>
-            </div>
+            {% if stores|length > 1 %}
+                <h2 id="{{ store.handle }}" class="{% if loop.first %}first{% endif %}">{{ store.name }}</h2>
+            {% endif %}
+            <div id="pdfs-vue-admin-table-{{ store.handle }}"></div>
+            {% if not loop.last %}<hr>{% endif %}
         {% endfor %}
-    </div>
 {% endblock %}
 
 {% for storeHandle, storePdfs in pdfs %}
@@ -74,31 +73,21 @@
             }
         ];
 
-        var pdfVueAdminTableConfig = {
+        let {{ storeHandle }}Config = {
           columns: columns,
+          fullPane: false,
           container: '#pdfs-vue-admin-table-{{ storeHandle }}',
           emptyMessage: Craft.t('commerce', 'No PDFs exist yet.'),
           tableData: {{ tableData|json_encode|raw }},
         };
 
         {% if not readOnly %}
-        pdfVueAdminTableConfig.deleteAction = 'commerce/pdfs/delete';
-        pdfVueAdminTableConfig.reorderAction = 'commerce/pdfs/reorder';
-        pdfVueAdminTableConfig.reorderFailMessage = Craft.t('commerce', 'Couldn’t reorder PDFs.');
-        pdfVueAdminTableConfig.reorderSuccessMessage = Craft.t('commerce', 'PDFs reordered.');
+        {{ storeHandle }}Config['deleteAction'] = 'commerce/pdfs/delete';
+        {{ storeHandle }}Config['reorderAction'] = 'commerce/pdfs/reorder';
+        {{ storeHandle }}Config['reorderFailMessage'] = Craft.t('commerce', 'Couldn’t reorder PDFs.');
+        {{ storeHandle }}Config['reorderSuccessMessage'] = Craft.t('commerce', 'PDFs reordered.');
         {% endif %}
 
-        new Craft.VueAdminTable(pdfVueAdminTableConfig);
+        new Craft.VueAdminTable({{ storeHandle }}Config);
     {% endjs %}
 {% endfor %}
-
-{% css %}
-  table.data thead .vuetable-th-slot-title,
-  table.data thead .vuetable-th-slot-handle {
-    width: 33%;
-  }
-
-  .pdfs-margin-top {
-    margin-top: var(--xl);
-  }
-{% endcss %}

@@ -1,9 +1,10 @@
 {% extends "commerce/_layouts/settings" %}
 
-{% set selectedTab = 'settings' %}
 {% import "_includes/forms" as forms %}
 
-{% set fullPageForm = true %}
+{% set selectedItem = 'transfers' %}
+
+{% set fullPageForm = not readOnly %}
 
 {% if not readOnly is defined %}
     {% exit 422 %}
@@ -14,13 +15,16 @@
 {% endif %}
 
 {% block content %}
-    <input type="hidden" name="action" value="commerce/order-settings/save">
-    {{ redirectInput('commerce/settings/ordersettings') }}
-
+    {% if not readOnly %}
+    {{ actionInput('commerce/settings/save-transfer-settings') }}
     {{ csrfInput() }}
+    {% endif %}
+    {{ redirectInput('commerce/settings/transfers') }}
 
     {{ forms.fieldLayoutDesignerField({
         fieldLayout: fieldLayout,
         disabled: readOnly,
     }) }}
+
+
 {% endblock %}

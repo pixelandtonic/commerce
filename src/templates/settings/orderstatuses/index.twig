@@ -12,14 +12,6 @@
     'Yes',
 ]) %}
 
-{% if not readOnly is defined %}
-    {% exit 422 %}
-{% endif %}
-
-{% if readOnly %}
-    {% set contentNotice = readOnlyNotice() %}
-{% endif %}
-
 {% block actionButton %}
     {% if not readOnly %}
     <div class="btngroup">
@@ -37,15 +29,14 @@
     {% endif %}
 {% endblock %}
 
-{% block main %}
-    <div id="content">
+{% block content %}
         {% for store in stores %}
-            <h2 id="{{ store.handle }}" class="os-margin-top">{{ store.name }}</h2>
-            <div class="content-pane">
+            {% if stores|length > 1 %}
+                <h2 id="{{ store.handle }}" class="{% if loop.first %}first{% endif %}">{{ store.name }}</h2>
+            {% endif %}
                 <div id="statuses-vue-admin-table-{{ store.handle }}"></div>
-            </div>
+            {% if not loop.last %}<hr>{% endif %}
         {% endfor %}
-    </div>
 {% endblock %}
 
 {% for handle, storeStatuses in orderStatuses %}
@@ -88,31 +79,21 @@
           }
       ];
 
-      var orderStatusVueTableConfig = {
+      let {{ handle }}Config = {
         columns: columns,
+        fullPane: false,
         container: '#statuses-vue-admin-table-{{ handle }}',
-          minItems: 1,
-          tableData: {{ tableData|json_encode|raw }},
+        minItems: 1,
+        tableData: {{ tableData|json_encode|raw }},
       };
 
       {% if not readOnly %}
-      orderStatusVueTableConfig.reorderAction: 'commerce/order-statuses/reorder';
-      orderStatusVueTableConfig.reorderSuccessMessage: Craft.t('commerce', 'Order statuses reordered.');
-      orderStatusVueTableConfig.reorderFailMessage:    Craft.t('commerce', 'Couldn’t reorder statuses.');
-      orderStatusVueTableConfig.deleteAction: 'commerce/order-statuses/delete';
+        {{ handle }}Config['deleteAction'] = 'commerce/order-statuses/delete';
+        {{ handle }}Config['reorderAction'] = 'commerce/order-statuses/reorder';
+        {{ handle }}Config['reorderSuccessMessage'] = Craft.t('commerce', 'Order statuses reordered.');
+        {{ handle }}Config['reorderFailMessage'] = Craft.t('commerce', 'Couldn’t reorder statuses.');
       {% endif %}
 
-      new Craft.VueAdminTable(orderStatusVueTableConfig);
+      new Craft.VueAdminTable({{ handle }}Config);
   {% endjs %}
 {% endfor %}
-
-{% css %}
-  table.data thead .vuetable-th-labelHtml,
-  table.data thead .vuetable-th-slot-handle {
-  width: 30%;
-  }
-
-  .os-margin-top {
-    margin-top: var(--xl);
-  }
-{% endcss %}
