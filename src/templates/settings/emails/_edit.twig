@@ -7,14 +7,26 @@
 
 {% set selectedSubnavItem = 'settings' %}
 
-{% set fullPageForm = true %}
+{% set fullPageForm = not readOnly %}
+
+{% if not readOnly is defined %}
+    {% exit 422 %}
+{% endif %}
+
+{% if readOnly %}
+    {% set contentNotice = readOnlyNotice() %}
+{% endif %}
 
 {% import "_includes/forms" as forms %}
 
 {% block content %}
-    {{ actionInput('commerce/emails/save') }}
+
+    {% if not readOnly %}
+        {{ actionInput('commerce/emails/save') }}
+        {{ redirectInput('commerce/settings/emails') }}
+    {% endif %}
+
     {{ hiddenInput('storeId', email.storeId) }}
-    {{ redirectInput('commerce/settings/emails') }}
     {% if email.id %}
         {{ hiddenInput('emailId', email.id) }}
     {% endif %}
@@ -28,7 +40,8 @@
         value: email.name,
         errors: email.getErrors('name'),
         autofocus: true,
-        required: true
+        required: true,
+        disabled: readOnly,
     }) }}
 
     {{ forms.autosuggestField({
@@ -40,6 +53,7 @@
         value: email.getSenderAddress(false),
         errors: email.getErrors('senderAddress'),
         suggestEnvVars: true,
+        disabled: readOnly,
     }) }}
 
     {{ forms.autosuggestField({
@@ -51,6 +65,7 @@
         value: email.getSenderName(false),
         errors: email.getErrors('senderName'),
         suggestEnvVars: true,
+        disabled: readOnly,
     }) }}
 
     {{ forms.textField({
@@ -61,6 +76,7 @@
         value: email.subject,
         errors: email.getErrors('subject'),
         required: true,
+        disabled: readOnly,
     }) }}
 
     {{ forms.textField({
@@ -69,7 +85,8 @@
         id: 'replyTo',
         name: 'replyTo',
         value: email.replyTo,
-        errors: email.getErrors('replyTo')
+        errors: email.getErrors('replyTo'),
+        disabled: readOnly,
     }) }}
 
     {% set recipientInput %}
@@ -84,7 +101,8 @@
                     ],
                     value: email.recipientType,
                     toggle: true,
-                    targetPrefix: 'to-option-'
+                    targetPrefix: 'to-option-',
+                    disabled: readOnly,
                 }) }}
             </div>
             <div id="to-option-custom"
@@ -95,6 +113,7 @@
                     value: email.getTo(false),
                     errors: email.getErrors('to'),
                     suggestEnvVars: true,
+                    disabled: readOnly,
                 }) }}
             </div>
         </div>
@@ -116,6 +135,7 @@
         value: email.getBcc(false),
         errors: email.getErrors('bcc'),
         suggestEnvVars: true,
+        disabled: readOnly,
     }) }}
 
     {{ forms.autosuggestField({
@@ -126,6 +146,7 @@
         value: email.getCc(false),
         errors: email.getErrors('cc'),
         suggestEnvVars: true,
+        disabled: readOnly,
     }) }}
 
     {{ forms.autoSuggestField({
@@ -136,7 +157,8 @@
         value: email.templatePath,
         errors: email.getErrors('templatePath'),
         required: true,
-        suggestions: craft.cp.getTemplateSuggestions()
+        suggestions: craft.cp.getTemplateSuggestions(),
+        disabled: readOnly,
     }) }}
 
     {{ forms.textField({
@@ -146,6 +168,7 @@
         name: 'plainTextTemplatePath',
         value: email.plainTextTemplatePath,
         errors: email.getErrors('plainTextTemplatePath'),
+        disabled: readOnly,
     }) }}
 
     {{ forms.selectField({
@@ -154,7 +177,8 @@
         id: 'pdfId',
         name: 'pdfId',
         value: email.pdfId,
-        options: pdfList
+        options: pdfList,
+        disabled: readOnly,
     }) }}
 
     {{ forms.selectField({
@@ -165,7 +189,8 @@
         options : emailLanguageOptions,
         value : email.language,
         errors: email.getErrors('language') ?? null,
-        toggle: true
+        toggle: true,
+        disabled: readOnly,
     }) }}
 
     {{ forms.lightswitchField({
@@ -175,6 +200,7 @@
         name: 'enabled',
         value: 1,
         on: email.enabled,
-        errors: email.getErrors('enabled')
+        errors: email.getErrors('enabled'),
+        disabled: readOnly,
     }) }}
 {% endblock %}

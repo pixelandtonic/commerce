@@ -13,6 +13,7 @@
 ]) %}
 
 {% block actionButton %}
+    {% if not readOnly %}
     <div class="btngroup">
         <button type="button" class="btn submit add icon menubtn">{{ 'New order status'|t('commerce') }}</button>
         <div class="menu">
@@ -25,6 +26,7 @@
             </ul>
         </div>
     </div>
+    {% endif %}
 {% endblock %}
 
 {% block main %}
@@ -78,16 +80,21 @@
           }
       ];
 
-      new Craft.VueAdminTable({
-          columns: columns,
-          container: '#statuses-vue-admin-table-{{ handle }}',
-          deleteAction: 'commerce/order-statuses/delete',
+      var orderStatusVueTableConfig = {
+        columns: columns,
+        container: '#statuses-vue-admin-table-{{ handle }}',
           minItems: 1,
-          reorderAction: 'commerce/order-statuses/reorder',
-          reorderSuccessMessage: Craft.t('commerce', 'Order statuses reordered.'),
-          reorderFailMessage:    Craft.t('commerce', 'Couldn’t reorder statuses.'),
           tableData: {{ tableData|json_encode|raw }},
-      });
+      };
+
+      {% if not readOnly %}
+      orderStatusVueTableConfig.reorderAction: 'commerce/order-statuses/reorder';
+      orderStatusVueTableConfig.reorderSuccessMessage: Craft.t('commerce', 'Order statuses reordered.');
+      orderStatusVueTableConfig.reorderFailMessage:    Craft.t('commerce', 'Couldn’t reorder statuses.');
+      orderStatusVueTableConfig.deleteAction: 'commerce/order-statuses/delete';
+      {% endif %}
+
+      new Craft.VueAdminTable(orderStatusVueTableConfig);
   {% endjs %}
 {% endfor %}
 

@@ -5,6 +5,14 @@
 
 {% set fullPageForm = true %}
 
+{% if not readOnly is defined %}
+    {% exit 422 %}
+{% endif %}
+
+{% if readOnly %}
+    {% set contentNotice = readOnlyNotice() %}
+{% endif %}
+
 {% block content %}
     <h2>{{ "Order Fields"|t('commerce') }}</h2>
 
@@ -15,5 +23,6 @@
 
     {{ forms.fieldLayoutDesignerField({
         fieldLayout: fieldLayout,
+        disabled: readOnly,
     }) }}
 {% endblock %}

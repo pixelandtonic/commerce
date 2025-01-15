@@ -11,6 +11,7 @@
 ]) %}
 
 {% block actionButton %}
+    {% if not readOnly %}
     <div class="btngroup">
         <button type="button" class="btn submit add icon menubtn">{{ 'New PDF'|t('commerce') }}</button>
         <div class="menu">
@@ -23,6 +24,7 @@
             </ul>
         </div>
     </div>
+    {% endif %}
 {% endblock %}
 
 {% block main %}
@@ -64,16 +66,21 @@
             }
         ];
 
-        new Craft.VueAdminTable({
-            columns: columns,
-            container: '#pdfs-vue-admin-table-{{ storeHandle }}',
-            deleteAction: 'commerce/pdfs/delete',
-            emptyMessage: Craft.t('commerce', 'No PDFs exist yet.'),
-            reorderAction: 'commerce/pdfs/reorder',
-            reorderFailMessage:    Craft.t('commerce', 'Couldn’t reorder PDFs.'),
-            reorderSuccessMessage: Craft.t('commerce', 'PDFs reordered.'),
-            tableData: {{ tableData|json_encode|raw }},
-        });
+        var pdfVueAdminTableConfig = {
+          columns: columns,
+          container: '#pdfs-vue-admin-table-{{ storeHandle }}',
+          emptyMessage: Craft.t('commerce', 'No PDFs exist yet.'),
+          tableData: {{ tableData|json_encode|raw }},
+        };
+
+        {% if not readOnly %}
+        pdfVueAdminTableConfig.deleteAction = 'commerce/pdfs/delete';
+        pdfVueAdminTableConfig.reorderAction = 'commerce/pdfs/reorder';
+        pdfVueAdminTableConfig.reorderFailMessage = Craft.t('commerce', 'Couldn’t reorder PDFs.');
+        pdfVueAdminTableConfig.reorderSuccessMessage = Craft.t('commerce', 'PDFs reordered.');
+        {% endif %}
+
+        new Craft.VueAdminTable(pdfVueAdminTableConfig);
     {% endjs %}
 {% endfor %}
 

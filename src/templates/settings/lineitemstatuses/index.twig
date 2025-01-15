@@ -13,6 +13,7 @@
 ]) %}
 
 {% block actionButton %}
+    {% if not readOnly %}
     <div class="btngroup">
         <button type="button" class="btn submit add icon menubtn">{{ 'New line item status'|t('commerce') }}</button>
         <div class="menu">
@@ -25,6 +26,7 @@
             </ul>
         </div>
     </div>
+    {% endif %}
 {% endblock %}
 
 {% block main %}
@@ -75,17 +77,22 @@
         }
     ];
 
-    new Craft.VueAdminTable({
+    var lineItemStatusVueTableConfig = {
         columns: columns,
         container: '#statuses-vue-admin-table-{{ handle }}',
-        deleteAction: 'commerce/line-item-statuses/archive',
-        deleteConfirmationMessage: Craft.t('commerce', 'Are you sure you want to delete “{name}”, this will set all line items with this status to no status?'),
         padded: false,
-        reorderAction: 'commerce/line-item-statuses/reorder',
-        reorderSuccessMessage: Craft.t('commerce', 'Line item statuses reordered.'),
-        reorderFailMessage:    Craft.t('commerce', 'Couldn’t reorder statuses.'),
         tableData: {{ tableData|json_encode|raw }},
-        });
+    };
+
+    {% if not readOnly %}
+    lineItemStatusVueTableConfig.deleteAction = 'commerce/line-item-statuses/archive';
+    lineItemStatusVueTableConfig.deleteConfirmationMessage = Craft.t('commerce', 'Are you sure you want to delete “{name}”, this will set all line items with this status to no status?');
+    lineItemStatusVueTableConfig.reorderAction = 'commerce/line-item-statuses/reorder';
+    lineItemStatusVueTableConfig.reorderSuccessMessage = Craft.t('commerce', 'Line item statuses reordered.');
+    lineItemStatusVueTableConfig.reorderFailMessage =    Craft.t('commerce', 'Couldn’t reorder statuses.');
+    {% endif %}
+
+    new Craft.VueAdminTable(lineItemStatusVueTableConfig);
     {% endjs %}
 {% endfor %}
 

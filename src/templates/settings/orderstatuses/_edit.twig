@@ -7,15 +7,26 @@
 
 {% set selectedSubnavItem = 'settings' %}
 
-{% set fullPageForm = true %}
+{% set fullPageForm = not readOnly %}
+
+{% if not readOnly is defined %}
+    {% exit 422 %}
+{% endif %}
+
+{% if readOnly %}
+    {% set contentNotice = readOnlyNotice() %}
+{% endif %}
 
 {% set selectedTab = 'settings' %}
 {% import "_includes/forms" as forms %}
 
 {% block content %}
+    {% if not readOnly %}
     {{ actionInput('commerce/order-statuses/save') }}
-    {{ hiddenInput('storeId', orderStatus.storeId) }}
     {{ redirectInput('commerce/settings/orderstatuses') }}
+    {% endif %}
+
+    {{ hiddenInput('storeId', orderStatus.storeId) }}
     {% if orderStatus.id %}
         {{ hiddenInput('sortOrder', orderStatus.sortOrder) }}
         {{ hiddenInput('id', orderStatus.id) }}
@@ -29,7 +40,8 @@
         name: 'name',
         value: orderStatus.name,
         errors: orderStatus.getErrors('name'),
-        required: true
+        required: true,
+        disabled: readOnly,
     }) }}
 
     {{ forms.textField({
@@ -40,7 +52,8 @@
         name: 'handle',
         value: orderStatus.handle,
         errors: orderStatus.getErrors('handle'),
-        required: true
+        required: true,
+        disabled: readOnly,
     }) }}
 
     {{ forms.textField({
@@ -50,6 +63,7 @@
         name: 'description',
         value: orderStatus.description,
         errors: orderStatus.getErrors('description'),
+        disabled: readOnly,
     }) }}
 
     {% set statusColor = not orderStatus.id and nextAvailableColor is defined and nextAvailableColor and not orderStatus.hasErrors() ? nextAvailableColor : orderStatus.color %}
@@ -57,6 +71,7 @@
         id: 'color',
         name: 'color',
         value: statusColor,
+        disabled: readOnly,
     }) }}
 
     {% set colorField %}
@@ -79,7 +94,8 @@
     {% endset %}
     {{ forms.field({
         label: 'Color'|t('commerce'),
-        instructions: 'Choose a color to represent the order’s status'|t('commerce')
+        instructions: 'Choose a color to represent the order’s status'|t('commerce'),
+        disabled: readOnly,
     },colorField) }}
 
 
@@ -99,6 +115,7 @@
             values: emailIds is defined ? emailIds : orderStatus.getEmailIds(),
             errors: orderStatus.getErrors('emails'),
             class: 'selectize fullwidth',
+            disabled: readOnly,
         }) }}
     {% endif %}
 
@@ -118,7 +135,8 @@
             name: 'default',
             value: 1,
             on: isDefault,
-            errors: orderStatus.getErrors('default')
+            errors: orderStatus.getErrors('default'),
+            disabled: readOnly,
         }) }}
     {% endif %}
 

@@ -2,15 +2,11 @@
 {% extends "commerce/_layouts/settings" %}
 
 {% set selectedTab = 'settings' %}
-{% set fullPageForm = true %}
+{% set fullPageForm = not readOnly %}
 
 {% import "_includes/forms" as forms %}
 
 {% from _self import configWarning %}
-
-{% if readOnly %}
-    {% set contentNotice = readOnlyNotice() %}
-{% endif %}
 
 {% block content %}
     <h2>{{ "General Settings"|t('commerce') }}</h2>

@@ -15,9 +15,11 @@
 ]) %}
 
 {% block actionButton %}
-    <div class="btngroup">
-        <a href="{{ url("commerce/settings/gateways/new") }}" class="btn submit add icon">{{ 'New gateway'|t('commerce') }}</a>
-    </div>
+    {% if not readOnly %}
+        <div class="btngroup">
+            <a href="{{ url("commerce/settings/gateways/new") }}" class="btn submit add icon">{{ 'New gateway'|t('commerce') }}</a>
+        </div>
+    {% endif %}
 {% endblock %}
 
 {% block main %}
@@ -72,15 +74,20 @@
             }
         ];
 
-        new Craft.VueAdminTable({
-            columns: columns,
-            container: '#gateways-vue-admin-table',
-            deleteAction: 'commerce/gateways/archive',
-            reorderAction: 'commerce/gateways/reorder',
-            reorderSuccessMessage: Craft.t('commerce', 'Gateways reordered.') ,
-            reorderFailMessage:    Craft.t('commerce', 'Couldn’t reorder gateways.'),
-            tableData: {{ tableData|json_encode|raw }}
-        });
+        var gatewayVueAdminTableConfig = {
+          columns: columns,
+          container: '#gateways-vue-admin-table',
+          tableData: {{ tableData|json_encode|raw }}
+        };
+
+        {% if not readOnly %}
+        gatewayVueAdminTableConfig.deleteAction = 'commerce/gateways/archive';
+        gatewayVueAdminTableConfig.reorderAction = 'commerce/gateways/reorder';
+        gatewayVueAdminTableConfig.reorderSuccessMessage = Craft.t('commerce', 'Gateways reordered.') ;
+        gatewayVueAdminTableConfig.reorderFailMessage =    Craft.t('commerce', 'Couldn’t reorder gateways.');
+        {% endif %}
+
+        new Craft.VueAdminTable(gatewayVueAdminTableConfig);
     {% endjs %}
 
 {% css %}
