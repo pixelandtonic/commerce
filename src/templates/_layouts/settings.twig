@@ -4,9 +4,7 @@
 
 {% set title = "System Settings"|t('commerce') %}
 
-{% if not readOnly is defined %}
-    {% exit 422 %}
-{% endif %}
+
 
 {% if readOnly %}
     {% set contentNotice = readOnlyNotice() %}

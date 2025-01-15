@@ -3,11 +3,8 @@
 {% set fullPageForm = not readOnly %}
 
 {% set selectedSubnavItem = 'settings' %}
-{% import '_includes/forms' as forms %}
 
-{% if not readOnly is defined %}
-    {% exit 422 %}
-{% endif %}
+{% import '_includes/forms' as forms %}
 
 {% if readOnly %}
     {% set contentNotice = readOnlyNotice() %}

@@ -9,9 +9,7 @@
 
 {% set fullPageForm = not readOnly %}
 
-{% if not readOnly is defined %}
-    {% exit 422 %}
-{% endif %}
+
 
 {% if readOnly %}
     {% set contentNotice = readOnlyNotice() %}
