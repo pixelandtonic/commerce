@@ -10,6 +10,7 @@
 
 ### Administration
 - Added support for environment variables to the `to`, `bcc`, and `cc` email fields. ([#3738](https://github.com/craftcms/commerce/issues/3738))
+- It’s now possible to view (but not edit) system and plugin settings on environments where `allowAdminChanges` is disabled. 
 
 ### Development
 - Added the `couponCode` order query param.
@@ -27,4 +28,4 @@
 - Added `craft\commerce\services\Inventory::updatePurchasableInventoryLevel()`.
 
 ### System
-- Craft Commerce now requires Craft CMS 5.5 or later.
+- Craft Commerce now requires Craft CMS 5.6 or later.

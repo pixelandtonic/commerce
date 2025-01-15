@@ -116,20 +116,6 @@ class TransfersController extends BaseStoreManagementController
     }
 
     /**
-     * @param array $variables
-     * @return Response
-     */
-    public function actionEditSettings(array $variables = []): Response
-    {
-        $fieldLayout = Plugin::getInstance()->getTransfers()->getFieldLayout();
-
-        $variables['fieldLayout'] = $fieldLayout;
-        $variables['title'] = Craft::t('commerce', 'Transfer Settings');
-
-        return $this->renderTemplate('commerce/settings/transfers/settings', $variables);
-    }
-
-    /**
      * @return Response
      */
     public function actionSaveSettings(): Response

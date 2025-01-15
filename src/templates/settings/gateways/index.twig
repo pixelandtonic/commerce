@@ -15,17 +15,15 @@
 ]) %}
 
 {% block actionButton %}
-    <div class="btngroup">
-        <a href="{{ url("commerce/settings/gateways/new") }}" class="btn submit add icon">{{ 'New gateway'|t('commerce') }}</a>
-    </div>
+    {% if not readOnly %}
+        <div class="btngroup">
+            <a href="{{ url("commerce/settings/gateways/new") }}" class="btn submit add icon">{{ 'New gateway'|t('commerce') }}</a>
+        </div>
+    {% endif %}
 {% endblock %}
 
-{% block main %}
-    <div id="content">
-        <div class="content-pane">
-            <div id="gateways-vue-admin-table"></div>
-        </div>
-    </div>
+{% block content %}
+    <div id="gateways-vue-admin-table"></div>
 {% endblock %}
 
 
@@ -72,15 +70,20 @@
             }
         ];
 
-        new Craft.VueAdminTable({
-            columns: columns,
-            container: '#gateways-vue-admin-table',
-            deleteAction: 'commerce/gateways/archive',
-            reorderAction: 'commerce/gateways/reorder',
-            reorderSuccessMessage: Craft.t('commerce', 'Gateways reordered.') ,
-            reorderFailMessage:    Craft.t('commerce', 'Couldn’t reorder gateways.'),
-            tableData: {{ tableData|json_encode|raw }}
-        });
+        let config = {
+          columns: columns,
+          container: '#gateways-vue-admin-table',
+          tableData: {{ tableData|json_encode|raw }}
+        };
+
+        {% if not readOnly %}
+        config['deleteAction'] = 'commerce/gateways/archive';
+        config['reorderAction'] = 'commerce/gateways/reorder';
+        config['reorderSuccessMessage'] = Craft.t('commerce', 'Gateways reordered.') ;
+        config['reorderFailMessage'] = Craft.t('commerce', 'Couldn’t reorder gateways.');
+        {% endif %}
+
+        new Craft.VueAdminTable(config);
     {% endjs %}
 
 {% css %}
@@ -97,9 +100,5 @@
     table.data thead th.vuetable-th-id,
     table.data thead th.vuetable-th-customerEnabled {
         width: 5%;
-    }
-
-    .gateways-margin-top {
-      margin-top: var(--xl);
     }
 {% endcss %}

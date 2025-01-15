@@ -33,7 +33,7 @@ use yii\web\ServerErrorHttpException;
  * @author Pixel & Tonic, Inc. <support@pixelandtonic.com>
  * @since 5.0
  */
-class StoresController extends BaseStoreManagementController
+class StoresController extends BaseAdminController
 {
     /**
      * Edit a store.
@@ -111,6 +111,7 @@ class StoresController extends BaseStoreManagementController
             'availableSiteOptions' => $availableSiteOptions,
             'freeOrderPaymentStrategyOptions' => $storeModel->getFreeOrderPaymentStrategyOptions(),
             'minimumTotalPriceStrategyOptions' => $storeModel->getMinimumTotalPriceStrategyOptions(),
+            'readOnly' => $this->isReadOnlyScreen(),
         ]);
     }
 
@@ -278,6 +279,7 @@ class StoresController extends BaseStoreManagementController
             'sitesStores' => Plugin::getInstance()->getStores()->getAllSiteStores(),
             'primaryStoreId' => Plugin::getInstance()->getStores()->getPrimaryStore()->id,
             'menuItems' => $menuItems,
+            'readOnly' => $this->isReadOnlyScreen(),
         ]);
     }
 
@@ -342,6 +344,7 @@ class StoresController extends BaseStoreManagementController
             'sites' => Craft::$app->getSites()->getAllSites(),
             'sitesStores' => $sitesStores ?? Plugin::getInstance()->getStores()->getAllSiteStores(),
             'primaryStoreId' => Plugin::getInstance()->getStores()->getPrimaryStore()->id,
+            'readOnly' => $this->isReadOnlyScreen(),
         ]);
     }
 
