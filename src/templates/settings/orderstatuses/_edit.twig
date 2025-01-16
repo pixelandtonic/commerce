@@ -72,7 +72,7 @@
 
     {% set colorField %}
         <div>
-            <a id="color-menu-btn" class="btn menubtn" href="#">
+            <a id="color-menu-btn" class="btn menubtn" href="#"{% if readOnly %} disabled=""{% endif %}>
                 <span class="status {{ statusColor }}"></span>{{ statusColor|t('commerce')|title }}
             </a>
             <div class="menu">
@@ -91,7 +91,6 @@
     {{ forms.field({
         label: 'Color'|t('commerce'),
         instructions: 'Choose a color to represent the order’s status'|t('commerce'),
-        disabled: readOnly,
     },colorField) }}
 
 
