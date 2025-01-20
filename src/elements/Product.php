@@ -858,7 +858,7 @@ class Product extends Element implements HasStoreInterface
             return false;
         }
 
-        return $user->can('commerce-editProductType:' . $productType->uid);
+        return Plugin::getInstance()->getProductTypes()->hasPermission($user, $productType, 'commerce-createProducts');
     }
 
     /**
@@ -876,7 +876,7 @@ class Product extends Element implements HasStoreInterface
             return false;
         }
 
-        return $user->can('commerce-deleteProducts:' . $productType->uid);
+        return Plugin::getInstance()->getProductTypes()->hasPermission($user, $productType, 'commerce-deleteProducts');
     }
 
     /**
