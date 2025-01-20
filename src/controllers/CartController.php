@@ -134,8 +134,13 @@ class CartController extends BaseFrontEndController
         }
 
         // Get the cart from the request or from the session.
-        // When we are about to update the cart, we consider it a real cart at this point, and want to actually create it in the DB.
         $this->_cart = $this->_getCart();
+
+        // When we are about to update the cart, we consider it a real cart at this point, and want to actually create it in the DB.
+        if ($this->_cart->id === null) {
+            // Make sure we have a fully saved cart before attempting any mutations.
+            $this->_getCart(true);
+        }
 
         // Can clear line items when updating the cart
         $clearLineItems = $this->request->getParam('clearLineItems');
