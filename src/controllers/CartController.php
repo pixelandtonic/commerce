@@ -713,7 +713,7 @@ class CartController extends BaseFrontEndController
                         $this->_cart->sourceShippingAddressId = $userBillingAddress->id;
 
                         if ($validBillingAddress) {
-                        	$this->_cart->setShippingAddress($cartBillingAddress);
+                            $this->_cart->setShippingAddress($cartBillingAddress);
                         }
                     }
                 }
