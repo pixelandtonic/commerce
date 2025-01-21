@@ -56,6 +56,7 @@ return [
     'Allow Checkout Without Payment' => 'Allow Checkout Without Payment',
     'Allow Empty Cart On Checkout' => 'Allow Empty Cart On Checkout',
     'Allow Partial Payment On Checkout' => 'Allow Partial Payment On Checkout',
+    'Allow out of stock purchases' => 'Allow out of stock purchases',
     'Allow' => 'Allow',
     'Allowed Qty' => 'Allowed Qty',
     'Alternative Phone' => 'Alternative Phone',

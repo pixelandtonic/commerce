@@ -690,6 +690,11 @@ class Inventory extends Component
 
             $purchasable = $lineItem->getPurchasable();
             // Don't reduce stock of unlimited items.
+
+            if (!$purchasable::hasInventory()) {
+                continue;
+            }
+
             if ($purchasable->inventoryTracked) {
                 if (!isset($qtyLineItem[$purchasable->id])) {
                     $qtyLineItem[$purchasable->id] = 0;
