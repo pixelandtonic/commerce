@@ -464,7 +464,6 @@ return [
     'Has Emails?' => 'Has Emails?',
     'Has Orders' => 'Has Orders',
     'Has Purchasable' => 'Has Purchasable',
-    'Has Transactions?' => 'Has Transactions?',
     'Has Variants?' => 'Has Variants?',
     'Height ({unit})' => 'Height ({unit})',
     'Height' => 'Height',
