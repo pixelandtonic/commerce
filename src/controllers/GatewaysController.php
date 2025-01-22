@@ -63,6 +63,7 @@ class GatewaysController extends BaseAdminController
         return $this->renderTemplate('commerce/settings/gateways/index', [
             'gateways' => $gateways,
             'archivedGateways' => array_values($archivedGateways),
+            'readOnly' => $this->isReadOnlyScreen(),
         ]);
     }
 
@@ -131,6 +132,8 @@ class GatewaysController extends BaseAdminController
         }
 
         DebugPanel::prependOrAppendModelTab(model: $variables['gateway'], prepend: true);
+
+        $variables['readOnly'] = $this->isReadOnlyScreen();
 
         return $this->renderTemplate('commerce/settings/gateways/_edit', $variables);
     }
