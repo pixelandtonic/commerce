@@ -1,6 +1,6 @@
 # Release Notes for Craft Commerce
 
-## Unreleased
+## 4.7.3 - 2025-01-22
 
 - Fixed a bug where users products had a “Save as a new product” action even if a plugin was preventing duplication via `craft\services\Elements::EVENT_AUTHORIZE_DUPLICATE`. ([#3819](https://github.com/craftcms/commerce/issues/3819))
 - Fixed a PHP error that could occur when updating a cart. ([#3842](https://github.com/craftcms/commerce/issues/3842))
