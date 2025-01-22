@@ -89,20 +89,17 @@ class ValidateOrganizationTaxIdBehavior extends Behavior
     private function _validateVatNumber(string $businessVatId): bool
     {
         try {
-            $validators = Plugin::getInstance()->getTaxes()->getEngine()->getValidators();
-            $valid = false;
+            $validators = Plugin::getInstance()->getTaxes()->getTaxIdValidators();
             foreach ($validators as $validator) {
                 if ($validator->validateExistence($businessVatId)) {
-                    $valid = true;
-                    break;
+                    return true;
                 }
             }
-            return $valid;
         } catch (Exception $e) {
             Craft::error('Communication with Tax ID validators failed: ' . $e->getMessage(), __METHOD__);
-
-            return false;
         }
+
+        return false;
     }
 
     /**
