@@ -339,7 +339,7 @@ class Tax extends Component implements AdjusterInterface
             return false;
         }
 
-        $validOrganizationTaxId = false;//Craft::$app->getCache()->exists('commerce:validVatId:' . $this->_address->organizationTaxId);
+        $validOrganizationTaxId = Craft::$app->getCache()->exists('commerce:validVatId:' . $this->_address->organizationTaxId);
 
         // If we do not have a valid VAT ID in cache, see if we can get one from the API
         if (!$validOrganizationTaxId) {
