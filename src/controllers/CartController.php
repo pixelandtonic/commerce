@@ -138,6 +138,7 @@ class CartController extends BaseFrontEndController
 
         // When we are about to update the cart, we consider it a real cart at this point, and want to actually create it in the DB.
         if ($this->_cart->id === null) {
+            // Make sure we have a fully saved cart before attempting any mutations.
             $this->_cart = $this->_getCart(true);
         }
 
