@@ -388,15 +388,6 @@ class Tax extends Component implements AdjusterInterface
         return false;
     }
 
-    private function _getEuVatValidator(): Validator
-    {
-        if ($this->_vatValidator === null) {
-            $this->_vatValidator = new Validator();
-        }
-
-        return $this->_vatValidator;
-    }
-
     private function _createAdjustment(TaxRate $rate): OrderAdjustment
     {
         $adjustment = new OrderAdjustment();
