@@ -8,14 +8,16 @@ interface TaxIdValidatorInterface
      * The display name of this tax ID type.
      *
      * @return string
+     * @since 4.8.0
      */
     public static function displayName(): string;
 
     /**
      * Tests if the ID looks generally correct. This would usually be something like a regex check.
      *
-     * @return bool
      * @param string $idNumber
+     * @return bool
+     * @since 4.8.0
      */
     public function validateFormat(string $idNumber): bool;
 
@@ -24,6 +26,7 @@ interface TaxIdValidatorInterface
      *
      * @param string $idNumber
      * @return bool
+     * @since 4.8.0
      */
     public function validateExistence(string $idNumber): bool;
 
@@ -32,6 +35,7 @@ interface TaxIdValidatorInterface
      *
      * @param string $idNumber
      * @return bool
+     * @since 4.8.0
      */
     public function validate(string $idNumber): bool;
 
@@ -40,6 +44,7 @@ interface TaxIdValidatorInterface
      * This would usually be a check against the existence or settings or API keys so that the validator can be used.
      *
      * @return bool
+     * @since 4.8.0
      */
     public static function isEnabled(): bool;
 }
