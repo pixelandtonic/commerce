@@ -91,7 +91,7 @@ class ValidateOrganizationTaxIdBehavior extends Behavior
         try {
             $validators = Plugin::getInstance()->getTaxes()->getTaxIdValidators();
             foreach ($validators as $validator) {
-                if ($validator->validateExistence($businessVatId)) {
+                if ($validator->validate($businessVatId)) {
                     return true;
                 }
             }
