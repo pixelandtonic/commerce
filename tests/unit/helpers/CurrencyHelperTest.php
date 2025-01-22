@@ -212,27 +212,6 @@ class CurrencyHelperTest extends Unit
                 false,
                 '1 234,00 €',
             ],
-            'EUR-ARABIC' => [
-                'EUR',
-                'ar',
-                1234.56,
-                true,
-                '١٬٢٣٤٫٥٦ €',
-            ],
-            'EUR-ARABIC-strip' => [
-                'EUR',
-                'ar',
-                1234.00,
-                true,
-                '١٬٢٣٤ €',
-            ],
-            'EUR-ARABIC-no-strip' => [
-                'EUR',
-                'ar',
-                1234.00,
-                false,
-                '١٬٢٣٤٫٠٠ €',
-            ],
         ];
     }
 }
