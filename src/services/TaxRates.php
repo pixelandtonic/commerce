@@ -15,6 +15,7 @@ use craft\commerce\Plugin;
 use craft\commerce\records\TaxRate as TaxRateRecord;
 use craft\db\Query;
 use craft\helpers\ArrayHelper;
+use DvK\Vat\Validator;
 use Throwable;
 use yii\base\Component;
 use yii\base\Exception;
@@ -129,6 +130,7 @@ class TaxRates extends Component
         $record->taxCategoryId = $model->taxCategoryId;
         $record->taxZoneId = $model->taxZoneId ?: null;
         $record->isEverywhere = $model->getIsEverywhere();
+        $record->taxIdValidators = $model->taxIdValidators;
 
         if (!$record->isEverywhere && $record->taxZoneId && empty($record->getErrors('taxZoneId'))) {
             $taxZone = Plugin::getInstance()->getTaxZones()->getTaxZoneById($record->taxZoneId);
@@ -237,6 +239,19 @@ class TaxRates extends Component
             ->orderBy(['include' => SORT_DESC, 'isVat' => SORT_DESC])
             ->from([Table::TAXRATES]);
 
+        // add taxIdValidators select
+        if (Craft::$app->getDb()->columnExists(Table::TAXRATES, 'taxIdValidators')) {
+            $query->addSelect(['taxIdValidators']);
+        }
+
         return $query;
+    }
+
+    public function getOrganizationTaxIdValidators()
+    {
+        return [
+            'vat' => new Vat(),
+            'euVat' => new Validator(),
+        ];
     }
 }

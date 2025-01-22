@@ -80,6 +80,7 @@ use craft\commerce\services\TaxRates;
 use craft\commerce\services\TaxZones;
 use craft\commerce\services\Transactions;
 use craft\commerce\services\Variants as VariantsService;
+use craft\commerce\services\Vat;
 use craft\commerce\services\Webhooks;
 use craft\commerce\web\twig\CraftVariableBehavior;
 use craft\commerce\web\twig\Extension;
@@ -195,6 +196,7 @@ class Plugin extends BasePlugin
                 'transactions' => ['class' => Transactions::class],
                 'customers' => ['class' => Customers::class],
                 'variants' => ['class' => VariantsService::class],
+                'vat' => ['class' => Vat::class],
                 'webhooks' => ['class' => Webhooks::class],
             ],
         ];
@@ -210,7 +212,7 @@ class Plugin extends BasePlugin
     /**
      * @inheritDoc
      */
-    public string $schemaVersion = '4.7.0.1';
+    public string $schemaVersion = '4.8.0.0';
 
     /**
      * @inheritdoc

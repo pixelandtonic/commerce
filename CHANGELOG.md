@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Improved the performance of recalculating shipping method prices. ([#3841](https://github.com/craftcms/commerce/pull/3841))
 - Fixed a bug where Edit Product pages would allow duplication for users that didn’t have permission to duplicate the product. ([#3819](https://github.com/craftcms/commerce/issues/3819))
 
 ## 4.7.2 - 2024-12-18
