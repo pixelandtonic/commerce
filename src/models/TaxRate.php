@@ -154,6 +154,7 @@ class TaxRate extends Model implements HasStoreInterface
             'isVat',
             'name',
             'rate',
+            'taxIdValidators',
             'removeIncluded',
             'removeVatIncluded',
             'storeId',
