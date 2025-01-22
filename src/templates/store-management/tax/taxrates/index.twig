@@ -3,7 +3,6 @@
 {% do view.registerTranslations('commerce', [
     'Include in price?',
     'Remove from price?',
-    'Is EU VAT?',
     'Name',
     'Rate',
     'Tax Category',
@@ -55,11 +54,6 @@ var columns = [
                 return '<span data-icon="check" title="'+Craft.escapeHtml(Craft.t('commerce', 'Yes'))+'"></span>';
             }
         } },
-    { name: 'vat', title: Craft.t('commerce', 'Is EU VAT?'), callback: function(value) {
-        if (value) {
-            return '<span data-icon="check" title="'+Craft.escapeHtml(Craft.t('commerce', 'Yes'))+'"></span>';
-        }
-    } },
     { name: 'zone', title: Craft.t('commerce', 'Tax Zone'), callback: function(value) {
         if (value && value.url) {
             return '<a href="'+value.url+'">'+value.label+'</a>';

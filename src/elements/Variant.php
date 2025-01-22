@@ -1405,4 +1405,12 @@ class Variant extends Purchasable implements NestedElementInterface
 
         return parent::attributeHtml($attribute);
     }
+
+    /**
+     * @inheritdoc
+     */
+    protected function ownerType(): ?string
+    {
+        return Product::class;
+    }
 }
