@@ -527,8 +527,9 @@ class CartTest extends Unit
         }
 
         $this->request->setBodyParams($bodyParams);
-        $originalSettingValue = Plugin::getInstance()->getSettings()->autoSetNewCartAddresses;
-        Plugin::getInstance()->getSettings()->autoSetNewCartAddresses = false;
+        $primaryStore = Plugin::getInstance()->getStores()->getPrimaryStore();
+        $originalSettingValue = $primaryStore->getAutoSetNewCartAddresses(false);
+        $primaryStore->setAutoSetNewCartAddresses(false);
 
         $this->cartController->runAction('update-cart');
 
@@ -589,7 +590,7 @@ class CartTest extends Unit
 
         Craft::$app->getElements()->deleteElement($cart, true);
 
-        Plugin::getInstance()->getSettings()->autoSetNewCartAddresses = $originalSettingValue;
+        $primaryStore->setAutoSetNewCartAddresses($originalSettingValue);
     }
 
     /**
