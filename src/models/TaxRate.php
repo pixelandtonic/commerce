@@ -261,6 +261,7 @@ class TaxRate extends Model
     /**
      * @return TaxIdValidatorInterface[]
      * @throws InvalidConfigException
+     * @since 4.8.0
      */
     public function getSelectedEnabledTaxIdValidators(): array
     {

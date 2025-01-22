@@ -15,7 +15,6 @@ use craft\commerce\Plugin;
 use craft\commerce\records\TaxRate as TaxRateRecord;
 use craft\db\Query;
 use craft\helpers\ArrayHelper;
-use DvK\Vat\Validator;
 use Throwable;
 use yii\base\Component;
 use yii\base\Exception;
@@ -245,13 +244,5 @@ class TaxRates extends Component
         }
 
         return $query;
-    }
-
-    public function getOrganizationTaxIdValidators()
-    {
-        return [
-            'vat' => new Vat(),
-            'euVat' => new Validator(),
-        ];
     }
 }
