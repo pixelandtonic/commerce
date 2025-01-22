@@ -13,6 +13,7 @@ use craft\commerce\base\Gateway;
 use craft\commerce\base\GatewayInterface;
 use craft\commerce\db\Table;
 use craft\commerce\gateways\Dummy;
+use craft\commerce\gateways\MissingGateway;
 use craft\commerce\helpers\DebugPanel;
 use craft\commerce\Plugin;
 use craft\db\Query;
@@ -46,7 +47,7 @@ class GatewaysController extends BaseAdminController
                 ->column();
 
             foreach ($archivedGateways as &$gateway) {
-                $missing = $gateway instanceof MissingComponentInterface;
+                $missing = $gateway instanceof MissingGateway;
                 $gateway = [
                     'id' => $gateway->id,
                     'title' => Craft::t('site', $gateway->name),
