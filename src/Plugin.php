@@ -257,7 +257,7 @@ class Plugin extends BasePlugin
     /**
      * @inheritDoc
      */
-    public string $schemaVersion = '5.3.0.0';
+    public string $schemaVersion = '5.3.0.2';
 
     /**
      * @inheritdoc
@@ -309,7 +309,6 @@ class Plugin extends BasePlugin
         $this->_registerGqlQueries();
         $this->_registerGqlComponents();
         $this->_registerGqlEagerLoadableFields();
-        $this->_registerLinkTypes();
         $this->_registerCacheTypes();
         $this->_registerGarbageCollection();
 
@@ -320,6 +319,7 @@ class Plugin extends BasePlugin
             $this->_registerWidgets();
             $this->_registerElementExports();
             $this->_defineFieldLayoutElements();
+            $this->_registerLinkTypes();
             $this->_registerRedactorLinkOptions();
             $this->_registerCKEditorLinkOptions();
         } else {
