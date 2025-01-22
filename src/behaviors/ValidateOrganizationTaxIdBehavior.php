@@ -89,7 +89,7 @@ class ValidateOrganizationTaxIdBehavior extends Behavior
     private function _validateVatNumber(string $businessVatId): bool
     {
         try {
-            $validators = Plugin::getInstance()->getTaxes()->getTaxIdValidators();
+            $validators = Plugin::getInstance()->getTaxes()->getEnabledTaxIdValidators();
             foreach ($validators as $validator) {
                 if ($validator->validate($businessVatId)) {
                     return true;
@@ -100,17 +100,5 @@ class ValidateOrganizationTaxIdBehavior extends Behavior
         }
 
         return false;
-    }
-
-    /**
-     * @return Validator
-     */
-    private function _getVatValidator(): Validator
-    {
-        if (!isset($this->_vatValidator)) {
-            $this->_vatValidator = new Validator();
-        }
-
-        return $this->_vatValidator;
     }
 }

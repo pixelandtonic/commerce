@@ -127,7 +127,6 @@ class TaxRatesController extends BaseTaxSettingsController
 
         $view->startJsBuffer();
 
-
         $newZone = new TaxAddressZone();
         $condition = $newZone->getCondition();
         $condition->mainTag = 'div';
@@ -156,11 +155,9 @@ class TaxRatesController extends BaseTaxSettingsController
         );
         $variables['newTaxCategoryJs'] = $view->clearJsBuffer(false);
 
-        $taxIdValidators = Plugin::getInstance()->getTaxes()->getTaxIdValidators();
+        $taxIdValidators = Plugin::getInstance()->getTaxes()->getEnabledTaxIdValidators();
         foreach ($taxIdValidators as $validator) {
-            if ($validator::isEnabled()) {
-                $variables['taxIdValidators'][] = $validator;
-            }
+            $variables['taxIdValidators'][] = $validator;
         }
 
         return $this->renderTemplate('commerce/tax/taxrates/_edit', $variables);

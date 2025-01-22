@@ -91,7 +91,7 @@ class TaxRate extends Model
     public ?int $taxZoneId = null;
 
     /**
-     * @var array|null Tax ID Validators
+     * @var array Tax ID Validators
      */
     public array $taxIdValidators = [];
 
@@ -231,10 +231,10 @@ class TaxRate extends Model
     }
 
     /**
-     * @return bool
+     * @param bool $isVat
      * @deprecated in 4.8.0.
      */
-    public function setIsVat(): void
+    public function setIsVat(bool $isVat): void
     {
         Craft::$app->getDeprecator()->log(__METHOD__, 'TaxRate::setIsVat() is deprecated.');
     }
@@ -266,10 +266,10 @@ class TaxRate extends Model
     public function getSelectedEnabledTaxIdValidators(): array
     {
         $selectedValidators = $this->taxIdValidators;
-        $validators = Plugin::getInstance()->getTaxes()->getTaxIdValidators();
+        $validators = Plugin::getInstance()->getTaxes()->getEnabledTaxIdValidators();
         $activeValidators = [];
         foreach ($validators as $validator) {
-            if ($validator::isEnabled() & in_array($validator::class, $selectedValidators)) {
+            if (in_array($validator::class, $selectedValidators)) {
                 $activeValidators[] = $validator;
             }
         }

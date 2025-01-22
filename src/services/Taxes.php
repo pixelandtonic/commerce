@@ -14,6 +14,7 @@ use craft\commerce\engines\Tax;
 use craft\commerce\events\TaxEngineEvent;
 use craft\commerce\events\TaxIdValidatorsEvent;
 use craft\commerce\taxidvalidators\EuVatIdValidator;
+use Illuminate\Support\Collection;
 use yii\base\InvalidConfigException;
 
 /**
@@ -77,11 +78,11 @@ class Taxes extends Component implements TaxEngineInterface
     private ?TaxEngineInterface $_taxEngine = null;
 
     /**
-     * @return TaxIdValidatorInterface[]
+     * @return Collection<TaxIdValidatorInterface>
      * @throws InvalidConfigException
      * @since 4.8.0
      */
-    public function getTaxIdValidators(): array
+    public function getTaxIdValidators(): Collection
     {
         $validators = [];
         $validators[] = new EuVatIdValidator();
@@ -100,7 +101,16 @@ class Taxes extends Component implements TaxEngineInterface
             }
         }
 
-        return $event->validators;
+        return collect($event->validators);
+    }
+
+    /**
+     * @return Collection<TaxIdValidatorInterface>
+     * @throws InvalidConfigException
+     */
+    public function getEnabledTaxIdValidators(): Collection
+    {
+        return $this->getTaxIdValidators()->filter(fn(TaxIdValidatorInterface $validator) => $validator::isEnabled());
     }
 
     /**
