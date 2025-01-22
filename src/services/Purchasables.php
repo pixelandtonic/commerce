@@ -137,20 +137,20 @@ class Purchasables extends Component
 
 
     /**
-     * @param PurchasableInterface $purchasable
+     * @param Purchasable $purchasable
      * @param Order|null $order
      * @param User|null $currentUser
      * @return bool
      * @throws Throwable
      * @since 5.3.0
      */
-    public function isPurchasableOutOfStockPurchasingAllowed(PurchasableInterface $purchasable, Order $order = null, User $currentUser = null): bool
+    public function isPurchasableOutOfStockPurchasingAllowed(Purchasable $purchasable, Order $order = null, User $currentUser = null): bool
     {
         if ($currentUser === null) {
             $currentUser = Craft::$app->getUser()->getIdentity();
         }
 
-        $outOfStockPurchasesAllowed = $purchasable->getIsOutOfStockPurchasingAllowed();
+        $outOfStockPurchasesAllowed = $purchasable->allowOutOfStockPurchases;
 
         $event = new PurchasableOutOfStockPurchasesAllowedEvent(compact('order', 'purchasable', 'currentUser', 'outOfStockPurchasesAllowed'));
 

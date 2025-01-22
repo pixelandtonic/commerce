@@ -829,9 +829,14 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
                         return;
                     }
 
+                    $lineItemPurchasable = $lineItem->getPurchasable();
+                    if (!$lineItemPurchasable instanceof Purchasable) {
+                        return;
+                    }
+
                     if (!$this->hasStock()) {
-                        if (!Plugin::getInstance()->getPurchasables()->isPurchasableOutOfStockPurchasingAllowed($lineItem->getPurchasable(), $lineItem->getOrder())) {
-                            $error = Craft::t('commerce', '“{description}” is currently out of stock.', ['description' => $lineItem->purchasable->getDescription()]);
+                        if (!Plugin::getInstance()->getPurchasables()->isPurchasableOutOfStockPurchasingAllowed($lineItemPurchasable, $lineItem->getOrder())) {
+                            $error = Craft::t('commerce', '“{description}” is currently out of stock.', ['description' => $lineItemPurchasable->getDescription()]);
                             $validator->addError($lineItem, $attribute, $error);
                         }
                     }
@@ -839,8 +844,8 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
                     $lineItemQty = $lineItem->id !== null ? $lineItemQuantitiesById[$lineItem->id] : $lineItemQuantitiesByPurchasableId[$lineItem->purchasableId];
 
                     if ($this->hasStock() && $this->inventoryTracked && $lineItemQty > $this->getStock()) {
-                        if (!Plugin::getInstance()->getPurchasables()->isPurchasableOutOfStockPurchasingAllowed($lineItem->getPurchasable(), $lineItem->getOrder())) {
-                            $error = Craft::t('commerce', 'There are only {num} “{description}” items left in stock.', ['num' => $this->getStock(), 'description' => $lineItem->purchasable->getDescription()]);
+                        if (!Plugin::getInstance()->getPurchasables()->isPurchasableOutOfStockPurchasingAllowed($lineItemPurchasable, $lineItem->getOrder())) {
+                            $error = Craft::t('commerce', 'There are only {num} “{description}” items left in stock.', ['num' => $this->getStock(), 'description' => $lineItemPurchasable->getDescription()]);
                             $validator->addError($lineItem, $attribute, $error);
                         }
                     }
