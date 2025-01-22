@@ -123,7 +123,7 @@ class TaxRates extends Component
 
         // if not an included tax, then can not be removed.
         $record->include = $model->include;
-        $record->isVat = $model->isVat;
+        $record->isVat = $model->hasTaxIdValidators();
         $record->removeIncluded = !$record->include ? false : $model->removeIncluded;
         $record->removeVatIncluded = (!$record->include || !$record->isVat) ? false : $model->removeVatIncluded;
         $record->taxable = $model->taxable;
