@@ -6,7 +6,6 @@ use Craft;
 use craft\commerce\Plugin;
 use craft\elements\Address;
 use craft\events\DefineRulesEvent;
-use DvK\Vat\Validator;
 use Exception;
 use RuntimeException;
 use yii\base\Behavior;
@@ -15,11 +14,6 @@ class ValidateOrganizationTaxIdBehavior extends Behavior
 {
     /** @var Address */
     public $owner;
-
-    /**
-     * @var Validator
-     */
-    private Validator $_vatValidator;
 
     /**
      * @inheritdoc
