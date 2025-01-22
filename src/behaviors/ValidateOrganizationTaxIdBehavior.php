@@ -6,7 +6,6 @@ use Craft;
 use craft\commerce\Plugin;
 use craft\elements\Address;
 use craft\events\DefineRulesEvent;
-use Exception;
 use RuntimeException;
 use yii\base\Behavior;
 use yii\base\InvalidConfigException;
