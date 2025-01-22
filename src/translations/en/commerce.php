@@ -513,7 +513,6 @@ return [
     'Invalid payment source ID: {value}' => 'Invalid payment source ID: {value}',
     'Invoice amount' => 'Invoice amount',
     'Invoice date' => 'Invoice date',
-    'Tax ID?' => 'Tax ID?',
     'Is subscription active?' => 'Is subscription active?',
     'Is this tax is already included in the price of items?' => 'Is this tax is already included in the price of items?',
     'Item Rates' => 'Item Rates',
