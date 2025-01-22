@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Improved the performance of recalculating shipping method prices. ([#3841](https://github.com/craftcms/commerce/pull/3841))
 - Fixed a bug where Edit Product pages would allow duplication for users that didn’t have permission to duplicate the product. ([#3819](https://github.com/craftcms/commerce/issues/3819))
 - Fixed a PHP error that could occur when updating a cart. ([#3842](https://github.com/craftcms/commerce/issues/3842))
 - Fixed a PHP error that could occur when adding an invalid address to a cart. ([#3848](https://github.com/craftcms/commerce/issues/3848))

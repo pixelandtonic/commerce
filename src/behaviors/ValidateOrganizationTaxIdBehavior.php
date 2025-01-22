@@ -6,7 +6,6 @@ use Craft;
 use craft\commerce\Plugin;
 use craft\elements\Address;
 use craft\events\DefineRulesEvent;
-use DvK\Vat\Validator;
 use Exception;
 use RuntimeException;
 use yii\base\Behavior;
@@ -15,11 +14,6 @@ class ValidateOrganizationTaxIdBehavior extends Behavior
 {
     /** @var Address */
     public $owner;
-
-    /**
-     * @var Validator
-     */
-    private Validator $_vatValidator;
 
     /**
      * @inheritdoc
@@ -89,23 +83,16 @@ class ValidateOrganizationTaxIdBehavior extends Behavior
     private function _validateVatNumber(string $businessVatId): bool
     {
         try {
-            return $this->_getVatValidator()->validate($businessVatId);
+            $validators = Plugin::getInstance()->getTaxes()->getEnabledTaxIdValidators();
+            foreach ($validators as $validator) {
+                if ($validator->validate($businessVatId)) {
+                    return true;
+                }
+            }
         } catch (Exception $e) {
-            Craft::error('Communication with VAT API failed: ' . $e->getMessage(), __METHOD__);
-
-            return false;
-        }
-    }
-
-    /**
-     * @return Validator
-     */
-    private function _getVatValidator(): Validator
-    {
-        if (!isset($this->_vatValidator)) {
-            $this->_vatValidator = new Validator();
+            Craft::error('Communication with Tax ID validators failed: ' . $e->getMessage(), __METHOD__);
         }
 
-        return $this->_vatValidator;
+        return false;
     }
 }
