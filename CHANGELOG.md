@@ -1,5 +1,9 @@
 # Release Notes for Craft Commerce
 
+## Unreleased
+
+- Fixed a JavaScript error that occurred when updating an order’s status for a non-primary store on order indexes. 
+
 ## 5.2.12 - 2025-01-22
 
 - Fixed a bug where product types’ “Max Variants” settings weren’t being respected. ([#3845](https://github.com/craftcms/commerce/issues/3845))
