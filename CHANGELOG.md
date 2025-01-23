@@ -1,6 +1,6 @@
 # Release Notes for Craft Commerce
 
-## Unreleased
+## 5.2.12.1 - 2025-01-23
 
 - Fixed a JavaScript error that occurred when updating an order’s status for a non-primary store on order indexes. 
 
