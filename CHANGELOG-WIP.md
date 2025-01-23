@@ -23,6 +23,7 @@
 - Added `craft\commerce\base\InventoryLocationTrait`.
 - Added `craft\commerce\base\InventoryLocationTrait`.
 - Added `craft\commerce\base\Purchasable::hasInventory()`.
+- Added `craft\commerce\base\Purchasable::loadSales()`.
 - Added `craft\commerce\base\TaxIdValidatorInterface`.
 - Added `craft\commerce\elements\Purchasable::$allowOutOfStockPurchases`.
 - Added `craft\commerce\elements\Purchasable::getIsOutOfStockPurchasingAllowed()`.
@@ -47,3 +48,4 @@
 
 ### System
 - Craft Commerce now requires Craft CMS 5.6 or later.
+- Fixed a bug where an order’s promotional price could be incorrectly calculated when using sales.

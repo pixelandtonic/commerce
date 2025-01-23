@@ -588,7 +588,9 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
         $price = $this->getPrice();
         if (!Plugin::getInstance()->getCatalogPricingRules()->canUseCatalogPricingRules()) {
             // Use the sales system to figure out the price
-            $this->_loadSales();
+            if (!isset($this->_sales)) {
+                $this->loadSales();
+            }
             $promotionalPrice = $this->_salesPrice ?? $this->basePromotionalPrice;
         } else {
             $promotionalPrice = $this->_promotionalPrice ?? $this->basePromotionalPrice;
@@ -1201,7 +1203,9 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
      */
     public function getSales(): array
     {
-        $this->_loadSales();
+        if (!isset($this->_sales)) {
+            $this->loadSales();
+        }
 
         return $this->_sales;
     }
@@ -1514,18 +1518,22 @@ abstract class Purchasable extends Element implements PurchasableInterface, HasS
     }
 
     /**
-     * Reloads any sales applicable to the purchasable for the current user.
+     * Reloads any sales applicable to the purchasable.
+     *
+     * @param Order|null $order
+     * @return void
+     * @throws InvalidConfigException
+     * @since 5.3.0
+     * @internal
      */
-    private function _loadSales(): void
+    public function loadSales(?Order $order = null): void
     {
-        if (!isset($this->_sales)) {
-            // Default the sales and salePrice to the original price without any sales
-            $this->_sales = [];
+        // Default the sales and salePrice to the original price without any sales
+        $this->_sales = [];
 
-            if ($this->getId()) {
-                $this->_sales = Plugin::getInstance()->getSales()->getSalesForPurchasable($this);
-                $this->_salesPrice = Plugin::getInstance()->getSales()->getSalePriceForPurchasable($this);
-            }
+        if ($this->getId()) {
+            $this->_sales = Plugin::getInstance()->getSales()->getSalesForPurchasable($this, $order);
+            $this->_salesPrice = Plugin::getInstance()->getSales()->getSalePriceForPurchasable($this, $order);
         }
     }
 }
