@@ -76,7 +76,7 @@ return [
     'Are you sure you want to mark this transfer as pending? This will show as incoming at the destination.' => 'Voulez-vous vraiment marquer ce transfert comme étant en attente ? Il apparaîtra comme entrant à la destination.',
     'Are you sure you want to overwrite the billing address?' => 'Êtes-vous sûr de vouloir écraser les adresses de facturation ?',
     'Are you sure you want to overwrite the shipping address?' => 'Êtes-vous sûr de vouloir écraser les adresses d\'expédition ?',
-    'Are you sure you want to permanently delete this store and everything in it?' => 'Voulez-vous vraiment supprimer ce magasin et tout ce qu\'il contient ?',
+    'Are you sure you want to permanently delete this store and everything in it?' => 'Voulez-vous vraiment définitivement supprimer ce magasin et tout ce qu\'il contient ?',
     'Are you sure you want to refund this transaction?' => 'Êtes-vous sûr de vouloir rembourser cette transaction ?',
     'Are you sure you want to remove this customer?' => 'Êtes-vous sûr de vouloir supprimer ce client ?',
     'Are you sure you want to save this as a new shipping rule?' => 'Êtes-vous sûr de vouloir enregistrer cette règle comme nouvelle règle de livraison ?',
