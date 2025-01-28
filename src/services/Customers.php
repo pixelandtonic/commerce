@@ -303,6 +303,7 @@ class Customers extends Component
     }
 
     /**
+     *
      * @param Order $order
      * @return void
      * @throws \Throwable
@@ -368,11 +369,22 @@ class Customers extends Component
             $order->sourceShippingAddressId = $newSourceShippingAddressId;
         }
 
+        // Since we saved the primary addresses, we can now set the primary if they chose that also
+        if ($order->makePrimaryShippingAddress && $order->sourceShippingAddressId) {
+            $this->savePrimaryShippingAddressId($order->getCustomer(), $order->sourceShippingAddressId);
+        }
+
+        if ($order->makePrimaryBillingAddress && $order->sourceBillingAddressId) {
+            $this->savePrimaryBillingAddressId($order->getCustomer(), $order->sourceBillingAddressId);
+        }
+
         // Manually update the order DB record to avoid looped element saves
         if ($newSourceBillingAddressId || $newSourceShippingAddressId) {
             \craft\commerce\records\Order::updateAll([
                 'sourceBillingAddressId' => $order->sourceBillingAddressId,
                 'sourceShippingAddressId' => $order->sourceShippingAddressId,
+                'makePrimaryBillingAddress' => false, // always set to false since the order is complete
+                'makePrimaryShippingAddress' => false, // always set to false since the order is complete
             ],
                 [
                     'id' => $order->id,
