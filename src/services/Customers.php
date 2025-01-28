@@ -16,6 +16,7 @@ use craft\commerce\elements\Order;
 use craft\commerce\events\UpdatePrimaryPaymentSourceEvent;
 use craft\commerce\Plugin;
 use craft\commerce\records\Customer as CustomerRecord;
+use craft\commerce\records\Order as OrderRecord;
 use craft\db\Query;
 use craft\elements\User;
 use craft\errors\ElementNotFoundException;
@@ -159,8 +160,21 @@ class Customers extends Component
             $this->_activateUserFromOrder($order);
         }
 
+        // Did they want to save addresses to the customers address book?
         if ($order->saveBillingAddressOnOrderComplete || $order->saveShippingAddressOnOrderComplete) {
             $this->_saveAddressesFromOrder($order);
+        }
+
+        // clear the primary address flags if they were set as it only applies to the cart
+        if ($order->makePrimaryBillingAddress || $order->makePrimaryShippingAddress) {
+            OrderRecord::updateAll([
+                'makePrimaryBillingAddress' => false,
+                'makePrimaryShippingAddress' => false,
+            ],
+                [
+                    'id' => $order->id,
+                ]
+            );
         }
     }
 
@@ -383,8 +397,6 @@ class Customers extends Component
             \craft\commerce\records\Order::updateAll([
                 'sourceBillingAddressId' => $order->sourceBillingAddressId,
                 'sourceShippingAddressId' => $order->sourceShippingAddressId,
-                'makePrimaryBillingAddress' => false, // always set to false since the order is complete
-                'makePrimaryShippingAddress' => false, // always set to false since the order is complete
             ],
                 [
                     'id' => $order->id,
