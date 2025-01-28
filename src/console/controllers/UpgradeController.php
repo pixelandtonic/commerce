@@ -438,9 +438,9 @@ EOL
 
             $field = new PlainText();
             $field->groupId = ArrayHelper::firstValue(Craft::$app->getFields()->getAllGroups())->id;
-            if($oldAttribute == 'notes'){
+            if ($oldAttribute == 'notes') {
                 $field->columnType = Schema::TYPE_TEXT;
-            }else{
+            } else {
                 $field->columnType = Schema::TYPE_STRING;
             }
             $field->handle = $this->prompt('Field handle:', [
