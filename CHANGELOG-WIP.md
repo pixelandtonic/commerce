@@ -50,4 +50,4 @@
 ### System
 - Craft Commerce now requires Craft CMS 5.6 or later.
 - Fixed a bug where an order’s promotional price could be incorrectly calculated when using sales.
-- Fixed a bug where `makePrimaryShippingAddress` and `makePrimaryBillingAddress` cart update params did not work when new addresses were saved on order completion.
+- Fixed a bug where `makePrimaryShippingAddress` and `makePrimaryBillingAddress` cart update params did not work when new addresses were saved on order completion. ([#3864](https://github.com/craftcms/commerce/pull/3864))
