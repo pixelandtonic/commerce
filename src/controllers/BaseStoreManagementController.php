@@ -75,7 +75,14 @@ class BaseStoreManagementController extends BaseCpController
         $store = $storeHandle ? Plugin::getInstance()->getStores()->getStoreByHandle($storeHandle) : null;
 
         $storeItems = $stores->filter(function(Store $s) {
-            return true;
+            // Check that the user has permission to access a site that this store is related to
+            foreach ($s->getSites() as $site) {
+                if (Craft::$app->getUser()->checkPermission('editSite:' . $site->uid)) {
+                    return true;
+                }
+            }
+
+            return false;
         })->map(function(Store $s) use ($storeHandle) {
             return [
                 'status' => null,
