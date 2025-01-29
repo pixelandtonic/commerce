@@ -1,5 +1,9 @@
 # Release Notes for Craft Commerce
 
+## Unreleased
+
+- Improved Craft Commerce navigation and breadcrumb labels.
+
 ## 4.7.3 - 2025-01-22
 
 - Improved the performance of recalculating shipping method prices. ([#3841](https://github.com/craftcms/commerce/pull/3841))

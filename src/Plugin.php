@@ -386,14 +386,15 @@ class Plugin extends BasePlugin
 
         if (Craft::$app->getUser()->checkPermission('commerce-manageStoreSettings')) {
             $ret['subnav']['store-settings'] = [
-                'label' => Craft::t('commerce', 'Store Settings'),
+                'label' => Craft::t('commerce', 'Store Management'),
                 'url' => 'commerce/store-settings',
             ];
         }
 
         if (Craft::$app->getUser()->getIsAdmin() && Craft::$app->getConfig()->getGeneral()->allowAdminChanges) {
             $ret['subnav']['settings'] = [
-                'label' => Craft::t('commerce', 'System Settings'),
+                'ariaLabel' => Craft::t('commerce', 'Commerce Settings'),
+                'label' => Craft::t('app', 'Settings'),
                 'url' => 'commerce/settings',
             ];
         }

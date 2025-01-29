@@ -2,7 +2,11 @@
 {% set selectedSubnavItem = 'store-settings' %}
 {% set bodyClass = (bodyClass is defined ? bodyClass~' ' : '') ~ "commercesettings" %}
 
-{% set title = "Store Settings"|t('commerce') %}
+{% set title = "Store Management"|t('commerce') %}
+
+{% set crumbs = [
+  { label: 'Commerce'|t('commerce'), url: url('commerce') },
+] %}
 
 {% set navItems = {} %}
 

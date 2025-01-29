@@ -1,6 +1,7 @@
 {% extends "commerce/_layouts/cp" %}
 
 {% set crumbs = [
+    { label: 'Commerce'|t('commerce'), url: url('commerce') },
     { label: "Shipping"|t('commerce'), url: url('commerce/shipping') },
     { label: "Shipping Methods"|t('commerce'), url: url('commerce/shipping/shippingmethods') },
     { label: shippingMethod.getName()|t('commerce'), url: url('commerce/shipping/shippingmethods/'~methodId) },
