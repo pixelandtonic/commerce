@@ -71,6 +71,10 @@ class StoresController extends BaseAdminController
         // Breadcrumbs
         $crumbs = [
             [
+                'label' => Craft::t('commerce', 'Commerce'),
+                'url' => UrlHelper::url('commerce'),
+            ],
+            [
                 'label' => Craft::t('commerce', 'Settings'),
                 'url' => UrlHelper::url('commerce/settings'),
             ],
@@ -209,8 +213,8 @@ class StoresController extends BaseAdminController
         // Breadcrumbs
         $crumbs = [
             [
-                'label' => Craft::t('commerce', 'Settings'),
-                'url' => UrlHelper::url('commerce/settings/stores'),
+                'label' => Craft::t('commerce', 'Commerce'),
+                'url' => UrlHelper::url('commerce'),
             ],
         ];
 
@@ -333,8 +337,8 @@ class StoresController extends BaseAdminController
         // Breadcrumbs
         $crumbs = [
             [
-                'label' => Craft::t('commerce', 'Settings'),
-                'url' => UrlHelper::url('commerce/settings/stores'),
+                'label' => Craft::t('commerce', 'Commerce'),
+                'url' => UrlHelper::url('commerce'),
             ],
         ];
 

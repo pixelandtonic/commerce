@@ -4,10 +4,6 @@
 
 {% set title = "Settings"|t('app') %}
 
-{% set crumbs = [
-  { label: "Commerce"|t('commerce'), url: url('commerce') },
-] %}
-
 {% if readOnly %}
     {% set contentNotice = readOnlyNotice() %}
 {% endif %}
@@ -24,7 +20,7 @@
     'producttypes': { title: "Product Types"|t('commerce')},
 
     'orders-heading': { heading: "Orders"|t('commerce')},
-    'ordersettings': { title: "Order Fields"|t('commerce')}
+    'ordersettings': { title: "Order Fields"|t('commerce')},
     'orderstatuses': { title: "Order Statuses"|t('commerce')},
     'lineitemstatuses': { title: "Line Item Statuses"|t('commerce')},
 

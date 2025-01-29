@@ -134,6 +134,7 @@ class CatalogPricingRulesController extends BaseStoreManagementController
         return $this->asCpScreen()
             ->title(Craft::t('commerce', 'Catalog Pricing Rule'))
             ->crumbs([
+                ['label' => Craft::t('commerce', 'Commerce'), 'url' => 'commerce'],
                 ['label' => $store->getName(), 'url' => UrlHelper::cpUrl('commerce/store-management/' . $store->handle)],
                 ['label' => Craft::t('commerce', 'Pricing Rules'), 'url' => UrlHelper::cpUrl('commerce/store-management/' . $store->handle . '/pricing-rules')],
             ])

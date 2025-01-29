@@ -11,6 +11,10 @@
     'Yes',
 ]) %}
 
+{% set crumbs = [
+  { label: 'Commerce'|t('commerce'), url: url('commerce') },
+] %}
+
 {% block actionButton %}
     {% if not readOnly %}
     <a href="{{ url('commerce/settings/producttypes/new') }}" class="btn submit add icon">{{ 'New product type'|t('commerce') }}</a>

@@ -12,9 +12,12 @@
 {% endif %}
 {% set store = craft.commerce.stores.getStoreByHandle(storeHandle) %}
 {% set defaultCrumbs = [
+  { label: 'Commerce'|t('commerce'), url: url('commerce') },
   { label: store.name, url: url('commerce/store-management/' ~ store.handle) },
 ] %}
-{% set crumbs = not isIndex ? defaultCrumbs|merge(crumbs is not defined ? [] : crumbs) : [] %}
+{% set crumbs = not isIndex ? defaultCrumbs|merge(crumbs is not defined ? [] : crumbs) : [
+  { label: 'Commerce'|t('commerce'), url: url('commerce') },
+] %}
 
 {% set title = title is not defined ? 'Store Management'|t('commerce') : title %}
 

@@ -4,6 +4,10 @@
 {% set selectedTab = 'settings' %}
 {% set fullPageForm = not readOnly %}
 
+{% set crumbs = [
+  { label: 'Commerce'|t('commerce'), url: url('commerce') },
+] %}
+
 {% import "_includes/forms" as forms %}
 
 {% from _self import configWarning %}
