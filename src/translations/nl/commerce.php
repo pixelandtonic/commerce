@@ -922,6 +922,7 @@ return [
     'Stops Processing?' => 'Verwerking stoppen?',
     'Stops subsequent?' => 'Volgende stoppen?',
     'Store Location' => 'Winkellocatie',
+    'Store Management' => 'Winkelbeheer',
     'Store Markets' => 'Winkelmarkten',
     'Store Settings' => 'Winkelinstellingen',
     'Store saved.' => 'Winkel opgeslagen.',
