@@ -443,7 +443,8 @@ class Plugin extends BasePlugin
 
         if (Craft::$app->getUser()->getIsAdmin()) {
             $ret['subnav']['settings'] = [
-                'label' => Craft::t('commerce', 'System Settings'),
+                'ariaLabel' => Craft::t('commerce', 'Commerce Settings'),
+                'label' => Craft::t('app', 'Settings'),
                 'url' => 'commerce/settings/general',
             ];
         }

@@ -1,7 +1,8 @@
 {% extends "commerce/_layouts/cp" %}
 
 {% set crumbs = [
-    { label: 'Commerce ' ~ 'Settings'|t('commerce'), url: url('commerce/settings') },
+    { label: 'Commerce'|t('commerce'), url: url('commerce') },
+    { label: 'Settings'|t('app'), url: url('commerce/settings') },
     { label: 'Line Item Statuses'|t('commerce'), url: url('commerce/settings/lineitemstatuses') }
 ] %}
 
