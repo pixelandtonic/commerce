@@ -1054,7 +1054,6 @@ return [
     'Stops Processing?' => 'Interrompe l’elaborazione?',
     'Stops subsequent?' => 'Interrompe i dati successivi?',
     'Store Location' => 'Posizione store',
-    'Store Management    ' => 'Gestione dello store    ',
     'Store Management' => 'Gestione dello store',
     'Store Markets' => 'Paesi in cui lo store vende',
     'Store Rule' => 'Regola dello store',
