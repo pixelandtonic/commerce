@@ -11,3 +11,6 @@
 - Added `craft\commerce\services\Gateways\getAllArchivedGateways()`.
 - Added `craft\commerce\services\Taxes::EVENT_REGISTER_TAX_ID_VALIDATORS`.
 - Added `craft\commerce\taxidvalidators\EuVatIdValidator`.
+
+### System
+- Improved Craft Commerce navigation and breadcrumb labels.
