@@ -10,7 +10,6 @@ namespace craft\commerce\controllers;
 use Craft;
 use craft\commerce\models\Store;
 use craft\commerce\Plugin;
-use craft\helpers\Cp;
 use craft\web\UrlManager;
 use yii\base\InvalidConfigException;
 use yii\web\Response as YiiResponse;
@@ -93,7 +92,7 @@ class BaseStoreManagementController extends BaseCpController
                     'data' => [
                         'store-handle' => $s->handle,
                     ],
-                ]
+                ],
             ];
         })->all();
 

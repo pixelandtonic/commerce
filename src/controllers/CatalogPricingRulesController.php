@@ -17,7 +17,6 @@ use craft\commerce\models\CatalogPricingRule;
 use craft\commerce\Plugin;
 use craft\commerce\records\CatalogPricingRule as CatalogPricingRuleRecord;
 use craft\helpers\ArrayHelper;
-use craft\helpers\Cp;
 use craft\helpers\DateTimeHelper;
 use craft\helpers\Localization;
 use craft\helpers\MoneyHelper;
