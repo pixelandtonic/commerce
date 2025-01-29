@@ -214,4 +214,65 @@ class CurrencyHelperTest extends Unit
             ],
         ];
     }
+
+    /**
+     * @param string $currency
+     * @param string $language
+     * @param string $expected
+     * @return void
+     * @throws CurrencyException
+     * @throws InvalidConfigException
+     * @dataProvider formatAsCurrencyNegativeDataProvider
+     */
+    public function testFormatAsCurrencyNegative(string $currency, string $language, string $expected): void
+    {
+        $originalLocale = \Craft::$app->getLocale();
+        Locale::switchAppLanguage($language);
+        $amount = -1234.56;
+        $formattedValue = Currency::formatAsCurrency($amount, $currency);
+
+        self::assertEquals($expected, $formattedValue);
+        Locale::switchAppLanguage($originalLocale->getLanguageID());
+    }
+
+    public function formatAsCurrencyNegativeDataProvider(): array
+    {
+        return [
+            'USD-US' => [
+                'USD',
+                'en-US',
+                '-$1,234.56',
+            ],
+            'USD-GB' => [
+                'USD',
+                'en-GB',
+                '-US$1,234.56',
+            ],
+            'USD-FR' => [
+                'USD',
+                'fr-FR',
+                '-1 234,56 $US',
+            ],
+            'EUR-US' => [
+                'EUR',
+                'en-US',
+                '-€1,234.56',
+            ],
+            'EUR-GB' => [
+                'EUR',
+                'en-GB',
+                '-€1,234.56',
+            ],
+            'EUR-FR' => [
+                'EUR',
+                'fr-FR',
+                '-1 234,56 €',
+            ],
+            'CHF-DE-CH' => [
+                'CHF',
+                'de-CH',
+                'CHF-1’234.56',
+            ],
+        ];
+    }
 }

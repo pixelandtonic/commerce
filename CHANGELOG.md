@@ -1,5 +1,16 @@
 # Release Notes for Craft Commerce
 
+## 5.2.12.1 - 2025-01-23
+
+- Fixed a JavaScript error that occurred when updating an order’s status for a non-primary store on order indexes. 
+
+## 5.2.12 - 2025-01-22
+
+- Fixed a bug where product types’ “Max Variants” settings weren’t being respected. ([#3845](https://github.com/craftcms/commerce/issues/3845))
+- Fixed a bug where products could be duplicated by users without the “Create products” permission for the product type. ([#3838](https://github.com/craftcms/commerce/issues/3838))
+- Fixed a PHP error that could occur when updating a cart. ([#3842](https://github.com/craftcms/commerce/issues/3842))
+- Fixed a PHP error that could occur when adding an invalid address to a cart. ([#3848](https://github.com/craftcms/commerce/issues/3848))
+
 ## 5.2.11 - 2025-01-02
 
 - Fixed an error that occurred when rendering a Link field with a product selected on the front end. ([#3833](https://github.com/craftcms/commerce/issues/3833))
