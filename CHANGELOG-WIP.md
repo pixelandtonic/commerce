@@ -1,24 +1,24 @@
 # Release Notes for Craft Commerce (WIP)
 
 ### Store Management
-- It is now possible to see archived gateways listed in the control panel. ([#3839](https://github.com/craftcms/commerce/issues/3839))
-- It is now possible to design card views for Products and Variants. ([#3809](https://github.com/craftcms/commerce/pull/3809))
-- Order conditions can now have a “Coupon Code” rule. ([#3776](https://github.com/craftcms/commerce/discussions/3776))
-- Order conditions can now have a “Payment Gateway” rule. ([#3722](https://github.com/craftcms/commerce/discussions/3722))
-- Variant conditions can now have a “Product” rule.
+- Archived gateways are now listed on the Gateways index page. ([#3839](https://github.com/craftcms/commerce/issues/3839))
+- Added card view designers for products and variants. ([#3809](https://github.com/craftcms/commerce/pull/3809))
+- Order conditions can now have “Coupon Code” and “Payment Gateway” rules. ([#3776](https://github.com/craftcms/commerce/discussions/3776), [#3722](https://github.com/craftcms/commerce/discussions/3722))
+- Product variant conditions can now have a “Product” rule.
 - Tax rates now have statuses. ([#3790](https://github.com/craftcms/commerce/discussions/3790))
-- Soft-deleted variants can now be restored.
+- It’s now possible to restore soft-deleted product variants.
 
 ### Administration
-- Added support for environment variables to the `to`, `bcc`, and `cc` email fields. ([#3738](https://github.com/craftcms/commerce/issues/3738))
+- The “Recipient”, “BCC’d Recipient”, and “CC’d Recipient” email settings now support being set to environment variables. ([#3738](https://github.com/craftcms/commerce/issues/3738))
 - It’s now possible to view (but not edit) system and plugin settings on environments where `allowAdminChanges` is disabled. 
 
 ### Development
 - Added the `couponCode` order query param.
-- Order `makePrimaryShippingAddress` and `makePrimaryBillingAddress` properties now persist during checkout.
-- Added an `originalCart` value to `commerce/update-cart` action, for failed ajax responses. ([#430](https://github.com/craftcms/commerce/issues/430))
+- Orders’ `makePrimaryShippingAddress` and `makePrimaryBillingAddress` property values now persist during checkout.
+- The `commerce/update-cart` action now includes an `originalCart` key in JSON responses. ([#430](https://github.com/craftcms/commerce/issues/430))
 
 ### Extensibility
+- Added support for registering custom tax ID validators.
 - Added `craft\commerce\base\InventoryItemTrait`.
 - Added `craft\commerce\base\InventoryItemTrait`.
 - Added `craft\commerce\base\InventoryLocationTrait`.
@@ -45,10 +45,9 @@
 - Added `craft\commerce\services\Taxes::getEnabledTaxIdValidators()`.
 - Added `craft\commerce\services\Taxes::getTaxIdValidators()`.
 - Added `craft\commerce\taxidvalidators\EuVatIdValidator`.
-- It is now possible to register custom tax ID validators.
 
 ### System
-- Craft Commerce now requires Craft CMS 5.6 or later.
-- Fixed a bug where an order’s promotional price could be incorrectly calculated when using sales.
-- Fixed a bug where `makePrimaryShippingAddress` and `makePrimaryBillingAddress` cart update params did not work when new addresses were saved on order completion. ([#3864](https://github.com/craftcms/commerce/pull/3864))
-- Fixed a PHP error that could occur when upgrading to Commerce 5 and viewing discounts. ([#3844](https://github.com/craftcms/commerce/issues/3844))
+- Craft Commerce now requires Craft CMS 5.6.0 or later.
+- Fixed a bug where orders’ promotional prices could be calculated incorrectly when using sales.
+- Fixed a bug where the `commerce/cart/update-cart` action wasn’t respecting `makePrimaryShippingAddress` and `makePrimaryBillingAddress` params for newly-created addresses. ([#3864](https://github.com/craftcms/commerce/pull/3864))
+- Fixed a PHP error that could occur when viewing discounts. ([#3844](https://github.com/craftcms/commerce/issues/3844))
