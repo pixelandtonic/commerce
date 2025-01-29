@@ -1,8 +1,6 @@
 {% extends "commerce/_layouts/store-management" %}
 {% set isIndex = false %}
 {% set crumbs = [
-    { label: 'Commerce'|t('commerce'), url: url('commerce') },
-    { label: "Store Management"|t('commerce'), url: url("commerce/store-management/#{storeHandle}") },
     { label: "Shipping Zones"|t('commerce'), url: url("commerce/store-management/#{storeHandle}/shippingzones") },
 ] %}
 

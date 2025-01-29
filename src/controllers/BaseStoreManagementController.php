@@ -8,7 +8,9 @@
 namespace craft\commerce\controllers;
 
 use Craft;
+use craft\commerce\models\Store;
 use craft\commerce\Plugin;
+use craft\helpers\Cp;
 use craft\web\UrlManager;
 use yii\base\InvalidConfigException;
 use yii\web\Response as YiiResponse;
@@ -53,7 +55,50 @@ class BaseStoreManagementController extends BaseCpController
             }
         }
 
+        if (!isset($variables['storeSwitcher'])) {
+            $variables['storeSwitcher'] = $this->getStoreSwitcher($variables['storeHandle']);
+        }
+
         return parent::renderTemplate($template, $variables, $templateMode);
+    }
+
+    /**
+     * @param string|null $storeHandle
+     * @return array
+     * @throws InvalidConfigException
+     * @since 5.3.0
+     */
+    protected function getStoreSwitcher(?string $storeHandle = null): array
+    {
+        $stores = Plugin::getInstance()->getStores()->getAllStores();
+
+        $store = $storeHandle ? Plugin::getInstance()->getStores()->getStoreByHandle($storeHandle) : null;
+
+        $storeItems = $stores->filter(function(Store $s) {
+            return true;
+        })->map(function(Store $s) use ($storeHandle) {
+            return [
+                'status' => null,
+                'label' => Craft::t('site', $s->getName()),
+                'url' => 'commerce/store-management/' . $s->handle,
+                'selected' => $storeHandle === $s->handle,
+                'attributes' => [
+                    'data' => [
+                        'store-handle' => $s->handle,
+                    ],
+                ]
+            ];
+        })->all();
+
+        return [
+            'id' => 'site-crumb',
+            'icon' => 'store',
+            'label' => $store?->getName() ?? Craft::t('commerce', 'Store Management'),
+            'menu' => [
+                'label' => Craft::t('app', 'Select site'),
+                'items' => $storeItems,
+            ],
+        ];
     }
 
     /**

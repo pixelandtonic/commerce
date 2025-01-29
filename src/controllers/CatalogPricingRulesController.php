@@ -17,6 +17,7 @@ use craft\commerce\models\CatalogPricingRule;
 use craft\commerce\Plugin;
 use craft\commerce\records\CatalogPricingRule as CatalogPricingRuleRecord;
 use craft\helpers\ArrayHelper;
+use craft\helpers\Cp;
 use craft\helpers\DateTimeHelper;
 use craft\helpers\Localization;
 use craft\helpers\MoneyHelper;
@@ -135,7 +136,7 @@ class CatalogPricingRulesController extends BaseStoreManagementController
             ->title(Craft::t('commerce', 'Catalog Pricing Rule'))
             ->crumbs([
                 ['label' => Craft::t('commerce', 'Commerce'), 'url' => 'commerce'],
-                ['label' => $store->getName(), 'url' => UrlHelper::cpUrl('commerce/store-management/' . $store->handle)],
+                $this->getStoreSwitcher($store->handle),
                 ['label' => Craft::t('commerce', 'Pricing Rules'), 'url' => UrlHelper::cpUrl('commerce/store-management/' . $store->handle . '/pricing-rules')],
             ])
             ->action('commerce/catalog-pricing-rules/save')

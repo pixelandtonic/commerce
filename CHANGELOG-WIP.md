@@ -26,6 +26,7 @@
 - Added `craft\commerce\base\Purchasable::hasInventory()`.
 - Added `craft\commerce\base\Purchasable::loadSales()`.
 - Added `craft\commerce\base\TaxIdValidatorInterface`.
+- Added `craft\commerce\controllers\BaseStoreManagementController::getStoreSwitch()`.
 - Added `craft\commerce\elements\Purchasable::$allowOutOfStockPurchases`.
 - Added `craft\commerce\elements\Purchasable::getIsOutOfStockPurchasingAllowed()`.
 - Added `craft\commerce\elements\conditions\orders\CouponCodeConditionRule`.
