@@ -1054,7 +1054,6 @@ return [
     'Stops Processing?' => '追加の設定を無効にする？',
     'Stops subsequent?' => '追加の設定を無効にする？',
     'Store Location' => 'ストアのロケーション',
-    'Store Management    ' => 'ストア管理    ',
     'Store Management' => 'ストア管理',
     'Store Markets' => 'ストア市場',
     'Store Rule' => 'ストアルール',
