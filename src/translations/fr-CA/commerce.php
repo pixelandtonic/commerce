@@ -922,6 +922,7 @@ return [
     'Stops Processing?' => 'Arrête le traitement?',
     'Stops subsequent?' => 'Arrête le suivant?',
     'Store Location' => 'Emplacement du magasin',
+    'Store Management' => 'Gestion de magasin',
     'Store Markets' => 'Marchés de la boutique',
     'Store Settings' => 'Réglages du site',
     'Store saved.' => 'Boutique enregistrée.',
