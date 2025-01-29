@@ -1054,7 +1054,6 @@ return [
     'Stops Processing?' => 'Stops Processing?',
     'Stops subsequent?' => 'Stops subsequent?',
     'Store Location' => 'Store Location',
-    'Store Management    ' => 'Store Management    ',
     'Store Management' => 'Store Management',
     'Store Markets' => 'Store Markets',
     'Store Rule' => 'Store Rule',
