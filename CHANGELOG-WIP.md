@@ -15,6 +15,7 @@
 
 ### Development
 - Added the `couponCode` order query param.
+- Order `makePrimaryShippingAddress` and `makePrimaryBillingAddress` properties now persist during checkout.
 - Added an `originalCart` value to `commerce/update-cart` action, for failed ajax responses. ([#430](https://github.com/craftcms/commerce/issues/430))
 
 ### Extensibility
@@ -49,3 +50,4 @@
 ### System
 - Craft Commerce now requires Craft CMS 5.6 or later.
 - Fixed a bug where an order’s promotional price could be incorrectly calculated when using sales.
+- Fixed a bug where `makePrimaryShippingAddress` and `makePrimaryBillingAddress` cart update params did not work when new addresses were saved on order completion. ([#3864](https://github.com/craftcms/commerce/pull/3864))

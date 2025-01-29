@@ -779,13 +779,15 @@ class CartController extends BaseFrontEndController
 
         // Set primary addresses
         if ($setShippingAddress) {
-            if ($this->request->getBodyParam('makePrimaryShippingAddress')) {
-                $this->_cart->makePrimaryShippingAddress = true;
+            $makePrimaryShippingAddress = $this->request->getBodyParam('makePrimaryShippingAddress');
+            if ($makePrimaryShippingAddress !== null) {
+                $this->_cart->makePrimaryShippingAddress = (bool)$makePrimaryShippingAddress;
             }
         }
         if ($setBillingAddress) {
-            if ($this->request->getBodyParam('makePrimaryBillingAddress')) {
-                $this->_cart->makePrimaryBillingAddress = true;
+            $makePrimaryBillingAddress = $this->request->getBodyParam('makePrimaryBillingAddress');
+            if ($makePrimaryBillingAddress !== null) {
+                $this->_cart->makePrimaryBillingAddress = (bool)$makePrimaryBillingAddress;
             }
         }
     }
