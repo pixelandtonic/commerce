@@ -88,7 +88,7 @@
     }) }}
 
     {% set recipientInput %}
-        <div class="flex{% if readOnly %} disabled{% endif %}">
+        <div class="flex flex-start{% if readOnly %} disabled{% endif %}">
             <div>
                 {{ forms.select({
                     id: 'recipient-type',
