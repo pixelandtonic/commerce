@@ -1,5 +1,9 @@
 # Release Notes for Craft Commerce
 
+## Unreleased
+
+- Improved Craft Commerce navigation and breadcrumb labels.
+
 ## 4.7.3 - 2025-01-22
 
 - Fixed a bug where users products had a “Save as a new product” action even if a plugin was preventing duplication via `craft\services\Elements::EVENT_AUTHORIZE_DUPLICATE`. ([#3819](https://github.com/craftcms/commerce/issues/3819))

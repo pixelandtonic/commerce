@@ -4,6 +4,10 @@
 {% set elementType = 'craft\\commerce\\elements\\Order' %}
 {% set bodyClass = (bodyClass is defined ? bodyClass~' ' : '') ~ "commerceorders commerceordersindex" %}
 
+{% set crumbs = [
+  { label: 'Commerce'|t('commerce'), url: url('commerce') },
+] %}
+
 {% do craft.app.view.registerTranslations('commerce', [
     "Apply",
     "Copy the URL",

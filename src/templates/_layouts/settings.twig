@@ -2,21 +2,29 @@
 {% set selectedSubnavItem = 'settings' %}
 {% set bodyClass = (bodyClass is defined ? bodyClass~' ' : '') ~ "commercesettings" %}
 
-{% set title = "System Settings"|t('commerce') %}
+{% set title = "Settings"|t('app') %}
+
+{% set crumbs = [
+  { label: "Commerce"|t('commerce'), url: url('commerce') },
+] %}
 
 {% set navItems = {} %}
 
 {% if currentUser.admin %}
 {% set navItems = {
     'general': { title: "General Settings"|t('commerce')},
-    'ordersettings': { title: "Order Fields"|t('commerce')},
-    'orderstatuses': { title: "Order Statuses"|t('commerce')},
-    'lineitemstatuses': { title: "Line Item Statuses"|t('commerce')},
     'emails': { title: "Emails"|t('commerce')},
     'pdfs': { title: "PDFs"|t('commerce')},
     'gateways': { title: "Gateways"|t('commerce')},
+
+    'orders-heading': { heading: 'Orders'|t('commerce')},
+    'ordersettings': { title: "Order Fields"|t('commerce')},
+    'orderstatuses': { title: "Order Statuses"|t('commerce')},
+    'lineitemstatuses': { title: "Line Item Statuses"|t('commerce')},
+
     'products-heading': { heading: "Products"|t('commerce')},
     'producttypes': { title: "Product Types"|t('commerce')},
+
     'subscriptions-heading': { heading: "Subscriptions"|t('commerce')},
     'subscriptions/fields': { title: "Subscription Fields"|t('commerce')},
 } %}

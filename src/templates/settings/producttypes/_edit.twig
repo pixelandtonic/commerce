@@ -2,7 +2,8 @@
 {% set title = productType.id ? productType.name : 'Create a new product type'|t('commerce') %}
 
 {% set crumbs = [
-    { label: "Commerce Settings"|t('commerce'), url: url('commerce/settings') },
+    { label: 'Commerce'|t('commerce'), url: url('commerce') },
+    { label: 'Settings'|t('app'), url: url('commerce/settings') },
     { label: "Product Types"|t('commerce'), url: url('commerce/settings/producttypes') },
 ] %}
 
