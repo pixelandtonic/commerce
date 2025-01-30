@@ -127,7 +127,6 @@ class TaxRatesController extends BaseTaxSettingsController
 
         $view->startJsBuffer();
 
-
         $newZone = new TaxAddressZone();
         $condition = $newZone->getCondition();
         $condition->mainTag = 'div';
@@ -156,6 +155,11 @@ class TaxRatesController extends BaseTaxSettingsController
         );
         $variables['newTaxCategoryJs'] = $view->clearJsBuffer(false);
 
+        $taxIdValidators = Plugin::getInstance()->getTaxes()->getEnabledTaxIdValidators();
+        foreach ($taxIdValidators as $validator) {
+            $variables['taxIdValidators'][] = $validator;
+        }
+
         return $this->renderTemplate('commerce/tax/taxrates/_edit', $variables);
     }
 
@@ -181,11 +185,14 @@ class TaxRatesController extends BaseTaxSettingsController
         $taxRate->include = (bool)$this->request->getBodyParam('include');
         $taxRate->removeIncluded = (bool)$this->request->getBodyParam('removeIncluded');
         $taxRate->removeVatIncluded = (bool)$this->request->getBodyParam('removeVatIncluded');
-        $taxRate->isVat = (bool)$this->request->getBodyParam('isVat');
         $taxRate->taxable = $this->request->getBodyParam('taxable');
         $taxRate->taxCategoryId = (int)$this->request->getBodyParam('taxCategoryId') ?: null;
         $taxRate->taxZoneId = (int)$this->request->getBodyParam('taxZoneId') ?: null;
         $taxRate->rate = Localization::normalizePercentage($this->request->getBodyParam('rate'));
+
+        // data comes in as className => bool, we want just the class names that are true
+        $validators = collect($this->request->getBodyParam('taxIdValidators'))->filter(fn($enabled) => (bool)$enabled)->keys();
+        $taxRate->taxIdValidators = $validators->toArray();
 
         // Save it
         if (Plugin::getInstance()->getTaxRates()->saveTaxRate($taxRate)) {

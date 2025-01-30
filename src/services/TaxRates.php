@@ -122,13 +122,14 @@ class TaxRates extends Component
 
         // if not an included tax, then can not be removed.
         $record->include = $model->include;
-        $record->isVat = $model->isVat;
+        $record->isVat = $model->hasTaxIdValidators();
         $record->removeIncluded = !$record->include ? false : $model->removeIncluded;
         $record->removeVatIncluded = (!$record->include || !$record->isVat) ? false : $model->removeVatIncluded;
         $record->taxable = $model->taxable;
         $record->taxCategoryId = $model->taxCategoryId;
         $record->taxZoneId = $model->taxZoneId ?: null;
         $record->isEverywhere = $model->getIsEverywhere();
+        $record->taxIdValidators = $model->taxIdValidators;
 
         if (!$record->isEverywhere && $record->taxZoneId && empty($record->getErrors('taxZoneId'))) {
             $taxZone = Plugin::getInstance()->getTaxZones()->getTaxZoneById($record->taxZoneId);
@@ -236,6 +237,11 @@ class TaxRates extends Component
             ])
             ->orderBy(['include' => SORT_DESC, 'isVat' => SORT_DESC])
             ->from([Table::TAXRATES]);
+
+        // add taxIdValidators select
+        if (Craft::$app->getDb()->columnExists(Table::TAXRATES, 'taxIdValidators')) {
+            $query->addSelect(['taxIdValidators']);
+        }
 
         return $query;
     }

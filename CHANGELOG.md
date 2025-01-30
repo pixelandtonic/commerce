@@ -2,10 +2,22 @@
 
 ## Unreleased
 
+### Store Management
+- Archived gateways are now listed on the Gateways index page. ([#3839](https://github.com/craftcms/commerce/issues/3839))
 - Improved Craft Commerce navigation and breadcrumb labels.
+
+### Extensibility
+- Added support for registering custom tax ID validators.
+- Added `\craft\commerce\services\Taxes::getEnabledTaxIdValidators()`.
+- Added `\craft\commerce\services\Taxes::getTaxIdValidators()`.
+- Added `craft\commerce\base\TaxIdValidatorInterface`.
+- Added `craft\commerce\services\Gateways\getAllArchivedGateways()`.
+- Added `craft\commerce\services\Taxes::EVENT_REGISTER_TAX_ID_VALIDATORS`.
+- Added `craft\commerce\taxidvalidators\EuVatIdValidator`.
 
 ## 4.7.3 - 2025-01-22
 
+- Improved the performance of recalculating shipping method prices. ([#3841](https://github.com/craftcms/commerce/pull/3841))
 - Fixed a bug where users products had a “Save as a new product” action even if a plugin was preventing duplication via `craft\services\Elements::EVENT_AUTHORIZE_DUPLICATE`. ([#3819](https://github.com/craftcms/commerce/issues/3819))
 - Fixed a PHP error that could occur when updating a cart. ([#3842](https://github.com/craftcms/commerce/issues/3842))
 - Fixed a PHP error that could occur when adding an invalid address to a cart. ([#3848](https://github.com/craftcms/commerce/issues/3848))
