@@ -301,7 +301,7 @@ class Inventory extends Component
      */
     public function executeUpdateInventoryLevels(UpdateInventoryLevelCollection $updateInventoryLevels): bool
     {
-        if($updateInventoryLevels->count() < 1) {
+        if ($updateInventoryLevels->count() < 1) {
             return true;
         }
 
@@ -320,7 +320,7 @@ class Inventory extends Component
 
             // Update all purchasables stock
             $purchasables = $updateInventoryLevels->getPurchasables();
-            if($purchasables) {
+            if ($purchasables) {
                 Plugin::getInstance()->getPurchasables()->updateStoreStockCache($purchasables[0], true);
             }
 

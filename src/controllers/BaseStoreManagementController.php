@@ -83,7 +83,6 @@ class BaseStoreManagementController extends BaseCpController
 
             return false;
         })->map(function(Store $s) use ($storeHandle) {
-
             $segments = Craft::$app->getRequest()->getSegments();
             $storeSubSection = count($segments) >= 4 ? $segments[3] : null;
 
