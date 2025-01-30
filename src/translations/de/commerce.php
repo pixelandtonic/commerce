@@ -1054,7 +1054,6 @@ return [
     'Stops Processing?' => 'Bearbeitung wird angehalten?',
     'Stops subsequent?' => 'Stoppt nachfolgende?',
     'Store Location' => 'Standort des Geschäfts',
-    'Store Management    ' => 'Shopverwaltung    ',
     'Store Management' => 'Shopverwaltung',
     'Store Markets' => 'Shopmärkte',
     'Store Rule' => 'Shopregel',

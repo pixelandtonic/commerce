@@ -1054,7 +1054,6 @@ return [
     'Stops Processing?' => 'Stoppe behandling?',
     'Stops subsequent?' => 'Stopper påfølgende?',
     'Store Location' => 'Stedet for butikk',
-    'Store Management    ' => 'Butikkadministrasjon    ',
     'Store Management' => 'Butikkadministrasjon',
     'Store Markets' => 'Butikkmarkeder',
     'Store Rule' => 'Butikkregel',

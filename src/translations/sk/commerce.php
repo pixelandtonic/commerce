@@ -1054,7 +1054,6 @@ return [
     'Stops Processing?' => 'Zastaví spracovanie?',
     'Stops subsequent?' => 'Zastaví následné?',
     'Store Location' => 'Umiestnenie obchodu',
-    'Store Management    ' => 'Manažment obchodu    ',
     'Store Management' => 'Manažment obchodu',
     'Store Markets' => 'Obchodné trhy',
     'Store Rule' => 'Pravidlo obchodu',
