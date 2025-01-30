@@ -932,6 +932,7 @@ return [
     'Subject' => 'Subject',
     'Subscribing user' => 'Subscribing user',
     'Subscription Fields' => 'Subscription Fields',
+    'Subscription Plans' => 'Subscription Plans',
     'Subscription Settings' => 'Subscription Settings',
     'Subscription cancelled.' => 'Subscription cancelled.',
     'Subscription date' => 'Subscription date',
