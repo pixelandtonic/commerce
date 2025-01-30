@@ -16,7 +16,7 @@
 ] %}
 
 {% if craft.commerce.stores.getAllStores().count() > 1 %}
-    {% set defaultCrumbs = defaultCrumbs|merge(storeSwitcher) %}
+    {% set defaultCrumbs = defaultCrumbs|merge({storeSwitcher}) %}
 {% endif %}
 
 {% set crumbs = not isIndex ? defaultCrumbs|merge(crumbs is not defined ? [] : crumbs) : defaultCrumbs %}
