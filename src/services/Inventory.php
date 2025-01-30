@@ -301,6 +301,10 @@ class Inventory extends Component
      */
     public function executeUpdateInventoryLevels(UpdateInventoryLevelCollection $updateInventoryLevels): bool
     {
+        if($updateInventoryLevels->count() < 1) {
+            return true;
+        }
+
         $transaction = Craft::$app->getDb()->beginTransaction();
 
         try {
@@ -316,7 +320,9 @@ class Inventory extends Component
 
             // Update all purchasables stock
             $purchasables = $updateInventoryLevels->getPurchasables();
-            Plugin::getInstance()->getPurchasables()->updateStoreStockCache($purchasables[0], true);
+            if($purchasables) {
+                Plugin::getInstance()->getPurchasables()->updateStoreStockCache($purchasables[0], true);
+            }
 
             return true;
         } catch (\Exception $e) {

@@ -34,7 +34,7 @@ use yii\web\Response;
  * @author Pixel & Tonic, Inc. <support@pixelandtonic.com>
  * @since 5.1.0
  */
-class TransfersController extends BaseStoreManagementController
+class TransfersController extends BaseCpController
 {
     /**
      * @return void
@@ -212,7 +212,9 @@ class TransfersController extends BaseStoreManagementController
         $transfer->setDetails($transferDetails);
 
         try {
+            // Accepted movement
             Plugin::getInstance()->getInventory()->executeInventoryMovements($inventoryMovementCollection);
+            // Rejected updates
             Plugin::getInstance()->getInventory()->executeUpdateInventoryLevels($inventoryUpdateCollection);
             Craft::$app->getElements()->saveElement($transfer, false);
         } catch (\Throwable $e) {
