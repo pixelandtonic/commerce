@@ -83,10 +83,14 @@ class BaseStoreManagementController extends BaseCpController
 
             return false;
         })->map(function(Store $s) use ($storeHandle) {
+
+            $segments = Craft::$app->getRequest()->getSegments();
+            $storeSubSection = count($segments) >= 4 ? $segments[3] : null;
+
             return [
                 'status' => null,
                 'label' => Craft::t('site', $s->getName()),
-                'url' => 'commerce/store-management/' . $s->handle,
+                'url' => 'commerce/store-management/' . $s->handle . ($storeSubSection ? '/' . $storeSubSection : ''),
                 'selected' => $storeHandle === $s->handle,
                 'attributes' => [
                     'data' => [
