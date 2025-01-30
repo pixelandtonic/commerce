@@ -21,6 +21,7 @@ use craft\errors\DeprecationException;
 use craft\errors\MissingComponentException;
 use craft\events\ConfigEvent;
 use craft\events\RegisterComponentTypesEvent;
+use craft\helpers\ArrayHelper;
 use craft\helpers\Component as ComponentHelper;
 use craft\helpers\Db;
 use craft\helpers\StringHelper;
@@ -135,6 +136,17 @@ class Gateways extends Component
     public function getAllGateways(): Collection
     {
         return $this->_getAllGateways()->where('isArchived', false);
+    }
+
+    /**
+     * @return array
+     * @throws DeprecationException
+     * @throws InvalidConfigException
+     * @sine 4.8.0
+     */
+    public function getAllArchivedGateways(): array
+    {
+        return ArrayHelper::where($this->_getAllGateways(), 'isArchived', true);
     }
 
     /**

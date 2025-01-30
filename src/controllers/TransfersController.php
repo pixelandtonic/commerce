@@ -34,7 +34,7 @@ use yii\web\Response;
  * @author Pixel & Tonic, Inc. <support@pixelandtonic.com>
  * @since 5.1.0
  */
-class TransfersController extends BaseStoreManagementController
+class TransfersController extends BaseCpController
 {
     /**
      * @return void
@@ -116,20 +116,6 @@ class TransfersController extends BaseStoreManagementController
     }
 
     /**
-     * @param array $variables
-     * @return Response
-     */
-    public function actionEditSettings(array $variables = []): Response
-    {
-        $fieldLayout = Plugin::getInstance()->getTransfers()->getFieldLayout();
-
-        $variables['fieldLayout'] = $fieldLayout;
-        $variables['title'] = Craft::t('commerce', 'Transfer Settings');
-
-        return $this->renderTemplate('commerce/settings/transfers/settings', $variables);
-    }
-
-    /**
      * @return Response
      */
     public function actionSaveSettings(): Response
@@ -198,7 +184,7 @@ class TransfersController extends BaseStoreManagementController
                 $inventoryAcceptedMovement = new InventoryTransferMovement();
                 $inventoryAcceptedMovement->quantity = $acceptedAmount;
                 $inventoryAcceptedMovement->transferId = $transfer->id;
-                $inventoryAcceptedMovement->inventoryItem = $detail->getInventoryItem();
+                $inventoryAcceptedMovement->setInventoryItem($detail->getInventoryItem());
                 $inventoryAcceptedMovement->toInventoryLocation = $transfer->getDestinationLocation();
                 $inventoryAcceptedMovement->fromInventoryLocation = $transfer->getDestinationLocation(); // we are moving from incoming to available
                 $inventoryAcceptedMovement->toInventoryTransactionType = InventoryTransactionType::AVAILABLE;
@@ -214,9 +200,9 @@ class TransfersController extends BaseStoreManagementController
                 $inventoryRejectedMovement = new UpdateInventoryLevel();
                 $inventoryRejectedMovement->quantity = $rejectedAmount * -1;
                 $inventoryRejectedMovement->updateAction = InventoryUpdateQuantityType::ADJUST;
-                $inventoryRejectedMovement->inventoryItem = $detail->getInventoryItem();
+                $inventoryRejectedMovement->inventoryItemId = $detail->inventoryItemId;
                 $inventoryRejectedMovement->transferId = $transfer->id;
-                $inventoryRejectedMovement->inventoryLocation = $transfer->getDestinationLocation();
+                $inventoryRejectedMovement->setInventoryLocation($transfer->getDestinationLocation());
                 $inventoryRejectedMovement->type = InventoryTransactionType::INCOMING->value;
 
                 $inventoryUpdateCollection->push($inventoryRejectedMovement);
@@ -226,7 +212,9 @@ class TransfersController extends BaseStoreManagementController
         $transfer->setDetails($transferDetails);
 
         try {
+            // Accepted movement
             Plugin::getInstance()->getInventory()->executeInventoryMovements($inventoryMovementCollection);
+            // Rejected updates
             Plugin::getInstance()->getInventory()->executeUpdateInventoryLevels($inventoryUpdateCollection);
             Craft::$app->getElements()->saveElement($transfer, false);
         } catch (\Throwable $e) {

@@ -30,14 +30,16 @@ class OrderCondition extends ElementCondition
     {
         return array_merge(parent::selectableConditionRules(), [
             DateOrderedConditionRule::class,
-            CustomerConditionRule::class,
             CompletedConditionRule::class,
+            CouponCodeConditionRule::class,
+            CustomerConditionRule::class,
             PaidConditionRule::class,
             HasPurchasableConditionRule::class,
             ItemSubtotalConditionRule::class,
             ItemTotalConditionRule::class,
             OrderStatusConditionRule::class,
             OrderSiteConditionRule::class,
+            PaymentGatewayConditionRule::class,
             ReferenceConditionRule::class,
             ShippingMethodConditionRule::class,
             TotalDiscountConditionRule::class,

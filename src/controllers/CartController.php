@@ -20,6 +20,7 @@ use craft\elements\User;
 use craft\errors\ElementNotFoundException;
 use craft\errors\MissingComponentException;
 use craft\helpers\Json;
+use craft\helpers\StringHelper;
 use craft\helpers\UrlHelper;
 use Illuminate\Support\Collection;
 use Throwable;
@@ -539,13 +540,21 @@ class CartController extends BaseFrontEndController
                 $this->_mutex->release($this->_mutexLockName);
             }
 
+            $data = [
+                $this->_cartVariable => $this->cartArray($this->_cart),
+            ];
+
+            $originalCart = Order::find()->id($this->_cart->id)->isCompleted(null)->one();
+
+            if ($originalCart && $this->_cart->number == $originalCart->number) {
+                $data['original' . StringHelper::toTitleCase($this->_cartVariable)] = $this->cartArray($originalCart);
+            }
+
             return $this->asModelFailure(
                 $this->_cart,
                 $message,
                 'cart',
-                [
-                    $this->_cartVariable => $this->cartArray($this->_cart),
-                ],
+                $data,
                 [
                     $this->_cartVariable => $this->_cart,
                 ]
@@ -770,13 +779,15 @@ class CartController extends BaseFrontEndController
 
         // Set primary addresses
         if ($setShippingAddress) {
-            if ($this->request->getBodyParam('makePrimaryShippingAddress')) {
-                $this->_cart->makePrimaryShippingAddress = true;
+            $makePrimaryShippingAddress = $this->request->getBodyParam('makePrimaryShippingAddress');
+            if ($makePrimaryShippingAddress !== null) {
+                $this->_cart->makePrimaryShippingAddress = (bool)$makePrimaryShippingAddress;
             }
         }
         if ($setBillingAddress) {
-            if ($this->request->getBodyParam('makePrimaryBillingAddress')) {
-                $this->_cart->makePrimaryBillingAddress = true;
+            $makePrimaryBillingAddress = $this->request->getBodyParam('makePrimaryBillingAddress');
+            if ($makePrimaryBillingAddress !== null) {
+                $this->_cart->makePrimaryBillingAddress = (bool)$makePrimaryBillingAddress;
             }
         }
     }
