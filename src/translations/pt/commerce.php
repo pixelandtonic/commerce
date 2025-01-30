@@ -1054,7 +1054,6 @@ return [
     'Stops Processing?' => 'Para o processamento?',
     'Stops subsequent?' => 'Para o subsequente?',
     'Store Location' => 'Localização da loja',
-    'Store Management    ' => 'Gestão de loja',
     'Store Management' => 'Gestão de loja',
     'Store Markets' => 'Mercados da loja',
     'Store Rule' => 'Regra da loja',

@@ -1054,7 +1054,6 @@ return [
     'Stops Processing?' => 'Verwerking stoppen?',
     'Stops subsequent?' => 'Volgende stoppen?',
     'Store Location' => 'Winkellocatie',
-    'Store Management    ' => 'Winkelbeheer    ',
     'Store Management' => 'Winkelbeheer',
     'Store Markets' => 'Winkelmarkten',
     'Store Rule' => 'Winkelregel',
