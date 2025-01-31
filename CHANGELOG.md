@@ -1,5 +1,9 @@
 # Release Notes for Craft Commerce
 
+## Unreleased
+
+- Fixed a bug where the deprecated `TaxRate::$isVat` property was still being set. ([#3874](https://github.com/craftcms/commerce/issues/3874))
+
 ## 4.8.0 - 2025-01-30
 
 ### Store Management
