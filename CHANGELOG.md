@@ -6,7 +6,7 @@
 
 ## 5.3.0.1 - 2025-01-30
 
-- Fixed a bug where the `craft\commerce\events\CartPurgeEvent` could not be used in any event.
+- Fixed a bug where the `craft\commerce\events\CartPurgeEvent` could not be used in any event. ([#2721](https://github.com/craftcms/commerce/issues/2721)) 
 - Added `craft\commerce\services\Carts::EVENT_BEFORE_PURGE_INACTIVE_CARTS`.
 
 ## 5.3.0 - 2025-01-30
