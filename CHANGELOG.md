@@ -1,5 +1,9 @@
 # Release Notes for Craft Commerce
 
+## Unreleased
+
+- Fixed a bug where gateways weren’t ensuring handle uniqueness. ([#3839](https://github.com/craftcms/commerce/issues/3839))
+
 ## 5.3.0.1 - 2025-01-30
 
 - Fixed a bug where the `craft\commerce\events\CartPurgeEvent` could not be used in any event.

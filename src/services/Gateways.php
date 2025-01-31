@@ -216,7 +216,7 @@ class Gateways extends Component
      */
     public function getGatewayByHandle(string $handle): ?Gateway
     {
-        return $this->getAllGateways()->firstWhere('handle', $handle);
+        return $this->_getAllGateways()->firstWhere('handle', $handle);
     }
 
     /**
