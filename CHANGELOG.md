@@ -1,5 +1,10 @@
 # Release Notes for Craft Commerce
 
+## Unreleased
+
+- Fixed a bug where the purge carts event wasn’t being triggered.
+- Added `craft\commerce\services\Carts::EVENT_BEFORE_PURGE_INACTIVE_CARTS`.
+
 ## 5.3.0 - 2025-01-30
 
 ### Store Management

@@ -39,6 +39,28 @@ use yii\web\Cookie;
 class Carts extends Component
 {
     /**
+     * @event CartPurgeEvent The event that is triggered before the carts are purged.
+     *
+     * This example modifies the query to only purge carts with a total price of 0.
+     * You can also set the `isValid` property to `false` to prevent the carts from being purged.
+     *
+     * ```php
+     * use craft\commerce\events\CartPurgeEvent;
+     * use craft\commerce\services\Carts;
+     * use yii\base\Event;
+     *
+     * Event::on(
+     *     Carts::class,
+     *     Carts::EVENT_BEFORE_PURGE_INACTIVE_CARTS,
+     *     function(CartPurgeEvent $event) {
+     *         $event->inactiveCartsQuery = $event->inactiveCartsQuery->andWhere(['totalPrice' => 0]);
+     *     }
+     * );
+     * ```
+     */
+    public const EVENT_BEFORE_PURGE_INACTIVE_CARTS = 'beforePurgeInactiveCarts';
+
+    /**
      * @var array The configuration of the cart cookie.
      * @since 4.0.0
      * @see setSessionCartNumber()
@@ -422,6 +444,10 @@ class Carts extends Component
         $event = new CartPurgeEvent([
             'inactiveCartsQuery' => $cartIdsQuery,
         ]);
+
+        if ($this->hasEventHandlers(self::EVENT_BEFORE_PURGE_INACTIVE_CARTS)) {
+            $this->trigger(self::EVENT_BEFORE_PURGE_INACTIVE_CARTS, $event);
+        }
 
         if (!$event->isValid) {
             return 0;
