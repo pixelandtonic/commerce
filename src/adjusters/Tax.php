@@ -223,8 +223,7 @@ class Tax extends Component implements AdjusterInterface
                                 )
                             );
 
-                            // make amount negative
-                            $amount = (float)$teller->multiply($amount, $item->qty);
+                            $amount = -(float)$teller->multiply($amount, $item->qty);
                         } else {
                             $taxableAmount = $item->getTaxableSubtotal($taxRate->taxable);
                             // amount = taxableAmount - (taxableAmount / (1 + taxRate))
@@ -236,13 +235,12 @@ class Tax extends Component implements AdjusterInterface
                                 )
                             );
 
-                            // make amount negative
-                            $amount = (float)$amount;
+                            $amount = -(float)$amount;
                         }
                         $adjustment = $this->_createAdjustment($taxRate);
                         // We need to display the adjustment that removed the included tax
                         $adjustment->name = Craft::t('site', $taxRate->name) . ' ' . Craft::t('commerce', 'Removed');
-                        $adjustment->amount = -$amount;
+                        $adjustment->amount = $amount;
                         $adjustment->setLineItem($item);
                         $adjustment->type = 'discount';
                         $adjustment->included = false;
