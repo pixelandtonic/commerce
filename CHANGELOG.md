@@ -1,5 +1,9 @@
 # Release Notes for Craft Commerce
 
+## Unreleased
+
+- Fixed a PHP error that could occur when updating an order’s status on console requests. ([#3858](https://github.com/craftcms/commerce/issues/3858))
+
 ## 4.8.0 - 2025-01-30
 
 ### Store Management
