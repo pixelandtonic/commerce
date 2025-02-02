@@ -797,10 +797,11 @@ class Order extends Element implements HasStoreInterface
 
     /**
      * Whether the shipping address should be made the primary address of the
-     * order‘s customer. This is not persisted on the order, and is only used during the
-     * update order request.
+     * order‘s customer. This is persisted while the order is a cart, and is only used during the
+     * update cart request or on order completion and new addresses are being saved.
      *
-     * @var bool Make this the customer‘s primary shipping address
+     * @var bool Make this the customer’s primary shipping address
+     * @see \craft\commerce\services\Customers::_saveAddressesFromOrder()
      * ---
      * ```php
      * echo $order->makePrimaryShippingAddress;
@@ -813,10 +814,11 @@ class Order extends Element implements HasStoreInterface
 
     /**
      * Whether the billing address should be made the primary address of the
-     * order‘s customer. This is not persisted on the order, and is only used during the
-     * update order request.
-     *
+     * order‘s customer. This is persisted while the order is a cart, and is only used during the
+     * update cart request or on order completion and new addresses are being saved.
+ *
      * @var bool Make this the customer‘s primary billing address
+     * @see \craft\commerce\services\Customers::_saveAddressesFromOrder()
      * ---
      * ```php
      * echo $order->makePrimaryBillingAddress;
@@ -2244,6 +2246,8 @@ class Order extends Element implements HasStoreInterface
         $orderRecord->recalculationMode = $this->getRecalculationMode();
         $orderRecord->sourceShippingAddressId = $this->sourceShippingAddressId;
         $orderRecord->sourceBillingAddressId = $this->sourceBillingAddressId;
+        $orderRecord->makePrimaryShippingAddress = $this->makePrimaryShippingAddress;
+        $orderRecord->makePrimaryBillingAddress = $this->makePrimaryBillingAddress;
 
         // We want to always have the same date as the element table, based on the logic for updating these in the element service i.e resaving
         $orderRecord->dateUpdated = $this->dateUpdated;

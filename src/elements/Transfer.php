@@ -660,14 +660,16 @@ JS, [
         /** @var Response|CpScreenResponseBehavior $response */
         $response->crumbs([
             [
-                'label' => Craft::t('commerce', 'Inventory'),
-                'url' => UrlHelper::cpUrl('commerce/inventory'),
+                'label' => Craft::t('commerce', 'Commerce'),
+                'url' => UrlHelper::cpUrl('commerce'),
             ],
             [
                 'label' => self::pluralDisplayName(),
                 'url' => UrlHelper::cpUrl('commerce/inventory/transfers'),
             ],
         ]);
+
+        $response->selectedSubnavItem('inventory-transfers');
     }
 
     /**

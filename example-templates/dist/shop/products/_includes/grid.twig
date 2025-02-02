@@ -55,7 +55,7 @@
                     {% if variant.hasInventory and variant.inventoryTracked %}
                       ({{ variant.stock ? variant.stock ~ ' available' : 'out of stock'}})
                       {% if variant.allowOutOfStockPurchases %}
-                        <span class="text-xs text-gray-400">{{ "Continue selling when out of stock."|t('commerce') }}</span>
+                        <span class="text-xs text-gray-400">{{ "Continue selling when out of stock."|t }}</span>
                       {% endif %}
                     {% endif %}
                   </span>

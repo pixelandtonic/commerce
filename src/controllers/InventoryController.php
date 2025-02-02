@@ -184,6 +184,7 @@ class InventoryController extends Controller
 
         if (count($locationMenuItems) > 1) {
             $crumbs[] = [
+                'icon' => 'warehouse',
                 'menu' => [
                     'label' => Craft::t('app', 'Select section'),
                     'items' => $locationMenuItems,

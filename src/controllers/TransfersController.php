@@ -34,7 +34,7 @@ use yii\web\Response;
  * @author Pixel & Tonic, Inc. <support@pixelandtonic.com>
  * @since 5.1.0
  */
-class TransfersController extends BaseStoreManagementController
+class TransfersController extends BaseCpController
 {
     /**
      * @return void
@@ -113,20 +113,6 @@ class TransfersController extends BaseStoreManagementController
         }
 
         return $this->asSuccess(Craft::t('app', 'Transfer marked as pending.'));
-    }
-
-    /**
-     * @param array $variables
-     * @return Response
-     */
-    public function actionEditSettings(array $variables = []): Response
-    {
-        $fieldLayout = Plugin::getInstance()->getTransfers()->getFieldLayout();
-
-        $variables['fieldLayout'] = $fieldLayout;
-        $variables['title'] = Craft::t('commerce', 'Transfer Settings');
-
-        return $this->renderTemplate('commerce/settings/transfers/settings', $variables);
     }
 
     /**
@@ -226,7 +212,9 @@ class TransfersController extends BaseStoreManagementController
         $transfer->setDetails($transferDetails);
 
         try {
+            // Accepted movement
             Plugin::getInstance()->getInventory()->executeInventoryMovements($inventoryMovementCollection);
+            // Rejected updates
             Plugin::getInstance()->getInventory()->executeUpdateInventoryLevels($inventoryUpdateCollection);
             Craft::$app->getElements()->saveElement($transfer, false);
         } catch (\Throwable $e) {

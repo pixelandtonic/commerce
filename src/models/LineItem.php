@@ -824,6 +824,14 @@ class LineItem extends Model
             $order = $this->getOrder();
             /** @var PurchasableInterface|null $purchasable */
             $purchasable = Plugin::getInstance()->getPurchasables()->getPurchasableById($this->purchasableId, $order?->orderSiteId, $order?->getCustomer()?->id);
+
+            // If we are still using sales we need to make sure that the promotional price is set.
+            if (!Plugin::getInstance()->getCatalogPricingRules()->canUseCatalogPricingRules()) {
+                if ($purchasable instanceof Purchasable) {
+                    $purchasable->loadSales($this->getOrder());
+                }
+            }
+
             $this->_purchasable = $purchasable;
         }
 
