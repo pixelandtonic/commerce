@@ -115,7 +115,7 @@ class Tax extends Component implements AdjusterInterface
             throw new Exception('Amount added to the total removed price must be a positive number');
         }
 
-        $this->_costRemovedForOrderTotalPrice = $this->_getTeller()->add($this->_costRemovedForOrderTotalPrice, $amount);
+        $this->_costRemovedForOrderTotalPrice = (float)$this->_getTeller()->add($this->_costRemovedForOrderTotalPrice, $amount);
     }
 
     /**
