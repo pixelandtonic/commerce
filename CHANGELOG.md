@@ -3,6 +3,7 @@
 ## Unreleased
 
 - Fixed a PHP error that could occur when updating an order’s status on console requests. ([#3858](https://github.com/craftcms/commerce/issues/3858))
+- Improved logging when a user with orders is attempted to be deleted. ([#3686](https://github.com/craftcms/commerce/issues/3686))
 
 ## 5.3.0.2 - 2025-01-31
 
