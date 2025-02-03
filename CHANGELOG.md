@@ -8,6 +8,7 @@
 - Fixed a bug where additional tax ID validators where not being checked when a store’s "Validate Business Tax ID as Vat ID" setting was on.
 - Fixed a bug where the deprecated `TaxRate::$isVat` property was still being set. ([#3874](https://github.com/craftcms/commerce/issues/3874))
 - Fixed a bug where emails could be rendered in the incorrect language when sent manually from the control panel. ([#3852](https://github.com/craftcms/commerce/issues/3852))
+- Fixed an error that occurred when rendering a Link field with a product selected on the front end. ([#3833](https://github.com/craftcms/commerce/issues/3833))
 
 ## 5.3.0.2 - 2025-01-31
 
