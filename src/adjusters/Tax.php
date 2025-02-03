@@ -361,7 +361,7 @@ class Tax extends Component implements AdjusterInterface
     /**
      * @param string $businessVatId
      * @return bool
-     * @deprecated in 4.8.0. Use `validateTaxIdNumber()` instead, passing the validators you want to check the ID with.
+     * @deprecated in 5.3.0. Use `validateTaxIdNumber()` instead, passing the validators you want to check the ID with.
      */
     protected function validateVatNumber(string $businessVatId): bool
     {
