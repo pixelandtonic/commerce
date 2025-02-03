@@ -19,7 +19,6 @@ use craft\commerce\models\TaxAddressZone;
 use craft\commerce\models\TaxRate;
 use craft\commerce\Plugin;
 use craft\commerce\records\TaxRate as TaxRateRecord;
-use craft\commerce\services\Taxes;
 use craft\commerce\taxidvalidators\EuVatIdValidator;
 use craft\elements\Address;
 use DvK\Vat\Validator;
@@ -77,7 +76,7 @@ class Tax extends Component implements AdjusterInterface
     private float $_costRemovedForOrderShipping = 0;
 
     /**
-     * Track the additional discounts created inside the tax adjuster for order shipping
+     * Track the additional discounts created inside the tax adjuster for total price
      *
      * @internal This should not be modified directly, use _addAmountRemovedForOrderShipping() instead
      * @var float
