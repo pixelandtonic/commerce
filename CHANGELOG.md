@@ -1,5 +1,9 @@
 # Release Notes for Craft Commerce
 
+## Unreleased
+
+- Improved logging when a user deletion is prevented due to the user having Commerce orders. ([#3686](https://github.com/craftcms/commerce/issues/3686))
+
 ## 4.8.0.1 - 2025-02-03
 
 - Fixed a bug where the deprecated `TaxRate::$isVat` property was still being set. ([#3874](https://github.com/craftcms/commerce/issues/3874))
