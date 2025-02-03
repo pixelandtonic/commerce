@@ -1,6 +1,6 @@
 # Release Notes for Craft Commerce
 
-## Unreleased
+## 4.8.0.1 - 2025-02-03
 
 - Fixed a bug where the deprecated `TaxRate::$isVat` property was still being set. ([#3874](https://github.com/craftcms/commerce/issues/3874))
 - Fixed a PHP error that could occur when updating an order’s status on console requests. ([#3858](https://github.com/craftcms/commerce/issues/3858))
