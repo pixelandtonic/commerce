@@ -1,6 +1,6 @@
 # Release Notes for Craft Commerce
 
-## Unreleased
+## 5.3.1 - 2025-02-03
 
 - Improved logging when a user deletion is prevented due to the user having Commerce orders. ([#3686](https://github.com/craftcms/commerce/issues/3686))
 - Fixed a PHP error that could occur when calculating tax adjustments. ([#3822](https://github.com/craftcms/commerce/issues/3822))
