@@ -46,7 +46,6 @@ use craft\commerce\models\Transaction;
 use craft\commerce\Plugin;
 use craft\commerce\records\LineItem as LineItemRecord;
 use craft\commerce\records\Order as OrderRecord;
-use craft\commerce\records\OrderAdjustment as OrderAdjustmentRecord;
 use craft\commerce\records\OrderNotice as OrderNoticeRecord;
 use craft\commerce\records\Transaction as TransactionRecord;
 use craft\db\Query;
