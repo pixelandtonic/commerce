@@ -3595,11 +3595,6 @@ class Order extends Element implements HasStoreInterface
      */
     private function _saveAdjustments(): void
     {
-        /** @var null|array|OrderAdjustmentRecord[] $previousAdjustments */
-        $previousAdjustments = OrderAdjustmentRecord::find()
-            ->where(['orderId' => $this->id])
-            ->all();
-
         $newAdjustmentIds = [];
 
         foreach ($this->getAdjustments() as $adjustment) {
