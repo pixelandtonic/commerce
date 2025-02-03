@@ -316,13 +316,30 @@ class Tax extends Component implements AdjusterInterface
                  * since the discount adjustments we just added won't be picked up in getTaxableSubtotal()
                  */
                 if ($taxRate->taxable == TaxRateRecord::TAXABLE_PURCHASABLE) {
-                    $purchasableAmount = $item->salePrice - Currency::round($item->getDiscount() / $item->qty);
-                    $purchasableAmount += Currency::round(($this->_costRemovedByLineItem[$objectId] ?? 0) / $item->qty);
-                    $purchasableTax = $this->_getTaxAmount($purchasableAmount, $taxRate->rate, $taxRate->include);
-                    $itemTax = $purchasableTax * $item->qty; //already rounded
+//                  $item->salePrice - Currency::round($item->getDiscount() / $item->qty);
+                    $purchasableAmount = $this->_getTeller()->subtract(
+                        $item->salePrice,
+                        $this->_getTeller()->divide(
+                            $item->getDiscount(),
+                            $item->qty
+                        )
+                    );
+
+                    $purchasableAmount = $this->_getTeller()->add(
+                        $purchasableAmount,
+                        $this->_getTeller()->divide(
+                            ($this->_costRemovedByLineItem[$objectId] ?? 0),
+                            $item->qty
+                        )
+                    );
+                    $purchasableTax = $this->_getTaxAmount((float)$purchasableAmount, $taxRate->rate, $taxRate->include);
+                    $itemTax = $this->_getTeller()->multiply($purchasableTax, $item->qty); //already rounded
                 } else {
                     $taxableAmount = $item->getTaxableSubtotal($taxRate->taxable);
-                    $taxableAmount += $this->_costRemovedByLineItem[$objectId] ?? 0;
+                    $taxableAmount = (float)$this->_getTeller()->add(
+                        $taxableAmount,
+                        $this->_costRemovedByLineItem[$objectId] ?? 0
+                    );
                     $itemTax = $this->_getTaxAmount($taxableAmount, $taxRate->rate, $taxRate->include);
                 }
 
@@ -363,7 +380,7 @@ class Tax extends Component implements AdjusterInterface
     {
         $teller = $this->_getTeller();
         if (!$included) {
-            $incTax = $teller->multiply($taxableAmount,  (1 + $rate));
+            $incTax = $teller->multiply($taxableAmount, (1 + $rate));
             $tax = $teller->subtract($incTax, $taxableAmount);
         } else {
             $exTax = $teller->divide($taxableAmount, (1 + $rate));
@@ -476,7 +493,13 @@ class Tax extends Component implements AdjusterInterface
         $taxAdjustments = $order->getTotalTax();
         $includedTaxAdjustments = $order->getTotalTaxIncluded();
 
-        return $itemTotal + $allNonIncludedAdjustmentsTotal - ($taxAdjustments + $includedTaxAdjustments);
+        $totals = (float)$this->_getTeller()->add($itemTotal, $allNonIncludedAdjustmentsTotal);
+        $adjustments = (float)$this->_getTeller()->add($taxAdjustments, $includedTaxAdjustments);
+
+        return (float)$this->_getTeller()->subtract(
+            $totals,
+            $adjustments
+        );
     }
 
     /**
