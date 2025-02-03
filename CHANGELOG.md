@@ -4,6 +4,9 @@
 
 - Fixed a PHP error that could occur when updating an order’s status on console requests. ([#3858](https://github.com/craftcms/commerce/issues/3858))
 - Improved logging when a user with orders is attempted to be deleted. ([#3686](https://github.com/craftcms/commerce/issues/3686))
+- Fixed a bug where additional tax ID validators where not being checked when a store’s "Validate Business Tax ID as Vat ID" setting was on.
+- Fixed a bug where the deprecated `TaxRate::$isVat` property was still being set. ([#3874](https://github.com/craftcms/commerce/issues/3874))
+- Fixed a bug where emails could be rendered in the incorrect language when sent manually from the control panel. ([#3852](https://github.com/craftcms/commerce/issues/3852))
 
 ## 5.3.0.2 - 2025-01-31
 
