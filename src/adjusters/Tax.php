@@ -98,7 +98,7 @@ class Tax extends Component implements AdjusterInterface
             throw new Exception('Amount added to the total removed shipping must be a negative number');
         }
 
-        $this->_costRemovedForOrderShipping += $amount;
+        $this->_costRemovedForOrderShipping = (float)$this->_getTeller()->add($this->_costRemovedForOrderShipping, $amount);
     }
 
 
