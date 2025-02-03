@@ -3609,13 +3609,6 @@ class Order extends Element implements HasStoreInterface
             $adjustment->orderId = $this->id;
         }
 
-        foreach ($previousAdjustments as $previousAdjustment) {
-            if (!in_array($previousAdjustment->id, $newAdjustmentIds, false)) {
-                $previousAdjustment->delete();
-            }
-        }
-
-        // Make sure all other adjustments have been cleaned up.
         Db::delete(
             Table::ORDERADJUSTMENTS,
             ['and', ['orderId' => $this->id], ['not', ['id' => $newAdjustmentIds]]]
