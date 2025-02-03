@@ -94,8 +94,8 @@ class Tax extends Component implements AdjusterInterface
      */
     private function _addAmountRemovedForOrderShipping(float $amount): void
     {
-        if ($amount < 0) {
-            throw new Exception('Amount added to the total removed shipping must be a positive number');
+        if ($amount > 0) {
+            throw new Exception('Amount added to the total removed shipping must be a negative number');
         }
 
         $this->_costRemovedForOrderShipping += $amount;
@@ -111,8 +111,8 @@ class Tax extends Component implements AdjusterInterface
      */
     private function _addAmountRemovedForOrderTotalPrice(float $amount): void
     {
-        if ($amount < 0) {
-            throw new Exception('Amount added to the total removed price must be a positive number');
+        if ($amount > 0) {
+            throw new Exception('Amount added to the total removed price must be a negative number');
         }
 
         $this->_costRemovedForOrderTotalPrice = (float)$this->_getTeller()->add($this->_costRemovedForOrderTotalPrice, $amount);
@@ -181,7 +181,7 @@ class Tax extends Component implements AdjusterInterface
                     $orderTaxableAmount = $this->_order->getTotalShippingCost();
                 }
 
-                $orderLevelAmountToBeRemovedByDiscount = $this->_getTaxAmount($orderTaxableAmount, $taxRate->rate, $taxRate->include);
+                $orderLevelAmountToBeRemovedByDiscount = -$this->_getTaxAmount($orderTaxableAmount, $taxRate->rate, $taxRate->include);
 
                 if ($taxRate->taxable === TaxRateRecord::TAXABLE_ORDER_TOTAL_PRICE) {
                     $this->_addAmountRemovedForOrderTotalPrice($orderLevelAmountToBeRemovedByDiscount);
@@ -192,7 +192,7 @@ class Tax extends Component implements AdjusterInterface
                 $adjustment = $this->_createAdjustment($taxRate);
                 // We need to display the adjustment that removed the included tax
                 $adjustment->name = Craft::t('site', $taxRate->name) . ' ' . Craft::t('commerce', 'Removed');
-                $adjustment->amount = -$orderLevelAmountToBeRemovedByDiscount;
+                $adjustment->amount = $orderLevelAmountToBeRemovedByDiscount;
                 $adjustment->type = 'discount'; // TODO Not use a discount adjustment, but modify the price of the item instead. #COM-26
                 $adjustment->included = false;
 
