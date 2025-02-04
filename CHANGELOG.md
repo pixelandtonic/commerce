@@ -1,5 +1,9 @@
 # Release Notes for Craft Commerce
 
+## Unreleased
+
+- Fixed a bug where soft-deleted variants were not being restored when the product was restored. ([#3815](https://github.com/craftcms/commerce/issues/3815)) 
+
 ## 5.3.1 - 2025-02-03
 
 - Improved logging when a user deletion is prevented due to the user having Commerce orders. ([#3686](https://github.com/craftcms/commerce/issues/3686))
