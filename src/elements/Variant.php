@@ -206,12 +206,6 @@ class Variant extends Purchasable implements NestedElementInterface
     public ?int $sortOrder = null;
 
     /**
-     * @var bool Whether the variant was deleted along with its product
-     * @see beforeDelete()
-     */
-    public bool $deletedWithProduct = false;
-
-    /**
      * @var string|null
      * @see getProductSlug()
      * @see setProductSlug()
@@ -340,6 +334,27 @@ class Variant extends Purchasable implements NestedElementInterface
         }
 
         return $this->canSave($user);
+    }
+
+    /**
+     * @return bool
+     * TODO: Remove in next breakpoint
+     */
+    public function getDeletedWithProduct(): bool
+    {
+        Craft::$app->getDeprecator()->log('Variant::getDeletedWithProduct()', 'The “deletedWithProduct” property has been deprecated. Use “deletedWithOwner” instead.');
+
+        return $this->deletedWithOwner;
+    }
+
+    /**
+     * @param $value
+     * @return void
+     * TODO: Remove in next breakpoint
+     */
+    public function setDeletedWithProduct($value): void
+    {
+        return;
     }
 
     /**
@@ -1166,28 +1181,9 @@ class Variant extends Purchasable implements NestedElementInterface
      * @inheritdoc
      * @throws \yii\db\Exception
      */
-    public function beforeDelete(): bool
-    {
-        if (!parent::beforeDelete()) {
-            return false;
-        }
-
-        Craft::$app->getDb()->createCommand()
-            ->update(Table::VARIANTS, [
-                'deletedWithProduct' => $this->deletedWithProduct,
-            ], ['id' => $this->id], [], false)
-            ->execute();
-
-        return true;
-    }
-
-    /**
-     * @inheritdoc
-     * @throws \yii\db\Exception
-     */
     public function beforeRestore(): bool
     {
-        if (!parent::beforeDelete()) {
+        if (!parent::beforeRestore()) {
             return false;
         }
 
@@ -1227,21 +1223,6 @@ class Variant extends Purchasable implements NestedElementInterface
     }
 
     /**
-     * @throws \yii\db\Exception
-     */
-    public function afterRestore(): void
-    {
-        // Once restored, we no longer track if it was deleted with variant or not
-        $this->deletedWithProduct = false;
-        Craft::$app->getDb()->createCommand()->update(Table::VARIANTS,
-            ['deletedWithProduct' => false],
-            ['id' => $this->getId()]
-        )->execute();
-
-        parent::afterRestore();
-    }
-
-    /**
      * @throws InvalidConfigException
      * @since 2.2
      */
@@ -1264,7 +1245,7 @@ class Variant extends Purchasable implements NestedElementInterface
             [['minQty'], 'validateMinQtyRange', 'skipOnEmpty' => true],
             [['maxQty'], 'validateMaxQtyRange', 'skipOnEmpty' => true],
             [['stock', 'fieldId', 'ownerId', 'primaryOwnerId'], 'number'],
-            [['ownerId', 'primaryOwnerId', 'isDefault'], 'safe'],
+            [['ownerId', 'primaryOwnerId', 'isDefault', 'deletedWithProduct'], 'safe'],
         ]);
     }
 
