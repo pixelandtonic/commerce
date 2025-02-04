@@ -29,6 +29,7 @@
 - Tax rates now have statuses. ([#3790](https://github.com/craftcms/commerce/discussions/3790))
 - It’s now possible to restore soft-deleted product variants.
 - Improved Craft Commerce navigation and breadcrumb labels.
+- Added an “Allow out of stock purchases” option to purchasables. ([#3649](https://github.com/craftcms/commerce/discussions/3649))
 
 ### Administration
 - The “Recipient”, “BCC’d Recipient”, and “CC’d Recipient” email settings now support being set to environment variables. ([#3738](https://github.com/craftcms/commerce/issues/3738))
