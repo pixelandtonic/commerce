@@ -318,6 +318,7 @@ class Inventory extends Component
 
             $transaction->commit();
 
+            // TODO: Potentially move this to a job in the queue
             // Update all purchasables stock
             $purchasables = $updateInventoryLevels->getPurchasables();
             if ($purchasables) {
@@ -379,9 +380,6 @@ class Inventory extends Component
         ];
 
         $this->updateInventoryLevel($purchasable->inventoryItemId, $quantity, $updateInventoryLevelAttributes);
-
-        // Clear the stock cache for the class instance
-        unset($purchasable->stock);
     }
 
     /**
@@ -530,8 +528,14 @@ class Inventory extends Component
 
             $transaction->commit();
 
-            // TODO: Update stock value on purchasable stores
-            //  Craft::$app->getElements()->invalidateCachesForElement($this);
+            // TODO: Potentially move this to a job in the queue
+            foreach ($inventoryMovements as $inventoryMovement) {
+                // Update all purchasables stock
+                $purchasable = $inventoryMovement->getInventoryItem()->getPurchasable();
+                if ($purchasable) {
+                    Plugin::getInstance()->getPurchasables()->updateStoreStockCache($purchasable, true);
+                }
+            }
 
             return true;
         } catch (\Exception $e) {

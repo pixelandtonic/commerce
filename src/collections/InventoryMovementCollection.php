@@ -8,6 +8,7 @@
 namespace craft\commerce\collections;
 
 use craft\commerce\base\InventoryMovement;
+use craft\commerce\base\InventoryMovementInterface;
 use Illuminate\Support\Collection;
 
 /**
@@ -22,4 +23,13 @@ use Illuminate\Support\Collection;
  */
 class InventoryMovementCollection extends Collection
 {
+    /**
+     * @return array
+     */
+    public function getPurchasables(): array
+    {
+        return $this->map(function(InventoryMovementInterface $updateInventoryLevel) {
+            return $updateInventoryLevel->getInventoryItem()->getPurchasable();
+        })->all();
+    }
 }
