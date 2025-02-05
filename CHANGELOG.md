@@ -64,8 +64,6 @@
 - Added `craft\commerce\events\PurchasableOutOfStockPurchasesAllowedEvent`.
 - Added `craft\commerce\services\Gateways\getAllArchivedGateways()`.
 - Added `craft\commerce\services\Inventory::updateInventoryLevel()`.
-- Added `craft\commerce\services\Inventory::updateInventoryLevel()`.
-- Added `craft\commerce\services\Inventory::updatePurchasableInventoryLevel()`.
 - Added `craft\commerce\services\Inventory::updatePurchasableInventoryLevel()`.
 - Added `craft\commerce\services\Purchasables::EVENT_PURCHASABLE_OUT_OF_STOCK_PURCHASES_ALLOWED`.
 - Added `craft\commerce\services\Purchasables::isPurchasableOutOfStockPurchasingAllowed()`.
