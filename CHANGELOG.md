@@ -2,7 +2,9 @@
 
 ## Unreleased
 
+- Added `craft\commerce\base\Gateway::transactionSupportsRefund()`.
 - Fixed a bug where soft-deleted variants were not being restored when the product was restored. ([#3815](https://github.com/craftcms/commerce/issues/3815)) 
+- Fixed a bug where the `commerce/cart/update-cart` action could return unnecessary validation errors. ([3873](https://github.com/craftcms/commerce/issues/3873))
 
 ## 5.3.1 - 2025-02-03
 
