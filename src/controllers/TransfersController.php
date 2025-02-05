@@ -266,7 +266,7 @@ class TransfersController extends BaseCpController
                 Html::input('number', 'details[' . $key . '][accept]', '', [
                     'class' => 'text fullwidth',
                     'disabled' => $deleted,
-                    'placeholder' => $deleted ? Craft::t('app', '“{name}” deleted.', ['name' => $detail->inventoryItemDescription]) : ''
+                    'placeholder' => $deleted ? Craft::t('app', '“{name}” deleted.', ['name' => $detail->inventoryItemDescription]) : '',
                 ])
             );
             $tableRows .= Html::tag('td', (string)$detail->quantityRejected, ['class' => 'rightalign']);
@@ -274,7 +274,7 @@ class TransfersController extends BaseCpController
                 Html::input('number', 'details[' . $key . '][reject]', '', [
                     'class' => 'text fullwidth',
                     'disabled' => $deleted,
-                    'placeholder' => $deleted ? Craft::t('app', '“{name}” deleted.', ['name' => $detail->inventoryItemDescription]) : ''
+                    'placeholder' => $deleted ? Craft::t('app', '“{name}” deleted.', ['name' => $detail->inventoryItemDescription]) : '',
                 ])
             );
         }
