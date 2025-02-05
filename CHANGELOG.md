@@ -2,9 +2,9 @@
 
 ## Unreleased
 
-- Fixed a bug where the `commerce/cart/update-cart` action could return unnecessary validation errors. ([3873](https://github.com/craftcms/commerce/issues/3873))
 - Improved logging when a user deletion is prevented due to the user having Commerce orders. ([#3686](https://github.com/craftcms/commerce/issues/3686))
 - Added `craft\commerce\base\Gateway::transactionsSupportsRefund()`.
+- Fixed a bug where the `commerce/cart/update-cart` action could return unnecessary validation errors. ([3873](https://github.com/craftcms/commerce/issues/3873))
 
 ## 4.8.0.1 - 2025-02-03
 
