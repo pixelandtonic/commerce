@@ -1,6 +1,6 @@
 # Release Notes for Craft Commerce
 
-## Unreleased
+## 5.3.2 - 2025-02-06
 
 - Added `craft\commerce\collections\InventoryMovementCollection::getPurchasables()`.
 - Added `craft\commerce\base\Gateway::transactionSupportsRefund()`.
