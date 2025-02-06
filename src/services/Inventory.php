@@ -380,6 +380,9 @@ class Inventory extends Component
         ];
 
         $this->updateInventoryLevel($purchasable->inventoryItemId, $quantity, $updateInventoryLevelAttributes);
+
+        // Clear the stock cache for the class instance
+        unset($purchasable->stock); // set _stock to null
     }
 
     /**
