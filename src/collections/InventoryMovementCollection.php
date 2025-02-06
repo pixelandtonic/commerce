@@ -25,6 +25,7 @@ class InventoryMovementCollection extends Collection
 {
     /**
      * @return array
+     * @since 5.3.2
      */
     public function getPurchasables(): array
     {
