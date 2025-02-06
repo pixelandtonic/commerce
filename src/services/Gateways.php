@@ -12,6 +12,7 @@ use craft\commerce\base\Gateway;
 use craft\commerce\base\GatewayInterface;
 use craft\commerce\base\SubscriptionGateway;
 use craft\commerce\db\Table;
+use craft\commerce\events\GatewayEvent;
 use craft\commerce\gateways\Dummy;
 use craft\commerce\gateways\Manual;
 use craft\commerce\gateways\MissingGateway;
@@ -30,6 +31,7 @@ use Illuminate\Support\Collection;
 use Throwable;
 use yii\base\Component;
 use yii\base\ErrorException;
+use yii\base\Event;
 use yii\base\Exception;
 use yii\base\InvalidConfigException;
 use yii\base\NotSupportedException;
@@ -48,6 +50,56 @@ use function get_class;
  */
 class Gateways extends Component
 {
+    /**
+     * @event GatewayEvent The event that is triggered before a gateway is saved.
+     *
+     * ```php
+     * use craft\commerce\events\GatewayEvent;
+     * use craft\commerce\services\Gateways;
+     * use craft\commerce\models\Gateway;
+     * use yii\base\Event;
+     *
+     * Event::on(
+     *     Gateways::class,
+     *     Gateways::EVENT_BEFORE_SAVE_GATEWAY,
+     *     function(GatewayEvent $event) {
+     *         // @var Gateway $gateway
+     *         $gateway = $event->gateway;
+     *         // @var bool $isNew
+     *         $isNew = $event->isNew;
+     *
+     *         // ...
+     *     }
+     * );
+     * ```
+     */
+    public const EVENT_BEFORE_SAVE_GATEWAY = 'beforeSaveGateway';
+
+    /**
+     * @event GatewayEvent The event that is triggered after a gateway is saved.
+     *
+     * ```php
+     * use craft\commerce\events\GatewayEvent;
+     * use craft\commerce\services\Gateways;
+     * use craft\commerce\models\Gateway;
+     * use yii\base\Event;
+     *
+     * Event::on(
+     *     Gateways::class,
+     *     Gateways::EVENT_AFTER_SAVE_GATEWAY,
+     *     function(GatewayEvent $event) {
+     *         // @var Gateway $gateway
+     *         $gateway = $event->gateway;
+     *         // @var bool $isNew
+     *         $isNew = $event->isNew;
+     *
+     *         // ...
+     *     }
+     * );
+     * ```
+     */
+    public const EVENT_AFTER_SAVE_GATEWAY = 'afterSaveGateway';
+
     /**
      * @var array|null Gateway setting overrides
      */
@@ -235,6 +287,13 @@ class Gateways extends Component
     {
         $isNewGateway = $gateway->getIsNew();
 
+        if ($this->hasEventHandlers(self::EVENT_BEFORE_SAVE_GATEWAY)) {
+            $this->trigger(self::EVENT_BEFORE_SAVE_GATEWAY, new GatewayEvent([
+                'gateway' => $gateway,
+                'isNew' => $isNewGateway,
+            ]));
+        }
+
         if ($runValidation && !$gateway->validate()) {
             Craft::info('Gateway not saved due to validation error.', __METHOD__);
             return false;
@@ -294,7 +353,7 @@ class Gateways extends Component
         $transaction = Craft::$app->getDb()->beginTransaction();
         try {
             $gatewayRecord = $this->_getGatewayRecord($gatewayUid);
-
+            $isNewGateway = $gatewayRecord->getIsNewRecord();
             $gatewayRecord->name = $data['name'];
             $gatewayRecord->handle = $data['handle'];
             $gatewayRecord->type = $data['type'];
@@ -317,6 +376,13 @@ class Gateways extends Component
         } catch (Throwable $e) {
             $transaction->rollBack();
             throw $e;
+        }
+
+        if ($this->hasEventHandlers(self::EVENT_AFTER_SAVE_GATEWAY)) {
+            $this->trigger(self::EVENT_AFTER_SAVE_GATEWAY, new GatewayEvent([
+                'gateway' => $this->getGatewayById($gatewayRecord->id),
+                'isNew' => $isNewGateway,
+            ]));
         }
     }
 
