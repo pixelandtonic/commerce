@@ -176,7 +176,7 @@ class LineItems extends Component
      * @return LineItem
      * @throws \Exception
      */
-    public function resolveLineItem(Order $order, int $purchasableId, array $options = [], $params = []): LineItem
+    public function resolveLineItem(Order $order, int $purchasableId, array $options = [], array $params = []): LineItem
     {
         $signature = LineItemHelper::generateOptionsSignature($options);
 
