@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Fixed a bug where new line items did not expose their submitted quantity to the `craft\commerce\services\LineItems::EVENT_POPULATE_LINE_ITEM` event. ([#3883](https://github.com/craftcms/commerce/issues/3883))
 - Fixed a bug where soft-deleted variants were not being restored when the product was restored. ([#3815](https://github.com/craftcms/commerce/issues/3815))
 - Fixed a bug where inventory movements did not update the purchasable’s per-store cached stock total.
 - Fixed a bug where transfers that contained deleted inventory items could not be updated.
