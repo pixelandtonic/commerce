@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Fixed a bug where new line items did not expose their submitted quantity to the `craft\commerce\services\LineItems::EVENT_POPULATE_LINE_ITEM` event. ([#3883](https://github.com/craftcms/commerce/issues/3883))
 - Added `craft\commerce\base\Gateway::transactionSupportsRefund()`.
 - Fixed a bug where soft-deleted variants were not being restored when the product was restored. ([#3815](https://github.com/craftcms/commerce/issues/3815)) 
 - Fixed a bug where the `commerce/cart/update-cart` action could return unnecessary validation errors. ([3873](https://github.com/craftcms/commerce/issues/3873))
