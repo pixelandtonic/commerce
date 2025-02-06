@@ -6,6 +6,8 @@
 - Fixed a bug where inventory movements did not update the purchasable’s per-store cached stock total.
 - Fixed a bug where transfers that contained deleted inventory items could not be updated.
 - Added `craft\commerce\collections\InventoryMovementCollection::getPurchasables()`.
+- Added `craft\commerce\base\Gateway::transactionSupportsRefund()`.
+- Fixed a bug where the `commerce/cart/update-cart` action could return unnecessary validation errors. ([3873](https://github.com/craftcms/commerce/issues/3873))
 
 ## 5.3.1 - 2025-02-03
 
