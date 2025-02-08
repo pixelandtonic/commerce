@@ -1,5 +1,9 @@
 # Release Notes for Craft Commerce
 
+## Unreleased
+
+- Fixed a bug where taxes and shipping totals weren’t being recalculated in `commerce/cart/*` action requests. ([#3888](https://github.com/craftcms/commerce/issues/3888))
+
 ## 5.3.2 - 2025-02-06
 
 - Added `craft\commerce\collections\InventoryMovementCollection::getPurchasables()`.
