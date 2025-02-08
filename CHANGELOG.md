@@ -2,7 +2,7 @@
 
 ## 4.8.1.1 - 2025-02-07
 
-- Fixed a bug where taxes and shipping weren’t being recalculated in `commerce/cart/*` action requests. ([#3888](https://github.com/craftcms/commerce/issues/3888))
+- Fixed a bug where taxes and shipping totals weren’t being recalculated in `commerce/cart/*` action requests. ([#3888](https://github.com/craftcms/commerce/issues/3888))
 
 ## 4.8.1 - 2025-02-05
 
