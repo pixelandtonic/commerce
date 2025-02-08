@@ -1,8 +1,8 @@
 # Release Notes for Craft Commerce
 
-## Unreleased
+## 5.3.2.1 - 2025-02-07
 
-- Fixed a bug where taxes and shipping totals weren’t being recalculated in `commerce/cart/*` action requests. ([#3888](https://github.com/craftcms/commerce/issues/3888))
+- Fixed a bug where tax and shipping totals weren’t being recalculated in `commerce/cart/*` action requests. ([#3888](https://github.com/craftcms/commerce/issues/3888))
 
 ## 5.3.2 - 2025-02-06
 
