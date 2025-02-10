@@ -1,5 +1,9 @@
 # Release Notes for Craft Commerce
 
+## Unreleased
+
+- Fixed a styling issue on the Edit Order page. ([#3889](https://github.com/craftcms/commerce/issues/3889))
+
 ## 5.3.2.1 - 2025-02-07
 
 - Fixed a bug where tax and shipping totals weren’t being recalculated in `commerce/cart/*` action requests. ([#3888](https://github.com/craftcms/commerce/issues/3888))
