@@ -1,12 +1,21 @@
 # Release Notes for Craft Commerce
 
-## Unreleased
+## 5.3.2.2 - 2025-02-10
 
-- Fixed a bug where soft-deleted variants were not being restored when the product was restored. ([#3815](https://github.com/craftcms/commerce/issues/3815))
-- Fixed a bug where inventory movements did not update the purchasable’s per-store cached stock total.
-- Fixed a bug where transfers that contained deleted inventory items could not be updated.
+- Fixed a bug where carts’ adjustment totals could be calculated incorrectly. ([#3888](https://github.com/craftcms/commerce/issues/3888))
+- Fixed a styling issue on the Edit Order page. ([#3889](https://github.com/craftcms/commerce/issues/3889))
+
+## 5.3.2.1 - 2025-02-07
+
+- Fixed a bug where tax and shipping totals weren’t being recalculated in `commerce/cart/*` action requests. ([#3888](https://github.com/craftcms/commerce/issues/3888))
+
+## 5.3.2 - 2025-02-06
+
 - Added `craft\commerce\collections\InventoryMovementCollection::getPurchasables()`.
 - Added `craft\commerce\base\Gateway::transactionSupportsRefund()`.
+- Fixed a bug where product variants weren’t getting restored when soft-deleted products were restored. ([#3815](https://github.com/craftcms/commerce/issues/3815))
+- Fixed a bug where purchables’ cached per-store stock totals weren’t getting updated when inventory was moved.
+- Fixed a bug where it wasn’t possible to update inventory transfers that contained deleted inventory items.
 - Fixed a bug where the `commerce/cart/update-cart` action could return unnecessary validation errors. ([3873](https://github.com/craftcms/commerce/issues/3873))
 
 ## 5.3.1 - 2025-02-03
