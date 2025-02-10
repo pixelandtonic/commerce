@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Fixed a bug where carts’ adjustment totals could be calculated incorrectly. ([#3888](https://github.com/craftcms/commerce/issues/3888))
 - Fixed a styling issue on the Edit Order page. ([#3889](https://github.com/craftcms/commerce/issues/3889))
 
 ## 5.3.2.1 - 2025-02-07
