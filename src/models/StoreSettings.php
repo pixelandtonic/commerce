@@ -53,7 +53,7 @@ class StoreSettings extends Model
     /**
      * @var ?ZoneAddressCondition
      */
-    private ?ZoneAddressCondition $_marketAddressCondition;
+    private ?ZoneAddressCondition $_marketAddressCondition = null;
 
     /**
      * @inheritdoc
@@ -180,7 +180,7 @@ class StoreSettings extends Model
      */
     public function setCountries(mixed $countries): void
     {
-        $countries = $countries ?? [];
+        $countries ??= [];
         $countries = Json::decodeIfJson($countries);
 
         if (!is_array($countries)) {
@@ -196,9 +196,7 @@ class StoreSettings extends Model
     public function getCountriesList(): array
     {
         $all = Craft::$app->getAddresses()->getCountryRepository()->getList(Craft::$app->language);
-        return array_filter($all, function($fieldHandle) {
-            return in_array($fieldHandle, $this->getCountries(), true);
-        }, ARRAY_FILTER_USE_KEY);
+        return array_filter($all, fn($fieldHandle) => in_array($fieldHandle, $this->getCountries(), true), ARRAY_FILTER_USE_KEY);
     }
 
     /**

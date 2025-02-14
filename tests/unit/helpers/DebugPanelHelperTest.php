@@ -48,12 +48,10 @@ class DebugPanelHelperTest extends Unit
         );
 
         $usersServices = $this->make(Users::class, [
-            'getUserPreferences' => function($userId) {
-                return [
-                    'enableDebugToolbarForSite' => true,
-                    'enableDebugToolbarForCp' => true,
-                ];
-            },
+            'getUserPreferences' => fn($userId) => [
+                'enableDebugToolbarForSite' => true,
+                'enableDebugToolbarForCp' => true,
+            ],
         ]);
         Craft::$app->set('users', $usersServices);
 

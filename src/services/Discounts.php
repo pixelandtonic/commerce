@@ -219,7 +219,7 @@ class Discounts extends Component
      */
     public function getDiscountById(int $id, ?int $storeId = null): ?Discount
     {
-        $storeId = $storeId ?? Plugin::getInstance()->getStores()->getCurrentStore()->id;
+        $storeId ??= Plugin::getInstance()->getStores()->getCurrentStore()->id;
 
         // Keep this as a query for the performance boost
         $discounts = $this->_createDiscountQuery()
@@ -244,7 +244,7 @@ class Discounts extends Component
      */
     public function getAllDiscounts(?int $storeId = null): Collection
     {
-        $storeId = $storeId ?? Plugin::getInstance()->getStores()->getCurrentStore()->id;
+        $storeId ??= Plugin::getInstance()->getStores()->getCurrentStore()->id;
 
         if ($this->_allDiscounts === null || !isset($this->_allDiscounts[$storeId])) {
             $discounts = $this->_createDiscountQuery()
@@ -498,7 +498,7 @@ class Discounts extends Component
             return null;
         }
 
-        $storeId = $storeId ?? Plugin::getInstance()->getStores()->getCurrentStore()->id;
+        $storeId ??= Plugin::getInstance()->getStores()->getCurrentStore()->id;
 
         $query = $this->_createDiscountQuery()->where(['storeId' => $storeId]);
         $query->innerJoin(Table::COUPONS . ' coupons', '[[coupons.discountId]] = [[discounts.id]]');
@@ -513,12 +513,8 @@ class Discounts extends Component
             return null;
         }
 
-        return ArrayHelper::firstWhere($this->_populateDiscounts($discounts), function(Discount $discount) use ($code) {
-            return (
-                $discount->enabled &&
-                ArrayHelper::contains($discount->getCoupons(), fn(Coupon $coupon) => strcasecmp($coupon->code, $code) === 0)
-            );
-        });
+        return ArrayHelper::firstWhere($this->_populateDiscounts($discounts), fn(Discount $discount) => $discount->enabled &&
+        ArrayHelper::contains($discount->getCoupons(), fn(Coupon $coupon) => strcasecmp($coupon->code, $code) === 0));
     }
 
     /**
@@ -911,7 +907,7 @@ class Discounts extends Component
     public function ensureSortOrder(?int $storeId = null): void
     {
         // @TODO ensure sort order per store
-        $storeId = $storeId ?? Plugin::getInstance()->getStores()->getCurrentStore()->id;
+        $storeId ??= Plugin::getInstance()->getStores()->getCurrentStore()->id;
 
         $table = Table::DISCOUNTS;
 
@@ -1299,10 +1295,10 @@ SQL;
             $discount['purchasableIds'] = !empty($discount['purchasableIds']) ? Json::decodeIfJson($discount['purchasableIds'], true) : [];
             // IDs can be either category ID or entry ID due to the entryfication
             $discount['categoryIds'] = !empty($discount['categoryIds']) ? Json::decodeIfJson($discount['categoryIds'], true) : [];
-            $discount['orderCondition'] = $discount['orderCondition'] ?? '';
-            $discount['customerCondition'] = $discount['customerCondition'] ?? '';
-            $discount['billingAddressCondition'] = $discount['billingAddressCondition'] ?? '';
-            $discount['shippingAddressCondition'] = $discount['shippingAddressCondition'] ?? '';
+            $discount['orderCondition'] ??= '';
+            $discount['customerCondition'] ??= '';
+            $discount['billingAddressCondition'] ??= '';
+            $discount['shippingAddressCondition'] ??= '';
 
             $discount = Craft::createObject([
                 'class' => Discount::class,

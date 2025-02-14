@@ -60,12 +60,8 @@ class ProductResolverTest extends Unit
         $mockElement = $this->make(
             ProductElement::class, [
                 'postDate' => new \DateTime(),
-                '__get' => function($property) {
-                    return in_array($property, ['plainTextField', 'typeface'], false) ? 'ok' : $this->$property;
-                },
-                'getType' => function() use ($typeHandle) {
-                    return $this->make(ProductType::class, ['handle' => $typeHandle]);
-                },
+                '__get' => fn($property) => in_array($property, ['plainTextField', 'typeface'], false) ? 'ok' : $this->$property,
+                'getType' => fn() => $this->make(ProductType::class, ['handle' => $typeHandle]),
             ]
         );
 
@@ -84,9 +80,7 @@ class ProductResolverTest extends Unit
     public function _runTest($element, string $gqlTypeClass, string $propertyName, $result): void
     {
         $resolveInfo = $this->make(ResolveInfo::class, ['fieldName' => $propertyName]);
-        $resolve = function() use ($gqlTypeClass, $element, $resolveInfo) {
-            return $this->make($gqlTypeClass)->resolveWithDirectives($element, [], null, $resolveInfo);
-        };
+        $resolve = fn() => $this->make($gqlTypeClass)->resolveWithDirectives($element, [], null, $resolveInfo);
 
         if (is_callable($result)) {
             self::assertEquals($result($element), $resolve());
@@ -104,9 +98,7 @@ class ProductResolverTest extends Unit
     public function productFieldTestDataProvider(): array
     {
         return [
-            [ProductGqlType::class, 'productTypeHandle', function($source) {
-                return $source->getType()->handle;
-            }],
+            [ProductGqlType::class, 'productTypeHandle', fn($source) => $source->getType()->handle],
             [ProductGqlType::class, 'plainTextField', true],
             [ProductGqlType::class, 'notAField', false],
         ];

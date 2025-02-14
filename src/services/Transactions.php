@@ -508,7 +508,7 @@ class Transactions extends Component
 
         foreach ($transactionResults as $result) {
             $transaction = new Transaction($result);
-            $transactions[$transaction->orderId] = $transactions[$transaction->orderId] ?? [];
+            $transactions[$transaction->orderId] ??= [];
             $transactions[$transaction->orderId][] = $transaction;
         }
 

@@ -1264,9 +1264,7 @@ class Variant extends Purchasable implements NestedElementInterface
 
         // Limit to only those for this product type
         $categoryIds = collect(Plugin::getInstance()->getShippingCategories()->getShippingCategoriesByProductTypeId($productTypeId))->pluck('id')->toArray();
-        $available = collect($allAvailableShippingCategories)->filter(function(ShippingCategory $category) use ($categoryIds) {
-            return in_array($category->id, $categoryIds);
-        });
+        $available = collect($allAvailableShippingCategories)->filter(fn(ShippingCategory $category) => in_array($category->id, $categoryIds));
 
         if ($available->isEmpty()) {
             return [Plugin::getInstance()->getShippingCategories()->getDefaultShippingCategory($this->storeId)];
@@ -1290,9 +1288,7 @@ class Variant extends Purchasable implements NestedElementInterface
 
         // Limit to only those for this product type
         $categoryIds = collect(Plugin::getInstance()->getTaxCategories()->getTaxCategoriesByProductTypeId($productTypeId))->pluck('id')->toArray();
-        $available = collect($allAvailableTaxCategories)->filter(function(TaxCategory $category) use ($categoryIds) {
-            return in_array($category->id, $categoryIds);
-        });
+        $available = collect($allAvailableTaxCategories)->filter(fn(TaxCategory $category) => in_array($category->id, $categoryIds));
 
         if ($available->isEmpty()) {
             return [Plugin::getInstance()->getTaxCategories()->getDefaultTaxCategory()];
