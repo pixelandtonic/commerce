@@ -47,8 +47,6 @@ class UpdateInventoryLevelCollection extends Collection
      */
     public function getPurchasables(): array
     {
-        return $this->map(function(UpdateInventoryLevel|UpdateInventoryLevelInTransfer $updateInventoryLevel) {
-            return $updateInventoryLevel->getInventoryItem()->getPurchasable();
-        })->all();
+        return $this->map(fn(UpdateInventoryLevel|UpdateInventoryLevelInTransfer $updateInventoryLevel) => $updateInventoryLevel->getInventoryItem()->getPurchasable())->all();
     }
 }
