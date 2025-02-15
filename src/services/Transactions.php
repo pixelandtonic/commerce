@@ -221,7 +221,7 @@ class Transactions extends Component
             $transaction->amount = Currency::round($amount, $currency);
 
             // Capture historical rate
-            $transaction->paymentRate = $paymentCurrency->rate;
+            $transaction->paymentRate = $paymentCurrency->getRate($transaction);
 
             $transaction->setOrder($order);
         }
