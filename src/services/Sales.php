@@ -30,7 +30,6 @@ use yii\base\Component;
 use yii\base\Exception;
 use yii\base\InvalidConfigException;
 use yii\db\StaleObjectException;
-use function get_class;
 use function in_array;
 
 /**

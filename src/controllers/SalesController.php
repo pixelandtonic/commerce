@@ -31,7 +31,6 @@ use yii\web\ForbiddenHttpException;
 use yii\web\HttpException;
 use yii\web\Response;
 use function explode;
-use function get_class;
 
 /**
  * Class Sales Controller
