@@ -134,13 +134,12 @@ class DebugPanelHelperTest extends Unit
 
     /**
      * @param string $attr
-     * @param mixed $value
      * @param string|null $label
      * @param string $expected
      * @return void
      * @dataProvider renderModelAttributeRowDataProvider
      */
-    public function testRenderModelAttributeRow(string $attr, mixed $value, ?string $label = null, string $expected): void
+    public function testRenderModelAttributeRow(string $attr, mixed $value, string $expected, ?string $label = null): void
     {
         self::assertEquals($expected, DebugPanel::renderModelAttributeRow($attr, $value, $label));
     }

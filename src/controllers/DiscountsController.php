@@ -459,17 +459,12 @@ class DiscountsController extends BaseCpController
             return $this->asFailure(Craft::t('commerce', 'Type not in allowed options.'));
         }
 
-        switch ($type) {
-            case self::DISCOUNT_COUNTER_TYPE_EMAIL:
-                Plugin::getInstance()->getDiscounts()->clearEmailUsageHistoryById($id);
-                break;
-            case self::DISCOUNT_COUNTER_TYPE_CUSTOMER:
-                Plugin::getInstance()->getDiscounts()->clearCustomerUsageHistoryById($id);
-                break;
-            case self::DISCOUNT_COUNTER_TYPE_TOTAL:
-                Plugin::getInstance()->getDiscounts()->clearDiscountUsesById($id);
-                break;
-        }
+        match ($type) {
+            self::DISCOUNT_COUNTER_TYPE_EMAIL => Plugin::getInstance()->getDiscounts()->clearEmailUsageHistoryById($id),
+            self::DISCOUNT_COUNTER_TYPE_CUSTOMER => Plugin::getInstance()->getDiscounts()->clearCustomerUsageHistoryById($id),
+            self::DISCOUNT_COUNTER_TYPE_TOTAL => Plugin::getInstance()->getDiscounts()->clearDiscountUsesById($id),
+            default => $this->asSuccess(),
+        };
 
         return $this->asSuccess();
     }
@@ -678,7 +673,7 @@ class DiscountsController extends BaseCpController
         foreach ($purchasableIds as $purchasableId) {
             $purchasable = Craft::$app->getElements()->getElementById((int)$purchasableId);
             if ($purchasable instanceof PurchasableInterface) {
-                $class = get_class($purchasable);
+                $class = $purchasable::class;
                 $purchasables[$class] ??= [];
                 $purchasables[$class][] = $purchasable;
             }

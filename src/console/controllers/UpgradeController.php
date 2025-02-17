@@ -395,7 +395,7 @@ class UpgradeController extends Controller
             $firstTab = $this->_addressFieldLayout->getTabs()[0];
             $layoutElements = $firstTab->getElements();
 
-            $list = implode(array_map(fn($label) => " - $label\n", $this->neededCustomAddressFields));
+            $list = implode('', array_map(fn($label) => " - $label\n", $this->neededCustomAddressFields));
             $this->stdout(<<<EOL
 Customer and order addresses will be migrated to native Craft address elements.
 Some of the existing addresses contain data that will need to be stored in custom fields:

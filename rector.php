@@ -11,5 +11,6 @@ return RectorConfig::configure()
     ])
     ->withSkip([
         Rector\Php74\Rector\Closure\ClosureToArrowFunctionRector::class,
+        Rector\Php80\Rector\Class_\StringableForToStringRector::class,
     ])
-    ->withPhpSets(php74: true);
+    ->withPhpSets(php80: true);

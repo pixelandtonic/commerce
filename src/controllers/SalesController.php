@@ -525,7 +525,7 @@ class SalesController extends BaseCpController
         foreach ($purchasableIds as $purchasableId) {
             $purchasable = Craft::$app->getElements()->getElementById((int)$purchasableId);
             if ($purchasable instanceof PurchasableInterface) {
-                $class = get_class($purchasable);
+                $class = $purchasable::class;
                 $purchasables[$class] ??= [];
                 $purchasables[$class][] = $purchasable;
             }

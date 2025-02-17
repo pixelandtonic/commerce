@@ -163,7 +163,6 @@ class Store extends Model
     }
 
     /**
-     * @param mixed $countries
      * @return void
      * @throws InvalidConfigException
      */

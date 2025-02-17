@@ -256,7 +256,7 @@ class Gateways extends Component
             $configData = [
                 'name' => $gateway->name,
                 'handle' => $gateway->handle,
-                'type' => get_class($gateway),
+                'type' => $gateway::class,
                 'settings' => $gateway->getSettings(),
                 'sortOrder' => ($gateway->sortOrder ?? 99),
                 'paymentType' => $gateway->paymentType,

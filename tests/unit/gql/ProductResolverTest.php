@@ -53,7 +53,7 @@ class ProductResolverTest extends Unit
      * @param mixed $result True for exact match, false for non-existing or a callback for fetching the data
      * @throws \Exception
      */
-    public function testProductFieldResolving(string $gqlTypeClass, string $propertyName, $result): void
+    public function testProductFieldResolving(string $gqlTypeClass, string $propertyName, mixed $result): void
     {
         $typeHandle = StringHelper::UUID();
 
@@ -81,7 +81,7 @@ class ProductResolverTest extends Unit
      * @param mixed $result True for exact match, false for non-existing or a callback for fetching the data
      * @throws \Exception
      */
-    public function _runTest($element, string $gqlTypeClass, string $propertyName, $result): void
+    public function _runTest($element, string $gqlTypeClass, string $propertyName, mixed $result): void
     {
         $resolveInfo = $this->make(ResolveInfo::class, ['fieldName' => $propertyName]);
         $resolve = function() use ($gqlTypeClass, $element, $resolveInfo) {

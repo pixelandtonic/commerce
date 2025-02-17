@@ -599,7 +599,7 @@ class Sales extends Component
                 $relation = new SalePurchasableRecord();
                 $relation->purchasableId = $purchasableId;
                 $purchasable = Craft::$app->getElements()->getElementById($purchasableId, null, null, ['trashed' => null]);
-                $relation->purchasableType = get_class($purchasable);
+                $relation->purchasableType = $purchasable::class;
                 $relation->saleId = $model->id;
                 $relation->save();
 
