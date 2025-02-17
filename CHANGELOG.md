@@ -3,6 +3,7 @@
 ## Unreleased
 
 - Fixed a bug where line items totals could be formatted in the wrong currency on Edit Order pages. ([#3891](https://github.com/craftcms/commerce/issues/3891)) 
+- Fixed a bug that prevented emails and order status change events from triggering in the non-primary store.
 
 ## 5.3.2.2 - 2025-02-10
 
