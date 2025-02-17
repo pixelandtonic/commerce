@@ -33,7 +33,7 @@ class TaxTest extends Unit
     /**
      * @var Plugin|null
      */
-    public ?Plugin $pluginInstance;
+    public ?Plugin $pluginInstance = null;
 
     /**
      * @inheritdoc

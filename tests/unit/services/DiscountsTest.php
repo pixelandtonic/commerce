@@ -55,7 +55,7 @@ class DiscountsTest extends Unit
     /**
      * @var User|null
      */
-    private ?User $_user;
+    private ?User $_user = null;
 
     /**
      * @return array

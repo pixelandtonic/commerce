@@ -53,7 +53,7 @@ class Store extends Model
     /**
      * @var ?ZoneAddressCondition
      */
-    private ?ZoneAddressCondition $_marketAddressCondition;
+    private ?ZoneAddressCondition $_marketAddressCondition = null;
 
     /**
      * Sets the store location address ID.
@@ -169,7 +169,7 @@ class Store extends Model
      */
     public function setCountries(mixed $countries): void
     {
-        $countries = $countries ?? [];
+        $countries ??= [];
         $countries = Json::decodeIfJson($countries);
 
         if (!is_array($countries)) {

@@ -389,7 +389,7 @@ class LineItems extends Component
         foreach ($lineItemsResults as $result) {
             $result['snapshot'] = Json::decodeIfJson($result['snapshot']);
             $lineItem = new LineItem($result);
-            $lineItems[$lineItem->orderId] = $lineItems[$lineItem->orderId] ?? [];
+            $lineItems[$lineItem->orderId] ??= [];
             $lineItems[$lineItem->orderId][] = $lineItem;
         }
 

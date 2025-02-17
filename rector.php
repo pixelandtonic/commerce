@@ -9,4 +9,7 @@ return RectorConfig::configure()
         __DIR__ . '/src',
         __DIR__ . '/tests/unit',
     ])
-    ->withPhpSets(php73: true);
+    ->withSkip([
+        Rector\Php74\Rector\Closure\ClosureToArrowFunctionRector::class,
+    ])
+    ->withPhpSets(php74: true);

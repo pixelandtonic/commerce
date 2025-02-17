@@ -30,12 +30,12 @@ class DiscountTest extends Unit
     /**
      * @var Plugin|null
      */
-    public ?Plugin $pluginInstance;
+    public ?Plugin $pluginInstance = null;
 
     /**
      * @var string|null
      */
-    public ?string $originalEdition;
+    public ?string $originalEdition = null;
 
     /**
      * @inheritdoc

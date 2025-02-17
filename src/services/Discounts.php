@@ -1259,10 +1259,10 @@ SQL;
             $discount['purchasableIds'] = !empty($discount['purchasableIds']) ? Json::decodeIfJson($discount['purchasableIds'], true) : [];
             // IDs can be either category ID or entry ID due to the entryfication
             $discount['categoryIds'] = !empty($discount['categoryIds']) ? Json::decodeIfJson($discount['categoryIds'], true) : [];
-            $discount['orderCondition'] = $discount['orderCondition'] ?? '';
-            $discount['customerCondition'] = $discount['customerCondition'] ?? '';
-            $discount['billingAddressCondition'] = $discount['billingAddressCondition'] ?? '';
-            $discount['shippingAddressCondition'] = $discount['shippingAddressCondition'] ?? '';
+            $discount['orderCondition'] ??= '';
+            $discount['customerCondition'] ??= '';
+            $discount['billingAddressCondition'] ??= '';
+            $discount['shippingAddressCondition'] ??= '';
 
             $discount = Craft::createObject([
                 'class' => Discount::class,
