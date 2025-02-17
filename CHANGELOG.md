@@ -1,5 +1,9 @@
 # Release Notes for Craft Commerce
 
+## Unreleased
+
+- Fixed a bug that prevented emails and order status change events from triggering in the non-primary store.
+
 ## 5.3.2.2 - 2025-02-10
 
 - Fixed a bug where carts’ adjustment totals could be calculated incorrectly. ([#3888](https://github.com/craftcms/commerce/issues/3888))
