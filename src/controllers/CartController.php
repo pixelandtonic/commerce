@@ -243,15 +243,15 @@ class CartController extends BaseFrontEndController
 
         // Update multiple line items in the cart
         if ($lineItems = $this->request->getParam('lineItems')) {
-            foreach ($lineItems as $key => $lineItem) {
-                $key = ArrayHelper::getValue($lineItem, 'id', $key); // look for ID but fall back to key
+            foreach ($lineItems as $key => $lineItemData) {
+                $key = ArrayHelper::getValue($lineItemData, 'id', $key); // look for ID but fall back to key
                 $lineItem = $this->_getCartLineItemById($key);
                 if ($lineItem) {
-                    $lineItem->qty = (int) ArrayHelper::getValue($lineItem, 'qty', $lineItem->qty);
-                    $lineItem->note = ArrayHelper::getValue($lineItem, 'note', $lineItem->note);
-                    $lineItem->setOptions(ArrayHelper::getValue($lineItem, 'options', $lineItem->getOptions()));
+                    $lineItem->qty = (int) ArrayHelper::getValue($lineItemData, 'qty', $lineItem->qty);
+                    $lineItem->note = ArrayHelper::getValue($lineItemData, 'note', $lineItem->note);
+                    $lineItem->setOptions(ArrayHelper::getValue($lineItemData, 'options', $lineItem->getOptions()));
 
-                    $removeLine = ArrayHelper::getValue($lineItem, 'remove', false);
+                    $removeLine = ArrayHelper::getValue($lineItemData, 'remove', false);
                     if ($lineItem->qty == 0 || $removeLine) {
                         $this->_cart->removeLineItem($lineItem);
                     } else {
