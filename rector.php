@@ -9,4 +9,4 @@ return RectorConfig::configure()
         __DIR__ . '/src',
         __DIR__ . '/tests/unit',
     ])
-    ->withPhpSets(php56: true);
+    ->withPhpSets(php70: true);

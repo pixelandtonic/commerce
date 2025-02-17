@@ -107,11 +107,7 @@ class PaymentCurrencies extends Component
             $this->getAllPaymentCurrencies();
         }
 
-        if (isset($this->_allCurrenciesByIso[$iso])) {
-            return $this->_allCurrenciesByIso[$iso];
-        }
-
-        return null;
+        return $this->_allCurrenciesByIso[$iso] ?? null;
     }
 
     /**
