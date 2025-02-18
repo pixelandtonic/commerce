@@ -230,7 +230,7 @@ class OrderAdjustments extends Component
             $result['sourceSnapshot'] = Json::decodeIfJson($result['sourceSnapshot']);
             $adjustment = new OrderAdjustment($result);
 
-            $orderAdjustments[$adjustment->orderId] = $orderAdjustments[$adjustment->orderId] ?? [];
+            $orderAdjustments[$adjustment->orderId] ??= [];
             $orderAdjustments[$adjustment->orderId][] = $adjustment;
         }
 
