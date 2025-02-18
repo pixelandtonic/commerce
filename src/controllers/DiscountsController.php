@@ -462,7 +462,6 @@ class DiscountsController extends BaseCpController
             self::DISCOUNT_COUNTER_TYPE_EMAIL => Plugin::getInstance()->getDiscounts()->clearEmailUsageHistoryById($id),
             self::DISCOUNT_COUNTER_TYPE_CUSTOMER => Plugin::getInstance()->getDiscounts()->clearCustomerUsageHistoryById($id),
             self::DISCOUNT_COUNTER_TYPE_TOTAL => Plugin::getInstance()->getDiscounts()->clearDiscountUsesById($id),
-            default => $this->asSuccess(),
         };
 
         return $this->asSuccess();
