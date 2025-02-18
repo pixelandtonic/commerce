@@ -480,12 +480,8 @@ class Discounts extends Component
             return null;
         }
 
-        return ArrayHelper::firstWhere($this->_populateDiscounts($discounts), function(Discount $discount) use ($code) {
-            return (
-                $discount->enabled &&
-                ArrayHelper::contains($discount->getCoupons(), fn(Coupon $coupon) => strcasecmp($coupon->code, $code) === 0)
-            );
-        });
+        return ArrayHelper::firstWhere($this->_populateDiscounts($discounts), fn(Discount $discount) => $discount->enabled &&
+        ArrayHelper::contains($discount->getCoupons(), fn(Coupon $coupon) => strcasecmp($coupon->code, $code) === 0));
     }
 
     /**

@@ -144,9 +144,7 @@ class PaymentCurrencies extends Component
      */
     public function getNonPrimaryPaymentCurrencies(): array
     {
-        return ArrayHelper::where($this->getAllPaymentCurrencies(), function(PaymentCurrency $paymentCurrency) {
-            return !$paymentCurrency->primary;
-        }, true, true, true);
+        return ArrayHelper::where($this->getAllPaymentCurrencies(), fn(PaymentCurrency $paymentCurrency) => !$paymentCurrency->primary, true, true, true);
     }
 
     /**

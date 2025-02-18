@@ -109,9 +109,7 @@ class Gateways extends Component
      */
     public function getAllCustomerEnabledGateways(): array
     {
-        return ArrayHelper::where($this->getAllGateways(), function($gateway) {
-            return $gateway->getIsFrontendEnabled();
-        });
+        return ArrayHelper::where($this->getAllGateways(), fn($gateway) => $gateway->getIsFrontendEnabled());
     }
 
     /**
@@ -121,9 +119,7 @@ class Gateways extends Component
      */
     public function getAllSubscriptionGateways(): array
     {
-        return ArrayHelper::where($this->_getAllGateways(), function($gateway) {
-            return $gateway instanceof SubscriptionGateway && !$gateway->isArchived;
-        });
+        return ArrayHelper::where($this->_getAllGateways(), fn($gateway) => $gateway instanceof SubscriptionGateway && !$gateway->isArchived);
     }
 
     /**

@@ -184,9 +184,7 @@ class Store extends Model
     public function getCountriesList(): array
     {
         $all = Craft::$app->getAddresses()->getCountryRepository()->getList(Craft::$app->language);
-        return array_filter($all, function($fieldHandle) {
-            return in_array($fieldHandle, $this->getCountries(), true);
-        }, ARRAY_FILTER_USE_KEY);
+        return array_filter($all, fn($fieldHandle) => in_array($fieldHandle, $this->getCountries(), true), ARRAY_FILTER_USE_KEY);
     }
 
     /**

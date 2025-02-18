@@ -263,14 +263,12 @@ class UpgradeController extends Controller
             ->all();
 
         // Filter out the address columns we don't need to migrate to custom fields
-        $this->neededCustomAddressFields = array_filter($this->neededCustomAddressFields, static function($fieldHandle) {
-            return (new Query())
-                ->select($fieldHandle)
-                ->where(['not', [$fieldHandle => null]])
-                ->andWhere(['not', [$fieldHandle => '']])
-                ->from(['{{%commerce_addresses}}'])
-                ->exists();
-        }, ARRAY_FILTER_USE_KEY);
+        $this->neededCustomAddressFields = array_filter($this->neededCustomAddressFields, static fn($fieldHandle) => (new Query())
+            ->select($fieldHandle)
+            ->where(['not', [$fieldHandle => null]])
+            ->andWhere(['not', [$fieldHandle => '']])
+            ->from(['{{%commerce_addresses}}'])
+            ->exists(), ARRAY_FILTER_USE_KEY);
 
         $startTime = DateTimeHelper::currentUTCDateTime();
 

@@ -111,9 +111,7 @@ class TaxTest extends Unit
 
         $taxAdjuster = $this->make(Tax::class, [
             'getTaxRates' => $taxRates,
-            'validateTaxIdNumber' => function($vatNum) use ($addressData) {
-                return $addressData['_validateVat'] ?? false;
-            },
+            'validateTaxIdNumber' => fn($vatNum) => $addressData['_validateVat'] ?? false,
         ]);
 
         $adjustments = $taxAdjuster->adjust($order);
