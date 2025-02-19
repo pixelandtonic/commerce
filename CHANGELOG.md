@@ -1,6 +1,6 @@
 # Release Notes for Craft Commerce
 
-## Unreleased
+## 5.3.3 - 2025-02-19
 
 - Fixed a bug where line item totals could be formatted in the wrong currency on Edit Order pages. ([#3891](https://github.com/craftcms/commerce/issues/3891)) 
 - Fixed a bug where email and order status change events weren’t getting triggered in non-primary stores.
