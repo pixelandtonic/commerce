@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-- Fixed a bug where shipping rules weren’t saving their shipping category conditions in non-primary stores.
+- Fixed a bug where shipping rules weren’t saving their shipping category conditions in non-primary stores. ([#3851](https://github.com/craftcms/commerce/issues/3851))
 
 ## 5.3.3 - 2025-02-19
 
