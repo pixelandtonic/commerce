@@ -102,7 +102,7 @@ class Discount extends Component implements AdjusterInterface
             }
         }
 
-        if(!$availableDiscounts) {
+        if (!$availableDiscounts) {
             return [];
         }
 
