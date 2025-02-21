@@ -298,10 +298,23 @@ class Discounts extends Component
         $dateKey = DateTimeHelper::toIso8601($date);
         $storeKey = $order ? $order->getStore()->id : '*';
         $purchasablesKey = !empty($purchasableIds) ? md5(serialize($purchasableIds)) : '';
-        $cacheKey = implode(':', array_filter([$dateKey, $couponKey, $storeKey, $purchasablesKey]));
+        $itemSubtotal = $order ? $order->getItemSubtotal() : '*';
+        $orderTotalQty = $order ? $order->getTotalQty() : '*';
+        $orderEmail = $order ? $order->getEmail() : '*';
+        $cacheKey = implode(':', array_filter([
+            $dateKey,
+            $couponKey,
+            $storeKey,
+            $purchasablesKey,
+            $itemSubtotal,
+            $orderTotalQty,
+            $orderEmail,
+        ]));
 
-        if (isset($this->_activeDiscountsByKey[$cacheKey])) {
-            return $this->_activeDiscountsByKey[$cacheKey];
+        $cacheKeyMd5 = md5($cacheKey);
+
+        if (isset($this->_activeDiscountsByKey[$cacheKeyMd5])) {
+            return $this->_activeDiscountsByKey[$cacheKeyMd5];
         }
 
         $discountQuery = $this->_createDiscountQuery()
@@ -330,12 +343,12 @@ class Discounts extends Component
 
         // Pre-qualify discounts based on purchase total
         if ($order) {
-            if ($order->getEmail()) {
+            if ($orderEmail) {
                 $emailUsesSubQuery = (new Query())
                     ->select([new Expression('COALESCE(SUM([[edu.uses]]), 0)')])
                     ->from(['edu' => Table::EMAIL_DISCOUNTUSES])
                     ->where(new Expression('[[edu.discountId]] = [[discounts.id]]'))
-                    ->andWhere(['email' => $order->getEmail()]);
+                    ->andWhere(['email' => $orderEmail]);
 
                 $discountQuery->andWhere([
                     'or',
@@ -346,10 +359,11 @@ class Discounts extends Component
                 $discountQuery->andWhere(['perEmailLimit' => 0]);
             }
 
+
             $discountQuery->andWhere([
                 'or',
                 ['purchaseTotal' => 0],
-                ['and', ['allPurchasables' => true], ['allCategories' => true], ['<=', 'purchaseTotal', $order->getItemSubtotal()]],
+                ['and', ['allPurchasables' => true], ['allCategories' => true], ['<=', 'purchaseTotal', $itemSubtotal]],
                 ['allPurchasables' => false],
                 ['allCategories' => false],
             ]);
@@ -357,9 +371,9 @@ class Discounts extends Component
             $discountQuery->andWhere([
                 'or',
                 ['purchaseQty' => 0, 'maxPurchaseQty' => 0],
-                ['and', ['allPurchasables' => true], ['allCategories' => true], ['>', 'purchaseQty', 0], ['maxPurchaseQty' => 0], ['<=', 'purchaseQty', $order->getTotalQty()]],
-                ['and', ['allPurchasables' => true], ['allCategories' => true], ['>', 'maxPurchaseQty', 0], ['purchaseQty' => 0], ['>=', 'maxPurchaseQty', $order->getTotalQty()]],
-                ['and', ['allPurchasables' => true], ['allCategories' => true], ['>', 'maxPurchaseQty', 0], ['>', 'purchaseQty', 0], ['<=', 'purchaseQty', $order->getTotalQty()], ['>=', 'maxPurchaseQty', $order->getTotalQty()]],
+                ['and', ['allPurchasables' => true], ['allCategories' => true], ['>', 'purchaseQty', 0], ['maxPurchaseQty' => 0], ['<=', 'purchaseQty', $orderTotalQty]],
+                ['and', ['allPurchasables' => true], ['allCategories' => true], ['>', 'maxPurchaseQty', 0], ['purchaseQty' => 0], ['>=', 'maxPurchaseQty', $orderTotalQty]],
+                ['and', ['allPurchasables' => true], ['allCategories' => true], ['>', 'maxPurchaseQty', 0], ['>', 'purchaseQty', 0], ['<=', 'purchaseQty', $orderTotalQty], ['>=', 'maxPurchaseQty', $orderTotalQty]],
                 ['allPurchasables' => false],
                 ['allCategories' => false],
             ]);
@@ -419,9 +433,11 @@ class Discounts extends Component
             );
         }
 
-        $this->_activeDiscountsByKey[$cacheKey] = $this->_populateDiscounts($discountQuery->all());
+        $discountResults = $discountQuery->all();
+        $discounts = $this->_populateDiscounts($discountResults);
+        $this->_activeDiscountsByKey[$cacheKeyMd5] = $discounts;
 
-        return $this->_activeDiscountsByKey[$cacheKey];
+        return $this->_activeDiscountsByKey[$cacheKeyMd5];
     }
 
     /**

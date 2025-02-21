@@ -1,5 +1,9 @@
 # Release Notes for Craft Commerce
 
+## Unreleased
+
+- Fixed a bug where discounts could not be applied when the order is recalculated more than once in the same request. ([#3896](https://github.com/craftcms/commerce/issues/3896))
+
 ## 5.3.3 - 2025-02-19
 
 - Fixed a bug where line item totals could be formatted in the wrong currency on Edit Order pages. ([#3891](https://github.com/craftcms/commerce/issues/3891)) 
