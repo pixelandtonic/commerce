@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Fixed a PHP error that could occur on order completion with disabled variants in the non-primary store.
 - Fixed a bug where gateway settings fields were being duplicated on the Edit Gateway pages.
 
 ## 5.3.3 - 2025-02-19
