@@ -3,6 +3,9 @@
 ## Unreleased
 
 - Fixed a bug where discounts could not be applied when the order is recalculated more than once in the same request. ([#3896](https://github.com/craftcms/commerce/issues/3896))
+- Fixed a bug where shipping rules weren’t saving their shipping category conditions in non-primary stores. ([#3851](https://github.com/craftcms/commerce/issues/3851))
+- Fixed a PHP error that could occur on order completion with disabled variants in the non-primary store.
+- Fixed a bug where gateway settings fields were being duplicated on the Edit Gateway pages.
 
 ## 5.3.3 - 2025-02-19
 
