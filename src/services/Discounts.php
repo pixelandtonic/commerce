@@ -297,19 +297,20 @@ class Discounts extends Component
         $couponKey = ($order && $order->couponCode) ? $order->couponCode : '*';
         $dateKey = DateTimeHelper::toIso8601($date);
         $storeKey = $order ? $order->getStore()->id : '*';
-        $purchasablesKey = !empty($purchasableIds) ? md5(serialize($purchasableIds)) : '';
-        $itemSubtotal = $order ? $order->getItemSubtotal() : '*';
-        $orderTotalQty = $order ? $order->getTotalQty() : '*';
-        $orderEmail = $order ? $order->getEmail() : '*';
-        $cacheKey = implode(':', array_filter([
-            $dateKey,
+        $purchasablesKey = !empty($purchasableIds) ? md5(serialize($purchasableIds)) : '*';
+        $itemSubtotalKey = $order ? $order->getItemSubtotal() : '*';
+        $orderTotalQtyKey = $order ? $order->getTotalQty() : '*';
+        $orderEmailKey = ($order && $order->getEmail()) ? $order->getEmail() : '*';
+
+        $cacheKey = implode(':', [
             $couponKey,
+            $dateKey,
             $storeKey,
             $purchasablesKey,
-            $itemSubtotal,
-            $orderTotalQty,
-            $orderEmail,
-        ]));
+            $itemSubtotalKey,
+            $orderTotalQtyKey,
+            $orderEmailKey,
+        ]);
 
         $cacheKeyMd5 = md5($cacheKey);
 
@@ -343,12 +344,12 @@ class Discounts extends Component
 
         // Pre-qualify discounts based on purchase total
         if ($order) {
-            if ($orderEmail) {
+            if ($order->getEmail()) {
                 $emailUsesSubQuery = (new Query())
                     ->select([new Expression('COALESCE(SUM([[edu.uses]]), 0)')])
                     ->from(['edu' => Table::EMAIL_DISCOUNTUSES])
                     ->where(new Expression('[[edu.discountId]] = [[discounts.id]]'))
-                    ->andWhere(['email' => $orderEmail]);
+                    ->andWhere(['email' => $order->getEmail()]);
 
                 $discountQuery->andWhere([
                     'or',
@@ -363,7 +364,7 @@ class Discounts extends Component
             $discountQuery->andWhere([
                 'or',
                 ['purchaseTotal' => 0],
-                ['and', ['allPurchasables' => true], ['allCategories' => true], ['<=', 'purchaseTotal', $itemSubtotal]],
+                ['and', ['allPurchasables' => true], ['allCategories' => true], ['<=', 'purchaseTotal', $order->getItemSubtotal()]],
                 ['allPurchasables' => false],
                 ['allCategories' => false],
             ]);
@@ -371,9 +372,9 @@ class Discounts extends Component
             $discountQuery->andWhere([
                 'or',
                 ['purchaseQty' => 0, 'maxPurchaseQty' => 0],
-                ['and', ['allPurchasables' => true], ['allCategories' => true], ['>', 'purchaseQty', 0], ['maxPurchaseQty' => 0], ['<=', 'purchaseQty', $orderTotalQty]],
-                ['and', ['allPurchasables' => true], ['allCategories' => true], ['>', 'maxPurchaseQty', 0], ['purchaseQty' => 0], ['>=', 'maxPurchaseQty', $orderTotalQty]],
-                ['and', ['allPurchasables' => true], ['allCategories' => true], ['>', 'maxPurchaseQty', 0], ['>', 'purchaseQty', 0], ['<=', 'purchaseQty', $orderTotalQty], ['>=', 'maxPurchaseQty', $orderTotalQty]],
+                ['and', ['allPurchasables' => true], ['allCategories' => true], ['>', 'purchaseQty', 0], ['maxPurchaseQty' => 0], ['<=', 'purchaseQty', $order->getTotalQty()]],
+                ['and', ['allPurchasables' => true], ['allCategories' => true], ['>', 'maxPurchaseQty', 0], ['purchaseQty' => 0], ['>=', 'maxPurchaseQty', $order->getTotalQty()]],
+                ['and', ['allPurchasables' => true], ['allCategories' => true], ['>', 'maxPurchaseQty', 0], ['>', 'purchaseQty', 0], ['<=', 'purchaseQty', $order->getTotalQty()], ['>=', 'maxPurchaseQty', $order->getTotalQty()]],
                 ['allPurchasables' => false],
                 ['allCategories' => false],
             ]);
