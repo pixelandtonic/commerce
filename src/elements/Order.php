@@ -36,7 +36,6 @@ use craft\commerce\events\OrderNoticeEvent;
 use craft\commerce\helpers\Currency;
 use craft\commerce\helpers\Order as OrderHelper;
 use craft\commerce\models\inventory\InventoryFulfillMovement;
-use craft\commerce\models\InventoryFulfillmentLevel;
 use craft\commerce\models\LineItem;
 use craft\commerce\models\OrderAdjustment;
 use craft\commerce\models\OrderHistory;
