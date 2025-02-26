@@ -1863,7 +1863,6 @@ class Order extends Element implements HasStoreInterface
      */
     public function fulfillOutstandingCommittedQuantity(): bool
     {
-        /** @var $levels Collection<InventoryFulfillmentLevel> */
         $levels = Plugin::getInstance()->getInventory()->getInventoryFulfillmentLevels($this);
         $movements = [];
         foreach ($levels as $level) {
