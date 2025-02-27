@@ -19,6 +19,7 @@ use craft\elements\Address;
 use craft\elements\User;
 use craft\errors\ElementNotFoundException;
 use craft\errors\MissingComponentException;
+use craft\helpers\ArrayHelper;
 use craft\helpers\Json;
 use craft\helpers\StringHelper;
 use craft\helpers\UrlHelper;
@@ -242,15 +243,16 @@ class CartController extends BaseFrontEndController
 
         // Update multiple line items in the cart
         if ($lineItems = $this->request->getParam('lineItems')) {
-            foreach ($lineItems as $key => $lineItem) {
+            foreach ($lineItems as $key => $lineItemData) {
+                $key = ArrayHelper::getValue($lineItemData, 'id', $key); // look for ID but fall back to key
                 $lineItem = $this->_getCartLineItemById($key);
                 if ($lineItem) {
-                    $lineItem->qty = (int)$this->request->getParam("lineItems.$key.qty", $lineItem->qty);
-                    $lineItem->note = $this->request->getParam("lineItems.$key.note", $lineItem->note);
-                    $lineItem->setOptions($this->request->getParam("lineItems.$key.options", $lineItem->getOptions()));
+                    $lineItem->qty = (int) ArrayHelper::getValue($lineItemData, 'qty', $lineItem->qty);
+                    $lineItem->note = ArrayHelper::getValue($lineItemData, 'note', $lineItem->note);
+                    $lineItem->setOptions(ArrayHelper::getValue($lineItemData, 'options', $lineItem->getOptions()));
 
-                    $removeLine = $this->request->getParam("lineItems.$key.remove", false);
-                    if (($lineItem->qty !== null && $lineItem->qty == 0) || $removeLine) {
+                    $removeLine = ArrayHelper::getValue($lineItemData, 'remove', false);
+                    if ($lineItem->qty == 0 || $removeLine) {
                         $this->_cart->removeLineItem($lineItem);
                     } else {
                         $this->_cart->addLineItem($lineItem);
